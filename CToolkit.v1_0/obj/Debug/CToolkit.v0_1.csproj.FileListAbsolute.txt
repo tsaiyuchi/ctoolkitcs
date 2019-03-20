@@ -1,0 +1,16 @@
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\CToolkit.v0_1.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\CToolkit.v0_1.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\Cudafy.NET.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\MathNet.Filtering.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\MathNet.Numerics.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\Newtonsoft.Json.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\Cudafy.NET.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\MathNet.Filtering.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\MathNet.Numerics.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\Newtonsoft.Json.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\bin\Debug\Newtonsoft.Json.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\obj\Debug\CToolkit.v0_1.csprojAssemblyReference.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\obj\Debug\CToolkit.v0_1.csproj.CoreCompileInputs.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\obj\Debug\CToolkit.v0_1.csproj.CopyComplete
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\obj\Debug\CToolkit.v0_1.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v0_1\obj\Debug\CToolkit.v0_1.pdb

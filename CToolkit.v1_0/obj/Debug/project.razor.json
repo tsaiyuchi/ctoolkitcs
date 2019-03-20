@@ -1,0 +1,14 @@
+{
+  "ProjectFilePath": "d:\\ycProject\\github\\ctoolkit.csharp\\CToolkit.v0_1\\CToolkit.v0_1.csproj",
+  "TargetFramework": "v4.0",
+  "TagHelpers": [],
+  "Configuration": {
+    "ConfigurationName": "UnsupportedRazor",
+    "LanguageVersion": "1.0",
+    "Extensions": [
+      {
+        "ExtensionName": "UnsupportedRazorExtension"
+      }
+    ]
+  }
+}

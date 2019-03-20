@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F07C68EF-A4D1-4AF9-A283-35F6E27ACE8A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CToolkit.v1_0</RootNamespace>
+    <AssemblyName>CToolkit.v1_0</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cudafy.NET, Version=1.29.5576.13786, Culture=neutral, PublicKeyToken=63a4c9931616906b, processorArchitecture=MSIL">
+      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\CUDAfy.NET.1.29.5576.13786\lib\net40\Cudafy.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Filtering, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\MathNet.Filtering.0.6.0\lib\net40\MathNet.Filtering.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\MathNet.Numerics.4.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CtkAspectUtil.cs" />
+    <Compile Include="Config\CtkConfigBase.cs" />
+    <Compile Include="Config\CtkConfigCollectorBase.cs" />
+    <Compile Include="Config\CtkConfigCollectorFolder.cs" />
+    <Compile Include="Config\CtkConfigCollector.cs" />
+    <Compile Include="CtkException.cs" />
+    <Compile Include="CtkMemcpyUtil.cs" />
+    <Compile Include="Net\CtkNetUtil.cs" />
+    <Compile Include="Numeric\CtkPassFilterStruct.cs" />
+    <Compile Include="Protocol\CtkProtocolBufferMessage.cs" />
+    <Compile Include="Protocol\CtkProtocolEventArgs.cs" />
+    <Compile Include="Data\CtkCsvEnumReadType.cs" />
+    <Compile Include="Data\CtkCsvWriter.cs" />
+    <Compile Include="Protocol\CtkProtocolTrxMessage.cs" />
+    <Compile Include="Protocol\ICtkProtocolConnect.cs" />
+    <Compile Include="Threading\CtkCancelTask.cs" />
+    <Compile Include="Threading\CtkSpinWait.cs" />
+    <Compile Include="Threading\CtkTask.cs" />
+    <Compile Include="Timing\CtkTimeUtil.cs" />
+    <Compile Include="Diagnostics\CtkStopwatchMapper.cs" />
+    <Compile Include="CtkEventUtil.cs" />
+    <Compile Include="Extension\Numberic\CtkExtNumberic.cs" />
+    <Compile Include="CtkLog.cs" />
+    <Compile Include="Logging\CtkLoggerMapperEventArgs.cs" />
+    <Compile Include="Modbus\CtkModbusEnumFuncCode.cs" />
+    <Compile Include="Modbus\CtkModbusMessageReceiver.cs" />
+    <Compile Include="Modbus\CtkModbusMessage.cs" />
+    <Compile Include="Modbus\CtkModbusOldMessage.cs" />
+    <Compile Include="Net\CtkNonStopTcpListener.cs" />
+    <Compile Include="Net\CtkNonStopTcpClient.cs" />
+    <Compile Include="Net\CtkNonStopTcpStateEventArgs.cs" />
+    <Compile Include="Net\CtkTcpListenerEx.cs" />
+    <Compile Include="Net\CtkTcpSocketStateEventArgs.cs" />
+    <Compile Include="Numeric\CtkEnumPassFilterMode.cs" />
+    <Compile Include="Numeric\CtkFftOnlineFilter.cs" />
+    <Compile Include="Logging\CtkLogger.cs" />
+    <Compile Include="CtkObject.cs" />
+    <Compile Include="CtkUtil.cs" />
+    <Compile Include="Data\CtkCsvReader.cs" />
+    <Compile Include="Data\CtkExcel.cs" />
+    <Compile Include="Data\CtkMsSql.cs" />
+    <Compile Include="Data\CtkOracle.cs" />
+    <Compile Include="Diagnostics\CtkStopwatch.cs" />
+    <Compile Include="ICtkContextFlow.cs" />
+    <Compile Include="ICtkContextFlowRun.cs" />
+    <Compile Include="Logging\CtkLoggerEnumDisplay.cs" />
+    <Compile Include="Logging\CtkLoggerMapper.cs" />
+    <Compile Include="Logging\CtkLoggerEventArgs.cs" />
+    <Compile Include="Logging\CtkLoggerEnumLevel.cs" />
+    <Compile Include="Mathing\CtkComplex.cs" />
+    <Compile Include="Mathing\CtkGcd.cs" />
+    <Compile Include="Mathing\CtkMatrix.cs" />
+    <Compile Include="Mathing\CtkMatrixf.cs" />
+    <Compile Include="Mathing\CtkOperator.cs" />
+    <Compile Include="Mathing\CtkRational.cs" />
+    <Compile Include="Mathing\CtkRealF.cs" />
+    <Compile Include="Mathing\CtkMathOpUtil.cs" />
+    <Compile Include="Mathing\ICtkOperator.cs" />
+    <Compile Include="Net\CtkMail.cs" />
+    <Compile Include="Net\CtkTcpSocketSync.cs" />
+    <Compile Include="Net\CtkWebTransaction.cs" />
+    <Compile Include="Net\CtkEgSimple_BeginSocket.cs" />
+    <Compile Include="Net\CtkEgSimple_Socket.cs" />
+    <Compile Include="Net\CtkEgSimple_SocketCloseTest.cs" />
+    <Compile Include="Numeric\CtkCudafyCannotUseException.cs" />
+    <Compile Include="Numeric\CtkCudafyContext.cs" />
+    <Compile Include="Numeric\CtkNumContext.cs" />
+    <Compile Include="Numeric\CtkNumUtil.cs" />
+    <Compile Include="Numeric\CtkOverallLevel.cs" />
+    <Compile Include="Numeric\CtkOverallLevelData.cs" />
+    <Compile Include="Numeric\CtkSampleSignals.cs" />
+    <Compile Include="Numeric\CtkNumConverter.cs" />
+    <Compile Include="Paint\CtkHslColor.cs" />
+    <Compile Include="Paint\CtkJetColor.cs" />
+    <Compile Include="Paint\CtkRgbColor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\CtkProtocolUtil.cs" />
+    <Compile Include="Protocol\ICtkProtocolNonStopConnect.cs" />
+    <Compile Include="Security\CtkMd5.cs" />
+    <Compile Include="DigitalPort\CtkNonStopSerialPort.cs" />
+    <Compile Include="DigitalPort\CtkNonStopSerialPortEventArgs.cs" />
+    <Compile Include="DigitalPort\CtkSerialPortCfg.cs" />
+    <Compile Include="Text\CtkFormat.cs" />
+    <Compile Include="Text\CtkRegular.cs" />
+    <Compile Include="Timing\CtkTime.cs" />
+    <Compile Include="Timing\CtkTimeTick.cs" />
+    <Compile Include="Timing\CtkTimeMilliSecond.cs" />
+    <Compile Include="Timing\CtkTimeSecond.cs" />
+    <Compile Include="Wcf\CtkWcfDuplexListenerBasic.cs" />
+    <Compile Include="Wcf\CtkWcfDuplexEventArgs.cs" />
+    <Compile Include="Wcf\CtkWcfMessage.cs" />
+    <Compile Include="Wcf\Example\CtkExampleCustomClient.cs" />
+    <Compile Include="Wcf\Example\CtkExampleCustomInstCallback.cs" />
+    <Compile Include="Wcf\Example\CtkExampleCustomInstListener.cs" />
+    <Compile Include="Wcf\Example\CtkExampleDefaultClient.cs" />
+    <Compile Include="Wcf\Example\CtkExampleCustomListener.cs" />
+    <Compile Include="Wcf\Example\CtkExampleDefaultListener.cs" />
+    <Compile Include="Wcf\CtkWcfChannelInfo.cs" />
+    <Compile Include="Wcf\CtkWcfDuplexTcpClient.cs" />
+    <Compile Include="Wcf\CtkWcfDuplexTcpListener.cs" />
+    <Compile Include="Wcf\Example\ICtkExampleCustomListenerSubtract.cs" />
+    <Compile Include="Wcf\Example\ICtkExampleCustomListenerAdd.cs" />
+    <Compile Include="Wcf\ICTkWcfDuplexOpCallback.cs" />
+    <Compile Include="Wcf\ICtkWcfDuplexOpService.cs" />
+    <Compile Include="Web\CtkIViewEditControl.cs" />
+    <Compile Include="Web\CtkPath.cs" />
+    <Compile Include="Web\CtkWebUtil.cs" />
+    <Compile Include="Web\CtkViewEditDropDownList.cs" />
+    <Compile Include="Web\CtkViewEditTextbox.cs" />
+    <Compile Include="WinApiNative\CtkEnumConst.cs" />
+    <Compile Include="WinApiNative\CtkEnumHookType.cs" />
+    <Compile Include="WinApiNative\CtkEnumKeyboardFlag.cs" />
+    <Compile Include="WinApiNative\CtkEnumMouseFlag.cs" />
+    <Compile Include="WinApiNative\CtkKernel32Lib.cs" />
+    <Compile Include="WinApiNative\CtkUser32Lib.cs" />
+    <Compile Include="WinApiNative\CtkMdlHookHardwareStruct.cs" />
+    <Compile Include="WinApiNative\CtkMdlHookKeyboardStruct.cs" />
+    <Compile Include="WinApiNative\CtkMdlHookMouseStruct.cs" />
+    <Compile Include="WinApiNative\CtkMdlInput.cs" />
+    <Compile Include="WinApiNative\CtkMdlInputType.cs" />
+    <Compile Include="WinApi\CtkEnumMouseLMR.cs" />
+    <Compile Include="WinApi\CtkEventArgsException.cs" />
+    <Compile Include="WinApi\CtkEventArgsHookCallback.cs" />
+    <Compile Include="WinApi\CtkHookKeyboard.cs" />
+    <Compile Include="WinApi\CtkHookMouse.cs" />
+    <Compile Include="WinApi\CtkUtilUser32.cs" />
+    <Compile Include="XmlSerialize\CtkDictionary.cs" />
+    <Compile Include="XmlSerialize\CtkKeyValuePair.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mathing\CtkMath.ReadMe.txt" />
+    <Content Include="Readme\CUDA.NET.Readme.txt" />
+    <Content Include="Readme\CUDAfy-License.txt" />
+    <Content Include="Readme\example_source_code.cs.txt" />
+    <Content Include="Readme\ILSpy-license.txt" />
+    <Content Include="Readme\README.txt" />
+    <Content Include="Tools\cudafycl.exe" />
+    <Content Include="Tools\CudafyViewer.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ReadMe.MD" />
+    <None Include="Tools\place_these_executables_in_same_folder_as_Cudafy.NET.dll_" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataAnalysis\" />
+    <Folder Include="StatisticalMethod\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "CToolkit.*" "../../../../CwTech/DLL/CToolkit.v1.0"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

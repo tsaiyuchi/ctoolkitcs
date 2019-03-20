@@ -1,0 +1,10 @@
+D:\ycProject\github\ctoolkit.csharp\CToolkit\bin\Release\CToolkit.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit\bin\Release\CToolkit.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit\bin\Release\MathNet.Filtering.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit\bin\Release\MathNet.Filtering.Kalman.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit\bin\Release\MathNet.Numerics.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit\obj\Release\CToolkit.csproj.CoreCompileInputs.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit\obj\Release\CToolkit.csproj.CopyComplete
+D:\ycProject\github\ctoolkit.csharp\CToolkit\obj\Release\CToolkit.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit\obj\Release\CToolkit.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit\obj\Release\CToolkit.csprojAssemblyReference.cache
