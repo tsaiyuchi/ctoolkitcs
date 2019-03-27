@@ -33,7 +33,7 @@ namespace CToolkit.v1_0.Wcf.Example
                 this.client.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
-                    CmdWrite("Client: " + ea.WcfMsg.DataObj + "");
+                    CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
                 };
                 this.client.Uri = ServerUri;
                 this.client.ConnectIfNo();
@@ -44,7 +44,7 @@ namespace CToolkit.v1_0.Wcf.Example
                 this.client1.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
-                    CmdWrite("Client: " + ea.WcfMsg.DataObj + "");
+                    CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
                 };
                 this.client1.Uri = ServerUri;
                 this.client1.EntryAddress = "Add";
@@ -56,7 +56,7 @@ namespace CToolkit.v1_0.Wcf.Example
                 this.client2.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
-                    CmdWrite("Client: " + ea.WcfMsg.DataObj + "");
+                    CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
                 };
                 this.client2.Uri = ServerUri;
                 this.client2.EntryAddress = "Sub";

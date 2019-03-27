@@ -69,7 +69,11 @@ namespace CToolkit.v1_0.Wcf
 
         public void AbortNonStopConnect()
         {
-            this.NonStopTask.Cancel();
+            if (this.NonStopTask != null)
+            {
+                using (var obj = this.NonStopTask)
+                    obj.Cancel();
+            }
         }
 
         public void ConnectIfNo()

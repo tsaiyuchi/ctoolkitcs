@@ -64,6 +64,8 @@ namespace CToolkit.v1_0.Wcf
                     obj.Close();
                 }
             }
+
+            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//關閉就代表此類別不用了
         }
 
         public List<TCallback> GetAllChannels()

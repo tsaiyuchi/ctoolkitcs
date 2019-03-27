@@ -11,6 +11,7 @@
     <AssemblyName>CToolkit.v1_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +67,7 @@
     <Compile Include="Config\CtkConfigCollectorBase.cs" />
     <Compile Include="Config\CtkConfigCollectorFolder.cs" />
     <Compile Include="Config\CtkConfigCollector.cs" />
+    <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkException.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />
     <Compile Include="Net\CtkNetUtil.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="Wcf\CtkWcfChannelInfo.cs" />
     <Compile Include="Wcf\CtkWcfDuplexTcpClient.cs" />
     <Compile Include="Wcf\CtkWcfDuplexTcpListener.cs" />
+    <Compile Include="Wcf\Example\CtkWcfTestUri.cs" />
     <Compile Include="Wcf\Example\ICtkExampleCustomListenerSubtract.cs" />
     <Compile Include="Wcf\Example\ICtkExampleCustomListenerAdd.cs" />
     <Compile Include="Wcf\ICTkWcfDuplexOpCallback.cs" />
@@ -201,6 +204,7 @@
     <Content Include="Tools\CudafyViewer.exe" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="ReadMe.MD" />
     <None Include="Tools\place_these_executables_in_same_folder_as_Cudafy.NET.dll_" />

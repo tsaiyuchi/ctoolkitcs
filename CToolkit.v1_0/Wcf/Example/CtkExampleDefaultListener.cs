@@ -31,7 +31,7 @@ namespace CToolkit.v1_0.Wcf.Example
             this.listenerCtk.evtDataReceive += (ss, ee) =>
             {
                 var ea = ee as CtkWcfDuplexEventArgs;
-                CmdWrite(ea.WcfMsg.DataObj + "");
+                CmdWrite(ea.WcfMsg.TypeName + "");
             };
             this.listenerCtk.Uri = ServerUri;
             this.listenerCtk.ConnectIfNo();

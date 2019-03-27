@@ -31,7 +31,7 @@ namespace CToolkit.v1_0.Wcf.Example
             this.listenerCtk.evtDataReceive += (ss, ee) =>
             {
                 var ea = ee as CtkWcfDuplexEventArgs;
-                CmdWrite("Client: " + ea.WcfMsg.DataObj + "");
+                CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
             };
 
             var dict = new Dictionary<string, Type>();

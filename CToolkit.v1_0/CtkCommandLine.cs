@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CToolkit.v1_0
 {
@@ -10,7 +13,7 @@ namespace CToolkit.v1_0
 
 
 
-        public void CmdWrite(string msg, params object[] obj)
+        public static void CmdWrite(string msg, params object[] obj)
         {
             if (msg != null)
             {
@@ -20,12 +23,13 @@ namespace CToolkit.v1_0
             Console.Write(">");
         }
 
-        public void CommandLine(Action<string> act = null)
+        public static void Run(Action<string> act = null)
         {
-            CmdWrite(this.GetType().Name);
             var cmd = "";
             do
             {
+                
+                CmdWrite("App:");
                 cmd = Console.ReadLine();
                 if (act != null) act(cmd);
 

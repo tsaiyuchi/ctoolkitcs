@@ -33,7 +33,7 @@ namespace CToolkit.v1_0.Wcf
 
         void CleanHost()
         {
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
+            //CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//不用清除自己的
             CtkEventUtil.RemoveEventHandlersFromOwningByTarget(this.host, this);
         }
 
@@ -117,8 +117,6 @@ namespace CToolkit.v1_0.Wcf
         {
             this.AbortNonStopConnect();
             base.Close();
-
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
         }
 
         public void NonStopConnectAsyn()
@@ -228,7 +226,8 @@ namespace CToolkit.v1_0.Wcf
 
         public static CtkWcfDuplexTcpListener<CtkWcfDuplexTcpListener> CreateSingle()
         {
-            return new CtkWcfDuplexTcpListener<CtkWcfDuplexTcpListener>(new CtkWcfDuplexTcpListener());
+            var service = new CtkWcfDuplexTcpListener();
+            return new CtkWcfDuplexTcpListener<CtkWcfDuplexTcpListener>(service);
         }
         public void CtkSend(CtkWcfMessage msg)
         {
