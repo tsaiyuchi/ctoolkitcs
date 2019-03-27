@@ -14,7 +14,7 @@ namespace CToolkit.v1_0.Wcf
 
 
     /// <summary>
-    /// //´£¨ÑÂ²©ö°T®§¥æ´« & ¦¬¶° Channel
+    /// //æä¾›ç°¡æ˜“è¨Šæ¯äº¤æ› & æ”¶é›† Channel
     /// </summary>
     /// <typeparam name="TService"></typeparam>
     public class CtkWcfDuplexTcpListener<TService>
@@ -66,7 +66,11 @@ namespace CToolkit.v1_0.Wcf
         public bool IsRemoteConnected { get { return this.GetAllChannels().Count > 0; } }
         public void AbortNonStopConnect()
         {
-            this.NonStopTask.Cancel();
+            if (this.NonStopTask != null)
+            {
+                using (var obj = this.NonStopTask)
+                    obj.Cancel();
+            }
         }
 
         public void ConnectIfNo()
@@ -75,7 +79,7 @@ namespace CToolkit.v1_0.Wcf
 
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;//¶i¤£¥h¥ıÂ÷¶}
+                if (!Monitor.TryEnter(this, 1000)) return;//é€²ä¸å»å…ˆé›¢é–‹
                 this.CleanDisconnect();
                 this.CleanHost();
                 this.NewHost();
@@ -83,7 +87,7 @@ namespace CToolkit.v1_0.Wcf
                 this.host.Opened += (ss, ee) =>
                 {
                     var ea = new CtkWcfDuplexEventArgs();
-                    //ea.WcfChannel = this.GetCallback();//Listener(or call Host, Service) ¶}±Ò«á, ¨Ã¨S¦³Channel³s½u¶i¨Ó
+                    //ea.WcfChannel = this.GetCallback();//Listener(or call Host, Service) é–‹å•Ÿå¾Œ, ä¸¦æ²’æœ‰Channelé€£ç·šé€²ä¾†
                     this.OnFirstConnect(ea);
                 };
 
@@ -98,7 +102,7 @@ namespace CToolkit.v1_0.Wcf
                 this.host.Closed += (ss, ee) =>
                 {
                     var ea = new CtkWcfDuplexEventArgs();
-                    //ea.WcfChannel = this.GetCallback();//ListernerÃö³¬, ·|Ãö³¬©Ò¦³Channel, ¨Ã¨S¦³¯S©w­ş¤@­Ó
+                    //ea.WcfChannel = this.GetCallback();//Listerneré—œé–‰, æœƒé—œé–‰æ‰€æœ‰Channel, ä¸¦æ²’æœ‰ç‰¹å®šå“ªä¸€å€‹
                     this.OnDisconnect(ea);
                 };
                 this.Open();
@@ -142,7 +146,7 @@ namespace CToolkit.v1_0.Wcf
 
 
         /// <summary>
-        /// ¥u¤ä´© CtkWcfMessage
+        /// åªæ”¯æ´ CtkWcfMessage
         /// </summary>
         /// <param name="msg"></param>
         public void WriteMsg(CtkProtocolTrxMessage msg)
