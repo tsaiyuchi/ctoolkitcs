@@ -16,8 +16,8 @@ namespace CToolkit.v1_0.Wcf
 
     public class CtkWcfDuplexTcpClient<TService, TCallback> : IDisposable
         , ICtkProtocolNonStopConnect
-        where TService : ICtkWcfDuplexOpService//Server´£¨Ñªº, ¥²¶·¬Ointerface
-        where TCallback : ICTkWcfDuplexOpCallback//´£¨Ñµ¹Server©I¥sªº
+        where TService : ICtkWcfDuplexOpService//Serveræä¾›çš„, å¿…é ˆæ˜¯interface
+        where TCallback : ICTkWcfDuplexOpCallback//æä¾›çµ¦Serverå‘¼å«çš„
     {
 
 
@@ -78,10 +78,11 @@ namespace CToolkit.v1_0.Wcf
             if (this.IsLocalReadyConnect) return;
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;//¶i¤£¥h¥ıÂ÷¶}
+                if (!Monitor.TryEnter(this, 1000)) return;//é€²ä¸å»å…ˆé›¢é–‹
 
                 var site = new InstanceContext(this.Callback);
-                var address = Path.Combine(this.Uri, this.EntryAddress);
+                var address = this.Uri;
+                if (this.EntryAddress != null) address = Path.Combine(this.Uri, this.EntryAddress);
                 var endpointAddress = new EndpointAddress(address);
                 var binding = new NetTcpBinding();
                 this.ChannelFactory = new DuplexChannelFactory<TService>(site, binding, endpointAddress);
@@ -148,7 +149,7 @@ namespace CToolkit.v1_0.Wcf
 
 
         /// <summary>
-        /// ¥u¤ä´© CtkWcfMessage
+        /// åªæ”¯æ´ CtkWcfMessage
         /// </summary>
         /// <param name="msg"></param>
         public void WriteMsg(CtkProtocolTrxMessage msg)
