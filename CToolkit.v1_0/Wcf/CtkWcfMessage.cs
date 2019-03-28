@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -11,18 +12,28 @@ namespace CToolkit.v1_0.Wcf
     public class CtkWcfMessage
     {
 
+        public String AssemblyName;
         public String TypeName;
         public byte[] DataBytes;
 
         public void SetDataObj(object obj)
         {
-            this.TypeName = obj.GetType().ToString();
+            var type = obj.GetType();
+            this.AssemblyName = type.Assembly.GetName().Name;
+            this.TypeName = type.FullName;
             this.DataBytes = CtkObject.DataContractSerializeToByte(obj);
+
 
         }
         public Object GetDataObj()
         {
-            var type = Type.GetType(this.TypeName);
+            var assembly = (from row in AppDomain.CurrentDomain.GetAssemblies()
+                            where row.GetName().Name == this.AssemblyName
+                            select row).FirstOrDefault();
+            var type = assembly.GetType(this.TypeName);
+
+
+
             return CtkObject.DataContractDeserialize(type, this.DataBytes);
         }
 
