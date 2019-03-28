@@ -12,7 +12,7 @@ namespace CToolkit.v1_0.Wcf
 
 
     /// <summary>
-    /// Âù¦V(Duplex), ¦Û¦æ¹ê§@Callback¦¬¶°
+    /// é›™å‘(Duplex), è‡ªè¡Œå¯¦ä½œCallbackæ”¶é›†
     /// </summary>
     /// <typeparam name="TService"></typeparam>
     /// <typeparam name="TCallback"></typeparam>
@@ -65,7 +65,7 @@ namespace CToolkit.v1_0.Wcf
                 }
             }
 
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//Ãö³¬´N¥Nªí¦¹Ãş§O¤£¥Î¤F
+            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//é—œé–‰å°±ä»£è¡¨æ­¤é¡åˆ¥ä¸ç”¨äº†
         }
 
         public List<TCallback> GetAllChannels()
@@ -125,18 +125,10 @@ namespace CToolkit.v1_0.Wcf
             GC.SuppressFinalize(this);
         }
 
-        public virtual void DisposeManaged()
-        {
-
-        }
 
         public virtual void DisposeSelf()
         {
             this.Close();
-        }
-
-        public virtual void DisposeUnManaged()
-        {
         }
 
         protected virtual void Dispose(bool disposing)
@@ -147,12 +139,10 @@ namespace CToolkit.v1_0.Wcf
             if (disposing)
             {
                 // Free any managed objects here.
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnManaged();
             this.DisposeSelf();
             disposed = true;
         }
