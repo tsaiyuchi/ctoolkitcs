@@ -27,7 +27,7 @@ namespace CToolkit.v1_0
         public static byte[] DataContractSerializeToByte<T>(T obj, IEnumerable<Type> types = null)
         {
             using (var stm = DataContractSerializeToStream(obj))
-                return stm.GetBuffer();
+                return stm.ToArray();//.GetBuffer();
         }
         public static MemoryStream DataContractSerializeToStream<T>(T obj, IEnumerable<Type> types = null)
         {
