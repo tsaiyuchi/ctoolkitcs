@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,7 +77,8 @@ namespace CToolkit.v1_0.Threading
         {
             if (this.Task != null)
             {
-                this.Task.Dispose();
+                try { using (var obj = this.Task) { } }
+                catch (InvalidOperationException) { }
             }
         }
         #endregion
