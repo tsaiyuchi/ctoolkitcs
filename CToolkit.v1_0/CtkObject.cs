@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,29 +10,32 @@ namespace CToolkit.v1_0
     public class CtkObject
     {
 
-        public static Object DataContractDeserialize(Type type, MemoryStream stream)
+        public static Object DataContractDeserialize(Type type, MemoryStream stream, IEnumerable<Type> types = null)
         {
-            var dcSer = new DataContractSerializer(type);
-            return dcSer.ReadObject(stream);
+            var seri = new DataContractSerializer(type);
+            if (types != null) seri = new DataContractSerializer(type, types);
+            return seri.ReadObject(stream);
         }
-        public static Object DataContractDeserialize(Type type, byte[] buffer)
+        public static Object DataContractDeserialize(Type type, byte[] buffer, IEnumerable<Type> types = null)
         {
             using (var stm = new MemoryStream(buffer))
-                return DataContractDeserialize(type, stm);
+                return DataContractDeserialize(type, stm, types);
         }
-        public static T DataContractDeserialize<T>(MemoryStream stream) { return (T)DataContractDeserialize(typeof(T), stream); }
-        public static T DataContractDeserialize<T>(byte[] buffer) { return (T)DataContractDeserialize(typeof(T), buffer); }
+        public static T DataContractDeserialize<T>(MemoryStream stream, IEnumerable<Type> types = null) { return (T)DataContractDeserialize(typeof(T), stream, types); }
+        public static T DataContractDeserialize<T>(byte[] buffer, IEnumerable<Type> types = null) { return (T)DataContractDeserialize(typeof(T), buffer, types); }
 
-        public static byte[] DataContractSerializeToByte<T>(T obj)
+        public static byte[] DataContractSerializeToByte<T>(T obj, IEnumerable<Type> types = null)
         {
             using (var stm = DataContractSerializeToStream(obj))
                 return stm.GetBuffer();
         }
-        public static MemoryStream DataContractSerializeToStream<T>(T obj)
+        public static MemoryStream DataContractSerializeToStream<T>(T obj, IEnumerable<Type> types = null)
         {
-            DataContractSerializer dcSer = new DataContractSerializer(obj.GetType());
-            MemoryStream memoryStream = new MemoryStream();
-            dcSer.WriteObject(memoryStream, obj);
+            var type = obj.GetType();
+            var seri = new DataContractSerializer(type);
+            if (types != null) seri = new DataContractSerializer(type, types);
+            var memoryStream = new MemoryStream();
+            seri.WriteObject(memoryStream, obj);
             memoryStream.Position = 0;
             return memoryStream;
         }
