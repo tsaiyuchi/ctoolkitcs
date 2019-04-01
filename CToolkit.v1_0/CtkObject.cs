@@ -4,11 +4,74 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace CToolkit.v1_0
 {
     public class CtkObject
     {
+
+
+
+        #region Xml Serialization
+
+        public static T XmlDeserialize<T>(string xml, IEnumerable<Type> types = null) { return (T)XmlDeserialize(typeof(T), xml, types); }
+
+        public static Object XmlDeserialize(Type type, string xml, IEnumerable<Type> types = null)
+        {
+            var seri = new XmlSerializer(type);
+            if (types != null) seri = new XmlSerializer(type, types.ToArray());
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            using (var sr = new StreamReader(ms))
+            {
+                return seri.Deserialize(sr);
+            }
+        }
+
+
+
+        public static T XmlDeserialize<T>(byte[] buffer, IEnumerable<Type> types = null) { return (T)XmlDeserialize(typeof(T), buffer, types); }
+
+        public static Object XmlDeserialize(Type type, byte[] buffer, IEnumerable<Type> types = null)
+        {
+            var seri = new XmlSerializer(type);
+            if (types != null) seri = new XmlSerializer(type, types.ToArray());
+            using (var ms = new MemoryStream(buffer))
+            using (var sr = new StreamReader(ms))
+            {
+                return seri.Deserialize(sr);
+            }
+        }
+
+
+
+        public static byte[] XmlSerializeToBytes<T>(T obj, IEnumerable<Type> types = null)
+        {
+            var seri = new XmlSerializer(obj.GetType());
+            if (types != null) seri = new XmlSerializer(obj.GetType(), types.ToArray());
+            using (var ms = new MemoryStream())
+            {
+                seri.Serialize(ms, obj);
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms.ToArray();
+            }
+        }
+
+        public static string XmlSerializeToString<T>(T obj, IEnumerable<Type> types = null)
+        {
+            var seri = new XmlSerializer(obj.GetType());
+            if (types != null) seri = new XmlSerializer(obj.GetType(), types.ToArray());
+            using (var ms = new MemoryStream())
+            using (var sw = new StreamWriter(ms, Encoding.UTF8))
+            {
+                seri.Serialize(sw, obj);
+                return sw.ToString();
+            }
+        }
+        #endregion
+
+
+        #region Data Contract Serialization
 
         public static Object DataContractDeserialize(Type type, MemoryStream stream, IEnumerable<Type> types = null)
         {
@@ -39,6 +102,8 @@ namespace CToolkit.v1_0
             memoryStream.Position = 0;
             return memoryStream;
         }
+
+        #endregion
 
 
 
