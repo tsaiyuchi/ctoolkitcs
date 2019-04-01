@@ -88,8 +88,10 @@ namespace CToolkit.v1_0.Wcf
                 var address = this.Uri;
                 if (this.EntryAddress != null) address = Path.Combine(this.Uri, this.EntryAddress);
                 var endpointAddress = new EndpointAddress(address);
-                var binding = new NetTcpBinding();
-                this.ChannelFactory = new DuplexChannelFactory<TService>(site, binding, endpointAddress);
+                var myBinding = new NetTcpBinding();
+                myBinding.Security.Mode = SecurityMode.None;
+                myBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
+                this.ChannelFactory = new DuplexChannelFactory<TService>(site, myBinding, endpointAddress);
                 this.ChannelFactory.Opened += (ss, ee) =>
                 {
                     var ea = new CtkWcfDuplexEventArgs();
