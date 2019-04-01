@@ -26,15 +26,8 @@ namespace CToolkit.v1_0.Wcf
         protected int m_IntervalTimeOfConnectCheck = 5000;
         ICTkWcfDuplexOpCallback activeWorkClient;
         CtkCancelTask NonStopTask;
-        public CtkWcfDuplexTcpListener(TService serviceInstance)
+        public CtkWcfDuplexTcpListener(TService _svrInst, NetTcpBinding _binding) : base(_svrInst, _binding)
         {
-            var myBinding = new NetTcpBinding();
-            myBinding.Security.Mode = SecurityMode.None;
-            myBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
-
-            this.binding = myBinding;
-            this.serviceInstance = serviceInstance;
-
         }
         ~CtkWcfDuplexTcpListener() { this.Dispose(false); }
 
@@ -221,23 +214,27 @@ namespace CToolkit.v1_0.Wcf
 
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
     public class CtkWcfDuplexTcpListener : ICtkWcfDuplexOpService
     {
         public event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
 
-        public static CtkWcfDuplexTcpListener<T> CreateSingle<T>(T inst = null) where T : class, ICtkWcfDuplexOpService, new()
+
+        public static CtkWcfDuplexTcpListener<T> NewInst<T>(T svrInst, NetTcpBinding _binding = null) where T : class, ICtkWcfDuplexOpService
         {
-            if (inst == null)
-                return new CtkWcfDuplexTcpListener<T>(new T());
-            else
-                return new CtkWcfDuplexTcpListener<T>(inst);
+            if (_binding == null) _binding = new NetTcpBinding();
+            return new CtkWcfDuplexTcpListener<T>(svrInst, _binding);
         }
 
-        public static CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService> CreateSingle()
+
+        public static CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService> NewDefault(NetTcpBinding _binding = null)
         {
-            var service = new CtkWcfDuplexTcpListener();
-            return new CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService>(service);
+            var svrInst = new CtkWcfDuplexTcpListener();
+            if (_binding == null) _binding = new NetTcpBinding();
+            return NewInst<ICtkWcfDuplexOpService>(svrInst, _binding);
         }
+
+
         public void CtkSend(CtkWcfMessage msg)
         {
             var ea = new CtkWcfDuplexEventArgs();

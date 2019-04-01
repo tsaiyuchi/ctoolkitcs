@@ -29,7 +29,7 @@ namespace CToolkit.v1_0.Wcf.Example
         public void RunAsyn()
         {
             {
-                this.client = CtkWcfDuplexTcpClient.CreateSingle<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient>();
+                this.client = CtkWcfDuplexTcpClient.NewDefault<ICtkWcfDuplexOpService>();
                 this.client.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
@@ -40,7 +40,7 @@ namespace CToolkit.v1_0.Wcf.Example
             }
 
             {
-                this.client1 = CtkWcfDuplexTcpClient.CreateSingle<ICtkExampleCustomListenerAdd, CtkWcfDuplexTcpClient>();
+                this.client1 = CtkWcfDuplexTcpClient.NewDefault<ICtkExampleCustomListenerAdd>();
                 this.client1.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
@@ -52,7 +52,7 @@ namespace CToolkit.v1_0.Wcf.Example
             }
 
             {
-                this.client2 = CtkWcfDuplexTcpClient.CreateSingle<ICtkExampleCustomListenerSubtract, CtkWcfDuplexTcpClient>();
+                this.client2 = CtkWcfDuplexTcpClient.NewDefault<ICtkExampleCustomListenerSubtract>();
                 this.client2.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;

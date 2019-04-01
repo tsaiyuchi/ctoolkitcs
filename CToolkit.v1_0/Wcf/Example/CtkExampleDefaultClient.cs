@@ -26,7 +26,7 @@ namespace CToolkit.v1_0.Wcf.Example
 
         public void RunAsyn()
         {
-            this.client = CtkWcfDuplexTcpClient.CreateSingle<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient>();
+            this.client = CtkWcfDuplexTcpClient.NewDefault<ICtkWcfDuplexOpService>();
             this.client.evtDataReceive += (ss, ee) =>
             {
                 var ea = ee as CtkWcfDuplexEventArgs;

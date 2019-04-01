@@ -24,15 +24,11 @@ namespace CToolkit.v1_0.Wcf
         protected Dictionary<string, CtkWcfChannelInfo<TCallback>> channelMapper = new Dictionary<string, CtkWcfChannelInfo<TCallback>>();
         protected ServiceHost host;
         protected TService serviceInstance;
-        public CtkWcfDuplexTcpListenerBasic(Binding binding = null)
-        {
-            this.binding = binding;
-        }
 
-        public CtkWcfDuplexTcpListenerBasic(Binding binding, TService serviceInstance)
+        public CtkWcfDuplexTcpListenerBasic(TService svrInst, Binding _binding)
         {
-            this.serviceInstance = serviceInstance;
-            this.binding = binding;
+            this.serviceInstance = svrInst;
+            this.binding = _binding;
         }
 
         ~CtkWcfDuplexTcpListenerBasic() { this.Dispose(false); }

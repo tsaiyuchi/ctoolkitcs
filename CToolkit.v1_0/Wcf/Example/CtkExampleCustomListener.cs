@@ -27,7 +27,7 @@ namespace CToolkit.v1_0.Wcf.Example
 
         public void RunAsyn()
         {
-            this.listenerCtk = CtkWcfDuplexTcpListener.CreateSingle<CtkExampleCustomInstListener>();
+            this.listenerCtk = CtkWcfDuplexTcpListener.NewInst(new CtkExampleCustomInstListener());
             this.listenerCtk.evtDataReceive += (ss, ee) =>
             {
                 var ea = ee as CtkWcfDuplexEventArgs;

@@ -7,6 +7,7 @@ using System.Text;
 namespace CToolkit.v1_0.Wcf.Example
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
     public class CtkExampleCustomInstListener : ICtkWcfDuplexOpService, ICtkExampleCustomListenerAdd, ICtkExampleCustomListenerSubtract
     {
 

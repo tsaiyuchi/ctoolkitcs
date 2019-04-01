@@ -27,14 +27,16 @@ namespace CToolkit.v1_0.Wcf
         CtkCancelTask NonStopTask;
         public string Uri;
         public string EntryAddress;
+        public NetTcpBinding Binding;
         protected int m_IntervalTimeOfConnectCheck = 5000;
 
         ~CtkWcfDuplexTcpClient() { this.Dispose(false); }
 
 
-        public CtkWcfDuplexTcpClient(TCallback callbackInstance)
+        public CtkWcfDuplexTcpClient(TCallback callbackInstance, NetTcpBinding _binding)
         {
             this.Callback = callbackInstance;
+            this.Binding = _binding;
         }
 
 
@@ -88,10 +90,7 @@ namespace CToolkit.v1_0.Wcf
                 var address = this.Uri;
                 if (this.EntryAddress != null) address = Path.Combine(this.Uri, this.EntryAddress);
                 var endpointAddress = new EndpointAddress(address);
-                var myBinding = new NetTcpBinding();
-                myBinding.Security.Mode = SecurityMode.None;
-                myBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
-                this.ChannelFactory = new DuplexChannelFactory<TService>(site, myBinding, endpointAddress);
+                this.ChannelFactory = new DuplexChannelFactory<TService>(site, this.Binding, endpointAddress);
                 this.ChannelFactory.Opened += (ss, ee) =>
                 {
                     var ea = new CtkWcfDuplexEventArgs();
@@ -244,25 +243,25 @@ namespace CToolkit.v1_0.Wcf
     public class CtkWcfDuplexTcpClient : ICTkWcfDuplexOpCallback
     {
 
-        public static CtkWcfDuplexTcpClient<TService, TCallback> CreateSingle<TService, TCallback>(TCallback inst = null)
+        public static CtkWcfDuplexTcpClient<TService, TCallback> NewInst<TService, TCallback>(TCallback inst, NetTcpBinding binding = null)
             where TService : ICtkWcfDuplexOpService
-            where TCallback : class, ICTkWcfDuplexOpCallback, new()
+            where TCallback : ICTkWcfDuplexOpCallback
         {
-            if (inst == null)
-                return new CtkWcfDuplexTcpClient<TService, TCallback>(new TCallback());
-            else
-                return new CtkWcfDuplexTcpClient<TService, TCallback>(inst);
+            if (binding == null) binding = new NetTcpBinding();
+            return new CtkWcfDuplexTcpClient<TService, TCallback>(inst, binding);
         }
 
-        public static CtkWcfDuplexTcpClient<TService, CtkWcfDuplexTcpClient> CreateSingle<TService>()
+        public static CtkWcfDuplexTcpClient<TService, CtkWcfDuplexTcpClient> NewDefault<TService>(NetTcpBinding binding = null)
             where TService : ICtkWcfDuplexOpService
         {
-            return new CtkWcfDuplexTcpClient<TService, CtkWcfDuplexTcpClient>(new CtkWcfDuplexTcpClient());
+            if (binding == null) binding = new NetTcpBinding();
+            return new CtkWcfDuplexTcpClient<TService, CtkWcfDuplexTcpClient>(new CtkWcfDuplexTcpClient(), binding);
         }
 
-        public static CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient> CreateSingle()
+        public static CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient> NewDefault(NetTcpBinding binding = null)
         {
-            return new CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient>(new CtkWcfDuplexTcpClient());
+            if (binding == null) binding = new NetTcpBinding();
+            return new CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient>(new CtkWcfDuplexTcpClient(), binding);
         }
 
 
