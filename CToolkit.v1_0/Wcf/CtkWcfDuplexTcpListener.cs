@@ -28,10 +28,11 @@ namespace CToolkit.v1_0.Wcf
         CtkCancelTask NonStopTask;
         public CtkWcfDuplexTcpListener(TService serviceInstance)
         {
-            var bd = new NetTcpBinding();
-            bd.Security.Mode = SecurityMode.None;
+            var myBinding = new NetTcpBinding();
+            myBinding.Security.Mode = SecurityMode.None;
+            myBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
 
-            this.binding = bd;
+            this.binding = myBinding;
             this.serviceInstance = serviceInstance;
 
         }
@@ -232,10 +233,10 @@ namespace CToolkit.v1_0.Wcf
                 return new CtkWcfDuplexTcpListener<T>(inst);
         }
 
-        public static CtkWcfDuplexTcpListener<CtkWcfDuplexTcpListener> CreateSingle()
+        public static CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService> CreateSingle()
         {
             var service = new CtkWcfDuplexTcpListener();
-            return new CtkWcfDuplexTcpListener<CtkWcfDuplexTcpListener>(service);
+            return new CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService>(service);
         }
         public void CtkSend(CtkWcfMessage msg)
         {
