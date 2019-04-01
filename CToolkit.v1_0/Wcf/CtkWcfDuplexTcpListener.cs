@@ -26,7 +26,15 @@ namespace CToolkit.v1_0.Wcf
         protected int m_IntervalTimeOfConnectCheck = 5000;
         ICTkWcfDuplexOpCallback activeWorkClient;
         CtkCancelTask NonStopTask;
-        public CtkWcfDuplexTcpListener(TService serviceInstance) : base(new NetTcpBinding(), serviceInstance) { }
+        public CtkWcfDuplexTcpListener(TService serviceInstance)
+        {
+            var bd = new NetTcpBinding();
+            bd.Security.Mode = SecurityMode.None;
+
+            this.binding = bd;
+            this.serviceInstance = serviceInstance;
+
+        }
         ~CtkWcfDuplexTcpListener() { this.Dispose(false); }
 
 
