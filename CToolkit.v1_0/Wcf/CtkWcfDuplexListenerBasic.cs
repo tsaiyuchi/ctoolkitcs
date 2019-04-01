@@ -107,6 +107,9 @@ namespace CToolkit.v1_0.Wcf
             else
                 this.host = new ServiceHost(instance, new Uri(this.Uri));
 
+            this.host.AddServiceEndpoint(typeof(TService), this.binding, "");
+
+
             if (this.AddressMapInterface != null)
             {
                 foreach (var kv in this.AddressMapInterface)
