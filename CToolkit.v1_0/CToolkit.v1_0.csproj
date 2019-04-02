@@ -70,6 +70,8 @@
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkException.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />
+    <Compile Include="IO\CtkStreamSegment.cs" />
+    <Compile Include="IO\CtkStreamSegmentBuffer.cs" />
     <Compile Include="Net\CtkNetUtil.cs" />
     <Compile Include="Numeric\CtkPassFilterStruct.cs" />
     <Compile Include="Protocol\CtkProtocolBufferMessage.cs" />
