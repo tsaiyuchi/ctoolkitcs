@@ -41,11 +41,11 @@ namespace CToolkit.v1_0.IO
 
 
             var avalible = this.segBuffer.GetAvailableCount(this.Position);
-            if (avalible < 0) throw new InvalidOperationException("Search bytes is out of range");
-            if (avalible == 0) return 0;//當前無資料可讀
+            if (avalible <= 0) throw new InvalidOperationException("Search bytes is out of range");
+            if (avalible == 0) return 0;//當前無資料可讀 (不應發生)
 
             var cnt = this.segBuffer.Read(buffer, offset, count, this.Position);
-
+            this.Position += cnt;
             return cnt;
         }
 
