@@ -214,9 +214,13 @@ namespace CToolkit.v1_0.Wcf
 
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
+    
     public class CtkWcfDuplexTcpListener : ICtkWcfDuplexOpService
     {
+        //[ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
+        //無法同時繼承並宣告ServiceContract
+
+
         public event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
 
 
