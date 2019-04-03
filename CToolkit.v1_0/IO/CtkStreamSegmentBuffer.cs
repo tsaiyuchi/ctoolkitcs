@@ -26,7 +26,7 @@ namespace CToolkit.v1_0.IO
             var end = start + count;//應結束 in buffer
             if (end > this.BufferValidEndPosition) throw new InvalidOperationException("Cannot over valid range");
             Array.Copy(this.Buffer, start, buffer, offset, count);
-            return 0;
+            return count;
         }
 
 
@@ -39,7 +39,7 @@ namespace CToolkit.v1_0.IO
             return cnt;
         }
 
-        public bool IsEnd(long position) { return position >= this.AbsPosition; }
+        public bool IsEnd(long position) { return position >= this.AbsLength; }
 
         public bool IsInSegment(long position, long count)
         {
