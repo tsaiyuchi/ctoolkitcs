@@ -78,10 +78,10 @@ namespace CToolkit.v1_0.Wcf
         public void ConnectIfNo()
         {
             if (this.IsLocalReadyConnect) return;
-
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
+                if (this.IsLocalReadyConnect) return;
                 this.CleanDisconnect();
                 this.CleanHost();
                 this.NewHost();
@@ -214,7 +214,6 @@ namespace CToolkit.v1_0.Wcf
 
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    
     public class CtkWcfDuplexTcpListener : ICtkWcfDuplexOpService
     {
         //[ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
