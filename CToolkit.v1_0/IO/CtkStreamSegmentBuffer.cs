@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace CToolkit.v1_0.IO
 {
+    [Serializable]
     public class CtkStreamSegmentBuffer
     {
 
@@ -22,10 +23,12 @@ namespace CToolkit.v1_0.IO
         public int Read(byte[] buffer, int offset, int count, long position)
         {
             var start = (position - this.AbsPosition) + this.BufferValidOffset;//應開始 in buffer
-            var end = start + count;//應結束 in buffer
-            if (end > this.BufferValidEndPosition) throw new InvalidOperationException("Cannot over valid range");
-            Array.Copy(this.Buffer, start, buffer, offset, count);
-            return 0;
+            var end = start + count;//最大可結束位置
+            //if (end > this.BufferValidEndPosition) throw new InvalidOperationException("Cannot over valid range");
+            if (end > this.BufferValidEndPosition) end = this.BufferValidEndPosition;
+            var cnt = end - start;
+            Array.Copy(this.Buffer, start, buffer, offset, cnt);
+            return (int)cnt;
         }
 
 
@@ -38,7 +41,7 @@ namespace CToolkit.v1_0.IO
             return cnt;
         }
 
-        public bool IsEnd(long position) { return position >= this.AbsPosition; }
+        public bool IsEnd(long position) { return position >= this.AbsLength; }
 
         public bool IsInSegment(long position, long count)
         {
