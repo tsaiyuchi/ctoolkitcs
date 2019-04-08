@@ -14,6 +14,12 @@ namespace CToolkit.v1_0.Threading
 
         public void Cancel() { this.CancelTokenSource.Cancel(); }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="funcIsContinue">if return ture then continue</param>
+        /// <returns></returns>
         public static CtkCancelTask RunLoopUntilCancel(Func<bool> funcIsContinue)
         {
             var task = new CtkCancelTask();
@@ -29,6 +35,7 @@ namespace CToolkit.v1_0.Threading
 
             return task;
         }
+
 
 
         public static CtkCancelTask Run(Action<CancellationToken> act)

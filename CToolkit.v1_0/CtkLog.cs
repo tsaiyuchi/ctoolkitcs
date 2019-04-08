@@ -10,30 +10,46 @@ namespace CToolkit.v1_0
     {
         public static string LoggerAssemblyName { get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Name; } }
         public static CtkLogger DefaultLogger { get { return CtkLoggerMapper.Singleton.Get(); } }
-        public static CtkLogger ThisLogger { get { return GetAssemblyLogger(typeof(CtkLog)); } }
+
+        #region Default Logger
 
         public static void Write(CtkLoggerEventArgs ea)
         {
-            ThisLogger.Write(ea);
+            DefaultLogger.Write(ea);
         }
         public static void Write(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level)
         {
             ea.Level = _level;
-            ThisLogger.Write(ea);
+            DefaultLogger.Write(ea, _level);
         }
         //public static void Write(string msg, params object[] args) { Logger.Write(string.Format(msg, args)); }會造成呼叫模擬兩可
 
-        public static void Verbose(string msg, params object[] args) { ThisLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
-        public static void Debug(string msg, params object[] args) { ThisLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
+
+        public static void Verbose(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
+        public static void Debug(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
         /// <summary>
         /// 使用 空ID 記錄Log
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="args"></param>
-        public static void Info(string msg, params object[] args) { ThisLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
-        public static void Warn(string msg, params object[] args) { ThisLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
-        public static void Error(string msg, params object[] args) { ThisLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
-        public static void Fatal(string msg, params object[] args) { ThisLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+        public static void Info(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
+        public static void Warn(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
+        public static void Error(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
+        public static void Fatal(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+
+        #endregion
+
+        #region Namespace Logger
+
+        public static void WriteNs(object sender, CtkLoggerEventArgs ea)
+        {
+            GetAssemblyLogger(sender).Write(ea);
+        }
+        public static void WriteNs(object sender, CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level)
+        {
+            ea.Level = _level;
+            GetAssemblyLogger(sender).Write(ea, _level);
+        }
 
         public static void VerboseNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
         public static void DebugNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
@@ -48,6 +64,20 @@ namespace CToolkit.v1_0
         public static void ErrorNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
         public static void FatalNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
 
+        #endregion
+
+
+        #region Specified ID Logger
+
+        public static void WriteId(string loggerId, CtkLoggerEventArgs ea)
+        {
+            GetLoggerById(loggerId).Write(ea);
+        }
+        public static void WriteId(string loggerId, CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level)
+        {
+            ea.Level = _level;
+            GetLoggerById(loggerId).Write(ea, _level);
+        }
 
         public static void VerboseId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
         public static void DebugId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
@@ -62,6 +92,21 @@ namespace CToolkit.v1_0
         public static void ErrorId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
         public static void FatalId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
 
+        #endregion
+
+
+        #region Namespace.Specified ID Logger
+
+
+        public static void WriteNsId(object sender, string loggerId, CtkLoggerEventArgs ea)
+        {
+            GetAssemblyLoggerById(sender, loggerId).Write(ea);
+        }
+        public static void WriteNsId(object sender, string loggerId, CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level)
+        {
+            ea.Level = _level;
+            GetAssemblyLoggerById(sender, loggerId).Write(ea, _level);
+        }
 
         public static void VerboseNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
         public static void DebugNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
@@ -77,6 +122,7 @@ namespace CToolkit.v1_0
         public static void ErrorNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
         public static void FatalNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
 
+        #endregion
 
 
         public static CtkLogger GetLoggerById(string loggerId) { return CtkLoggerMapper.Singleton.Get(loggerId); }
