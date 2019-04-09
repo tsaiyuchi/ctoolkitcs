@@ -214,6 +214,7 @@
   <ItemGroup>
     <Folder Include="DataAnalysis\" />
     <Folder Include="StatisticalMethod\" />
+    <Folder Include="TriggerDiagram\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
