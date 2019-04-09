@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace CToolkit.v1_0
 
 
 
-        public static void CmdWrite(string msg, params object[] obj)
+        public static void CmdWrite(string msg = null, params object[] obj)
         {
             if (msg != null)
             {
@@ -27,7 +27,7 @@ namespace CToolkit.v1_0
             var cmd = "";
             do
             {
-                
+
                 CmdWrite("App:");
                 cmd = Console.ReadLine();
                 if (act != null) act(cmd);
