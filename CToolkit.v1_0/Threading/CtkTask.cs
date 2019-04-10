@@ -54,25 +54,17 @@ namespace CToolkit.v1_0.Threading
             {
                 // Free any other managed objects here.
                 //
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnmanaged();
             this.DisposeSelf();
             disposed = true;
         }
 
 
 
-        protected virtual void DisposeManaged()
-        {
-        }
-        protected virtual void DisposeUnmanaged()
-        {
 
-        }
         protected virtual void DisposeSelf()
         {
             if (this.Task != null)

@@ -31,7 +31,7 @@ namespace CToolkit.v1_0.Wcf.Example
             this.listenerCtk.evtDataReceive += (ss, ee) =>
             {
                 var ea = ee as CtkWcfDuplexEventArgs;
-                CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
+                CtkLog.InfoNs(this, "Client: " + ea.WcfMsg.TypeName + "");
             };
 
             var dict = new Dictionary<string, Type>();
@@ -48,36 +48,14 @@ namespace CToolkit.v1_0.Wcf.Example
 
 
 
-        public void CmdWrite(string msg, params object[] obj)
+        public void Command(string cmd)
         {
-            if (msg != null)
+            switch (cmd)
             {
-                Console.WriteLine();
-                Console.WriteLine(msg, obj);
+                case "send":
+                    this.Send();
+                    break;
             }
-            Console.Write(">");
-        }
-
-        public void CommandLine()
-        {
-            var cmd = "";
-            do
-            {
-                CmdWrite(this.GetType().Name);
-                cmd = Console.ReadLine();
-
-                switch (cmd)
-                {
-                    case "send":
-                        this.Send();
-                        break;
-                }
-
-
-            } while (string.Compare(cmd, "exit", true) != 0);
-
-            this.Close();
-
         }
 
 
@@ -117,12 +95,10 @@ namespace CToolkit.v1_0.Wcf.Example
             {
                 // Free any other managed objects here.
                 //
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnmanaged();
 
             this.DisposeSelf();
 
@@ -131,19 +107,14 @@ namespace CToolkit.v1_0.Wcf.Example
 
 
 
-        protected virtual void DisposeManaged()
-        {
-        }
+
 
         protected virtual void DisposeSelf()
         {
             this.Close();
         }
 
-        protected virtual void DisposeUnmanaged()
-        {
 
-        }
         #endregion
 
 

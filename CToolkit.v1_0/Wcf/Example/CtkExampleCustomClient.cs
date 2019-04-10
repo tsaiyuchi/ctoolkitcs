@@ -33,7 +33,7 @@ namespace CToolkit.v1_0.Wcf.Example
                 this.client.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
-                    CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
+                    CtkLog.InfoNs(this,"Client: " + ea.WcfMsg.TypeName + "");
                 };
                 this.client.Uri = ServerUri;
                 this.client.ConnectIfNo();
@@ -44,7 +44,7 @@ namespace CToolkit.v1_0.Wcf.Example
                 this.client1.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
-                    CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
+                    CtkLog.InfoNs(this, "Client: " + ea.WcfMsg.TypeName + "");
                 };
                 this.client1.Uri = ServerUri;
                 this.client1.EntryAddress = "Add";
@@ -56,7 +56,7 @@ namespace CToolkit.v1_0.Wcf.Example
                 this.client2.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
-                    CmdWrite("Client: " + ea.WcfMsg.TypeName + "");
+                    CtkLog.InfoNs(this, "Client: " + ea.WcfMsg.TypeName + "");
                 };
                 this.client2.Uri = ServerUri;
                 this.client2.EntryAddress = "Sub";
@@ -66,36 +66,15 @@ namespace CToolkit.v1_0.Wcf.Example
         }
 
 
-        public void CmdWrite(string msg, params object[] obj)
-        {
-            if (msg != null)
-            {
-                Console.WriteLine();
-                Console.WriteLine(msg, obj);
-            }
-            Console.Write(">");
-        }
 
-        public void CommandLine()
+        public void Command(string cmd)
         {
-            var cmd = "";
-            do
-            {
-                CmdWrite(this.GetType().Name);
-                cmd = Console.ReadLine();
-
                 switch (cmd)
                 {
                     case "send":
                         this.Send();
                         break;
                 }
-
-
-            } while (string.Compare(cmd, "exit", true) != 0);
-
-            this.Close();
-
         }
 
 
@@ -141,12 +120,10 @@ namespace CToolkit.v1_0.Wcf.Example
             {
                 // Free any other managed objects here.
                 //
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnmanaged();
 
             this.DisposeSelf();
 
@@ -155,19 +132,16 @@ namespace CToolkit.v1_0.Wcf.Example
 
 
 
-        protected virtual void DisposeManaged()
-        {
-        }
+
+
 
         protected virtual void DisposeSelf()
         {
             this.Close();
         }
 
-        protected virtual void DisposeUnmanaged()
-        {
 
-        }
+
         #endregion
 
 

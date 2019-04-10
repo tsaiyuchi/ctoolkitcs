@@ -107,24 +107,16 @@ namespace CToolkit.v1_0.Numeric
             if (disposing)
             {
                 // Free any managed objects here.
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnManaged();
             this.DisposeSelf();
             disposed = true;
         }
 
-        public void DisposeManaged()
-        {
 
-        }
 
-        public void DisposeUnManaged()
-        {
-        }
 
         public void DisposeSelf()
         {

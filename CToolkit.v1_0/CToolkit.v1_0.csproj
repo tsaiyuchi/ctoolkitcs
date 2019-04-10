@@ -153,6 +153,11 @@
     <Compile Include="Timing\CtkTimeTick.cs" />
     <Compile Include="Timing\CtkTimeMilliSecond.cs" />
     <Compile Include="Timing\CtkTimeSecond.cs" />
+    <Compile Include="TriggerDiagram\ICtkTdWire.cs" />
+    <Compile Include="TriggerDiagram\ICtkTdBlock.cs" />
+    <Compile Include="TriggerDiagram\ICtkTdDiagram.cs" />
+    <Compile Include="TriggerDiagram\ICtkTdContact.cs" />
+    <Compile Include="TriggerDiagram\ICtkTdNode.cs" />
     <Compile Include="Wcf\CtkWcfDuplexListenerBasic.cs" />
     <Compile Include="Wcf\CtkWcfDuplexEventArgs.cs" />
     <Compile Include="Wcf\CtkWcfMessage.cs" />
@@ -214,7 +219,6 @@
   <ItemGroup>
     <Folder Include="DataAnalysis\" />
     <Folder Include="StatisticalMethod\" />
-    <Folder Include="TriggerDiagram\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

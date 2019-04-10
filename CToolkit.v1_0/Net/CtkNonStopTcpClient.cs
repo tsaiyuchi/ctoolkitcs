@@ -301,12 +301,10 @@ namespace CToolkit.v1_0.Net
             {
                 // Free any other managed objects here.
                 //
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnmanaged();
 
             this.DisposeSelf();
 
@@ -315,9 +313,8 @@ namespace CToolkit.v1_0.Net
 
 
 
-        void DisposeManaged()
-        {
-        }
+
+
 
         void DisposeSelf()
         {
@@ -325,9 +322,6 @@ namespace CToolkit.v1_0.Net
             catch (Exception ex) { CtkLog.Write(ex); }
         }
 
-        void DisposeUnmanaged()
-        {
-        }
         #endregion
 
     }

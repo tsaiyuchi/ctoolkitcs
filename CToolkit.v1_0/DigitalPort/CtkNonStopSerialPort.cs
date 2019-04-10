@@ -250,12 +250,10 @@ namespace CToolkit.v1_0.DigitalPort
             {
                 // Free any other managed objects here.
                 //
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnmanaged();
 
             this.DisposeSelf();
 
@@ -264,9 +262,8 @@ namespace CToolkit.v1_0.DigitalPort
 
 
 
-        void DisposeManaged()
-        {
-        }
+ 
+
 
         void DisposeSelf()
         {
@@ -274,9 +271,8 @@ namespace CToolkit.v1_0.DigitalPort
             catch (Exception ex) { CtkLog.Write(ex); }
         }
 
-        void DisposeUnmanaged()
-        {
-        }
+ 
+
         #endregion
 
     }

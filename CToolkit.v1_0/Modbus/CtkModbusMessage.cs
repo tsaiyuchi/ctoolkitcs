@@ -107,12 +107,10 @@ namespace CToolkit.v1_0.Modbus
             {
                 // Free any other managed objects here.
                 //
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnmanaged();
 
             this.DisposeSelf();
 
@@ -121,13 +119,7 @@ namespace CToolkit.v1_0.Modbus
 
 
 
-        void DisposeManaged()
-        {
-        }
 
-        void DisposeUnmanaged()
-        {
-        }
 
         void DisposeSelf()
         {

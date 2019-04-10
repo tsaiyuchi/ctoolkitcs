@@ -113,9 +113,7 @@ namespace CToolkit.v1_0.Net
             GC.SuppressFinalize(this);
         }
 
-        public void DisposeManaged()
-        {
-        }
+
 
         public void DisposeSelf()
         {
@@ -124,9 +122,7 @@ namespace CToolkit.v1_0.Net
             CtkNetUtil.DisposeSocket(this.WorkSocket);
         }
 
-        public void DisposeUnManaged()
-        {
-        }
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -136,12 +132,10 @@ namespace CToolkit.v1_0.Net
             if (disposing)
             {
                 // Free any managed objects here.
-                this.DisposeManaged();
             }
 
             // Free any unmanaged objects here.
             //
-            this.DisposeUnManaged();
             this.DisposeSelf();
             disposed = true;
         }
