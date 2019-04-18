@@ -12,14 +12,14 @@ namespace CToolkit.v1_0.Numeric
     public class CtkNumContext
     {
         protected CtkCudafyContext m_cudafyContext = new CtkCudafyContext();
-        protected bool useCudafy = true;
+        public bool IsUseCudafy = true;
         public CtkCudafyContext CudafyContext { get { return m_cudafyContext; } }
 
 
 
         public Complex[] FftForward(Complex[] input)
         {
-            if (useCudafy)
+            if (IsUseCudafy)
             {
                 var fftD = this.FftForwardJustD(CtkNumConverter.ToCudafy(input));
                 if (fftD != null)
@@ -56,7 +56,7 @@ namespace CToolkit.v1_0.Numeric
         /// </summary>
         public ComplexD[] FftForwardD(ComplexD[] input)
         {
-            if (useCudafy)
+            if (IsUseCudafy)
             {
                 var fftD = this.FftForwardJustD(input);
                 if (fftD != null)
@@ -135,22 +135,22 @@ namespace CToolkit.v1_0.Numeric
             }
             catch (CtkCudafyCannotUseException ex)
             {
-                useCudafy = false;
+                IsUseCudafy = false;
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
             }
             catch (Cudafy.CudafyCompileException ex)
             {
-                useCudafy = false;
+                IsUseCudafy = false;
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
             }
             catch (System.ComponentModel.Win32Exception ex)
             {
-                useCudafy = false;
+                IsUseCudafy = false;
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
             }
             catch (NotSupportedException ex)
             {
-                useCudafy = false;
+                IsUseCudafy = false;
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
             }
             return null;
