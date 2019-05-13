@@ -11,8 +11,8 @@ namespace CToolkit.v1_0.Numeric
 
     public class CtkNumContext
     {
-        protected CtkCudafyContext m_cudafyContext = new CtkCudafyContext();
         public bool IsUseCudafy = true;
+        protected CtkCudafyContext m_cudafyContext = new CtkCudafyContext();
         public CtkCudafyContext CudafyContext { get { return m_cudafyContext; } }
 
 
@@ -74,6 +74,34 @@ namespace CToolkit.v1_0.Numeric
 
         public ComplexD[] FftForwardD(IEnumerable<Complex> input) { return FftForwardD(CtkNumConverter.ToCudafy(input)); }
 
+        public ComplexD[] FftForwardJustD(ComplexD[] input)
+        {
+            try
+            {
+                return this.CudafyContext.FftForward(input);
+            }
+            catch (CtkCudafyCannotUseException ex)
+            {
+                IsUseCudafy = false;
+                CtkLog.WarnNs(this, ex.StackTrace);
+            }
+            catch (Cudafy.CudafyCompileException ex)
+            {
+                IsUseCudafy = false;
+                CtkLog.WarnNs(this, ex.StackTrace);
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                IsUseCudafy = false;
+                CtkLog.WarnNs(this, ex.StackTrace);
+            }
+            catch (NotSupportedException ex)
+            {
+                IsUseCudafy = false;
+                CtkLog.WarnNs(this, ex.StackTrace);
+            }
+            return null;
+        }
         /// <summary>
         /// Return 正確的振幅, 注意 x 軸 Mag 左右對稱
         /// </summary>
@@ -126,36 +154,6 @@ namespace CToolkit.v1_0.Numeric
             var fft = this.FftForward(time);
             return this.SpectrumFft(fft);
         }
-
-        ComplexD[] FftForwardJustD(ComplexD[] input)
-        {
-            try
-            {
-                return this.CudafyContext.FftForward(input);
-            }
-            catch (CtkCudafyCannotUseException ex)
-            {
-                IsUseCudafy = false;
-                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-            }
-            catch (Cudafy.CudafyCompileException ex)
-            {
-                IsUseCudafy = false;
-                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-            }
-            catch (System.ComponentModel.Win32Exception ex)
-            {
-                IsUseCudafy = false;
-                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-            }
-            catch (NotSupportedException ex)
-            {
-                IsUseCudafy = false;
-                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-            }
-            return null;
-        }
-
 
 
         #region Static

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,31 +18,119 @@ namespace CToolkit.v1_0.Wcf
     /// //提供簡易訊息交換 & 收集 Channel
     /// </summary>
     /// <typeparam name="TService"></typeparam>
-    public class CtkWcfDuplexTcpListener<TService>
-        : CtkWcfDuplexTcpListenerBasic<TService, ICTkWcfDuplexOpCallback>
-        , ICtkProtocolNonStopConnect
+    public class CtkWcfDuplexTcpListener<TService> : ICtkProtocolNonStopConnect
         where TService : ICtkWcfDuplexOpService
     {
 
+        public Dictionary<string, Type> AddressMapInterface = new Dictionary<string, Type>();
+        public string Uri;
+        protected Binding binding;
+        protected Dictionary<string, CtkWcfChannelInfo<ICTkWcfDuplexOpCallback>> channelMapper = new Dictionary<string, CtkWcfChannelInfo<ICTkWcfDuplexOpCallback>>();
+        protected ServiceHost host;
         protected int m_IntervalTimeOfConnectCheck = 5000;
+        protected TService serviceInstance;
         ICTkWcfDuplexOpCallback activeWorkClient;
         CtkCancelTask NonStopTask;
-        public CtkWcfDuplexTcpListener(TService _svrInst, NetTcpBinding _binding) : base(_svrInst, _binding)
+        public CtkWcfDuplexTcpListener(TService _svrInst, NetTcpBinding _binding)
         {
+            this.serviceInstance = _svrInst;
+            this.binding = _binding;
         }
         ~CtkWcfDuplexTcpListener() { this.Dispose(false); }
 
 
+
+        public void CleanDisconnect()
+        {
+            var query = (from row in this.channelMapper
+                         where row.Value.Channel.State > CommunicationState.Opened
+                         select row).ToList();
+
+            foreach (var row in query)
+                this.channelMapper.Remove(row.Key);
+        }
+
+        public virtual void Close()
+        {
+            foreach (var chinfo in this.channelMapper)
+            {
+                var ch = chinfo.Value.Channel;
+                ch.Abort();
+                ch.Close();
+            }
+
+            if (this.host != null)
+            {
+                using (var obj = this.host)
+                {
+                    obj.Abort();
+                    obj.Close();
+                }
+            }
+
+            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//關閉就代表此類別不用了
+        }
+
+        public List<ICTkWcfDuplexOpCallback> GetAllChannels()
+        {
+            this.CleanDisconnect();
+            return (this.channelMapper.Select(row => row.Value.Callback)).ToList();
+        }
+
+        public T GetCallback<T>(string sessionId = null) where T : class, ICTkWcfDuplexOpCallback { return this.GetCallback(sessionId) as T; }
+
+        public ICTkWcfDuplexOpCallback GetCallback(string sessionId = null)
+        {
+            this.CleanDisconnect();
+            var oc = OperationContext.Current;
+            if (sessionId == null)
+                sessionId = oc.SessionId;
+            if (this.channelMapper.ContainsKey(sessionId)) return this.channelMapper[sessionId].Callback;
+
+            var chinfo = new CtkWcfChannelInfo<ICTkWcfDuplexOpCallback>();
+            chinfo.OpContext = oc;
+            chinfo.SessionId = sessionId;
+            chinfo.Channel = oc.Channel;
+            chinfo.Callback = oc.GetCallbackChannel<ICTkWcfDuplexOpCallback>();
+            this.channelMapper[sessionId] = chinfo;
+            return chinfo.Callback;
+        }
+
+        public virtual void NewHost()
+        {
+            var instance = this.serviceInstance;
+
+            if (instance == null)
+                this.host = new ServiceHost(typeof(TService), new Uri(this.Uri));
+            else
+                this.host = new ServiceHost(instance, new Uri(this.Uri));
+
+            this.host.AddServiceEndpoint(typeof(TService), this.binding, "");
+
+
+            if (this.AddressMapInterface != null)
+            {
+                foreach (var kv in this.AddressMapInterface)
+                {
+                    var ep = this.host.AddServiceEndpoint(kv.Value, this.binding, kv.Key);
+                }
+            }
+        }
+
+        public virtual void Open()
+        {
+            if (this.host == null) this.NewHost();
+            this.host.Open();
+        }
 
         void CleanHost()
         {
             //CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//不用清除自己的
             CtkEventUtil.RemoveEventHandlersFromOwningByTarget(this.host, this);
         }
-
-
-
-
+     
+        
+        
         #region ICtkProtocolNonStopConnect
 
 
@@ -118,7 +207,7 @@ namespace CToolkit.v1_0.Wcf
         public void Disconnect()
         {
             this.AbortNonStopConnect();
-            base.Close();
+            this.Close();
         }
 
         public void NonStopConnectAsyn()
@@ -189,20 +278,38 @@ namespace CToolkit.v1_0.Wcf
 
 
 
-
-        #region ICtkWcfDuplexOpService
-
-        #endregion
-
-
         #region IDisposable
 
-        public override void DisposeSelf()
+        protected bool disposed = false;
+
+        public void Dispose()
         {
-            this.Disconnect();
-            base.DisposeSelf();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
+
+        public virtual void DisposeSelf()
+        {
+            this.Disconnect();
+            this.Close();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any managed objects here.
+            }
+
+            // Free any unmanaged objects here.
+            //
+            this.DisposeSelf();
+            disposed = true;
+        }
         #endregion
 
 
@@ -211,54 +318,6 @@ namespace CToolkit.v1_0.Wcf
 
 
 
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class CtkWcfDuplexTcpListener : ICtkWcfDuplexOpService
-    {
-        //[ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
-        //無法同時繼承並宣告ServiceContract
-
-
-        public event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
-
-
-        public static CtkWcfDuplexTcpListener<T> NewInst<T>(T svrInst, NetTcpBinding _binding = null) where T : class, ICtkWcfDuplexOpService
-        {
-            if (_binding == null) _binding = new NetTcpBinding();
-            return new CtkWcfDuplexTcpListener<T>(svrInst, _binding);
-        }
-
-
-        public static CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService> NewDefault(NetTcpBinding _binding = null)
-        {
-            var svrInst = new CtkWcfDuplexTcpListener();
-            if (_binding == null) _binding = new NetTcpBinding();
-            return NewInst<ICtkWcfDuplexOpService>(svrInst, _binding);
-        }
-
-
-        public void CtkSend(CtkWcfMessage msg)
-        {
-            var ea = new CtkWcfDuplexEventArgs();
-            ea.WcfMsg = msg;
-            ea.IsWcfNeedReturnMsg = false;
-            this.OnReceiveMsg(ea);
-        }
-
-        public CtkWcfMessage CtkSendReply(CtkWcfMessage msg)
-        {
-            var ea = new CtkWcfDuplexEventArgs();
-            ea.WcfMsg = msg;
-            ea.IsWcfNeedReturnMsg = true;
-            this.OnReceiveMsg(ea);
-            return ea.WcfReturnMsg;
-        }
-
-        void OnReceiveMsg(CtkWcfDuplexEventArgs ea)
-        {
-            if (this.evtReceiveMsg == null) return;
-            this.evtReceiveMsg(this, ea);
-        }
-    }
 
 
 }

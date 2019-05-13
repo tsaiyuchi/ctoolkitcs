@@ -17,7 +17,7 @@ namespace CToolkit.v1_0.Wcf.Example
 {
     public class CtkExampleDefaultClient : IDisposable
     {
-        CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient> client;
+        CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClientInst> client;
 
         public const string ServerUri = @"net.tcp://localhost:9000/";
 
@@ -26,7 +26,7 @@ namespace CToolkit.v1_0.Wcf.Example
 
         public void RunAsyn()
         {
-            this.client = CtkWcfDuplexTcpClient.NewDefault<ICtkWcfDuplexOpService>();
+            this.client = CtkWcfDuplexTcpClientInst.NewDefault<ICtkWcfDuplexOpService>();
             this.client.evtDataReceive += (ss, ee) =>
             {
                 var ea = ee as CtkWcfDuplexEventArgs;

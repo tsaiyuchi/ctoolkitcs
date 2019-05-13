@@ -158,8 +158,9 @@
     <Compile Include="TriggerDiagram\ICtkTdDiagram.cs" />
     <Compile Include="TriggerDiagram\ICtkTdContact.cs" />
     <Compile Include="TriggerDiagram\ICtkTdNode.cs" />
-    <Compile Include="Wcf\CtkWcfDuplexListenerBasic.cs" />
     <Compile Include="Wcf\CtkWcfDuplexEventArgs.cs" />
+    <Compile Include="Wcf\CtkWcfDuplexTcpClientInst.cs" />
+    <Compile Include="Wcf\CtkWcfDuplexTcpListenerInst.cs" />
     <Compile Include="Wcf\CtkWcfMessage.cs" />
     <Compile Include="Wcf\Example\CtkExampleCustomClient.cs" />
     <Compile Include="Wcf\Example\CtkExampleCustomInstCallback.cs" />

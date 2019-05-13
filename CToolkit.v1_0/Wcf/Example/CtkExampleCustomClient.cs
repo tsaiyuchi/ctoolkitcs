@@ -17,9 +17,9 @@ namespace CToolkit.v1_0.Wcf.Example
 {
     public class CtkExampleCustomClient : IDisposable
     {
-        CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClient> client;
-        CtkWcfDuplexTcpClient<ICtkExampleCustomListenerAdd, CtkWcfDuplexTcpClient> client1;
-        CtkWcfDuplexTcpClient<ICtkExampleCustomListenerSubtract, CtkWcfDuplexTcpClient> client2;
+        CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClientInst> client;
+        CtkWcfDuplexTcpClient<ICtkExampleCustomListenerAdd, CtkWcfDuplexTcpClientInst> client1;
+        CtkWcfDuplexTcpClient<ICtkExampleCustomListenerSubtract, CtkWcfDuplexTcpClientInst> client2;
 
         public const string ServerUri = @"net.tcp://localhost:9000/";
 
@@ -29,7 +29,7 @@ namespace CToolkit.v1_0.Wcf.Example
         public void RunAsyn()
         {
             {
-                this.client = CtkWcfDuplexTcpClient.NewDefault<ICtkWcfDuplexOpService>();
+                this.client = CtkWcfDuplexTcpClientInst.NewDefault<ICtkWcfDuplexOpService>();
                 this.client.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
@@ -40,7 +40,7 @@ namespace CToolkit.v1_0.Wcf.Example
             }
 
             {
-                this.client1 = CtkWcfDuplexTcpClient.NewDefault<ICtkExampleCustomListenerAdd>();
+                this.client1 = CtkWcfDuplexTcpClientInst.NewDefault<ICtkExampleCustomListenerAdd>();
                 this.client1.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
@@ -52,7 +52,7 @@ namespace CToolkit.v1_0.Wcf.Example
             }
 
             {
-                this.client2 = CtkWcfDuplexTcpClient.NewDefault<ICtkExampleCustomListenerSubtract>();
+                this.client2 = CtkWcfDuplexTcpClientInst.NewDefault<ICtkExampleCustomListenerSubtract>();
                 this.client2.evtDataReceive += (ss, ee) =>
                 {
                     var ea = ee as CtkWcfDuplexEventArgs;
