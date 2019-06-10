@@ -1,0 +1,50 @@
+
+
+
+cd ctoolkit.csharp
+git add --all
+git commit -m 'bat commit'
+git pull
+git push
+cd ..
+
+cd CwTech
+git add --all
+git commit -m 'update'
+git pull
+git push
+cd ..
+
+
+
+cd ctoolkit.js
+git add --all
+git commit -m '1st update'
+git pull
+git push
+cd ..
+
+
+
+cd ctoolkit.golang
+git add --all
+git commit -m 'bat commit'
+git pull
+git push
+cd ..
+
+cd ctoolkit.aspx.csharp
+git add --all
+git commit -m 'bat commit'
+git pull
+git push
+cd ..
+
+cd ctoolkit.python
+git add --all
+git commit -m 'bat commit'
+git pull
+git push
+cd ..
+
+

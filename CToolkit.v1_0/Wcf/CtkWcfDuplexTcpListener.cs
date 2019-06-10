@@ -18,7 +18,7 @@ namespace CToolkit.v1_0.Wcf
     /// //提供簡易訊息交換 & 收集 Channel
     /// </summary>
     /// <typeparam name="TService"></typeparam>
-    public class CtkWcfDuplexTcpListener<TService> : ICtkProtocolNonStopConnect
+    public class CtkWcfDuplexTcpListener<TService> : ICtkProtocolNonStopConnect, IDisposable
         where TService : ICtkWcfDuplexOpService
     {
 
