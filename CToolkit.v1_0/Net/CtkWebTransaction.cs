@@ -21,7 +21,6 @@ namespace CToolkit.v1_0.Net
 
 
         public static String HttpGet(string uri, System.Net.Cache.RequestCacheLevel cachePolicy) { return HttpGet(new Uri(uri), cachePolicy); }
-
         public static String HttpGet(Uri uri, System.Net.Cache.RequestCacheLevel cachePolicy)
         {
             WebRequest wreq = WebRequest.Create(uri);
@@ -31,13 +30,11 @@ namespace CToolkit.v1_0.Net
             using (var reader = new System.IO.StreamReader(wrespStream))
                 return reader.ReadToEnd();
         }
-
         public static String HttpGet(string uri, Encoding encoding = null) { return HttpGet(new Uri(uri), encoding); }
-
         public static String HttpGet(Uri uri, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.UTF8;
-            System.Net.WebRequest wreq = WebRequest.Create(uri);
+            var wreq = WebRequest.Create(uri);
             using (var wresp = wreq.GetResponse())
             using (var wrespStream = wresp.GetResponseStream())
             using (var reader = new System.IO.StreamReader(wrespStream, encoding))
@@ -58,7 +55,6 @@ namespace CToolkit.v1_0.Net
             return HttpPost(uri, post, reqEncoding);
 
         }
-
         public static String HttpPost(String uri, String post, Encoding reqEncoding = null)
         {
             if (reqEncoding == null) reqEncoding = Encoding.UTF8;
@@ -94,40 +90,13 @@ namespace CToolkit.v1_0.Net
             }
         }
 
-        public static DataSet HttpPostToDataSet(String uri, String post)
+
+
+        public static string HttpRequest(HttpWebRequest wreq, string reqData, Encoding reqEncoding = null, Encoding respEncoding = null)
         {
-            UTF8Encoding encoding = new UTF8Encoding();
-            byte[] byteData = encoding.GetBytes(post);
+            if (reqEncoding == null) reqEncoding = Encoding.UTF8;
+            if (respEncoding == null) respEncoding = Encoding.UTF8;
 
-            HttpWebRequest request = null;
-            System.IO.Stream requestStream = null;
-            HttpWebResponse wresp = null;
-            try
-            {
-                request = (HttpWebRequest)WebRequest.Create(uri);
-                request.Method = "POST";
-                request.ContentType = "application/x-www-form-urlencoded";
-                request.ContentLength = byteData.Length;
-                //request.Credentials = new NetworkCredential("xx", "xx"); 
-                requestStream = request.GetRequestStream();
-                requestStream.Write(byteData, 0, byteData.Length);
-                wresp = (HttpWebResponse)request.GetResponse();
-                //string responseStatus = response.StatusDescription;
-
-                var ds = new DataSet();
-                using (var wrespStream = wresp.GetResponseStream())
-                    ds.ReadXml(wrespStream);
-                return ds;
-            }
-            finally
-            {
-                if (wresp != null) { wresp.Close(); }
-                if (requestStream != null) { requestStream.Close(); }
-            }
-        }
-
-        public static string HttpRequest(HttpWebRequest wreq, string reqData, Encoding reqEncoding, Encoding respEncoding)
-        {
 
             if (string.Compare(wreq.Method, "POST", true) == 0)
             {
