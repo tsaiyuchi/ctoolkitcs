@@ -25,60 +25,6 @@ namespace CToolkit.v1_0.Timing
         public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
 
 
-        #region String to DateTime
-
-        public static DateTime DateTimeParseExact(string s, string format = "yyyyMMdd") { return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture); }
-        public static DateTime DateTimeParseExact(string s, DateTime defaultDt, string format = "yyyyMMdd")
-        {
-            var dt = defaultDt;
-            DateTimeTryParseExact(s, out dt);
-            return dt;
-        }
-
-        public static bool DateTimeTryParseExact(string s, out DateTime result, string format = "yyyyMMdd") { return DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result); }
-
-        public static DateTime FromYyyy(string s) { return DateTimeParseExact(s, "yyyy"); }
-        public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
-        public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="yyyyqq"></param>
-        /// <returns>該季第一天</returns>
-        public static DateTime FromYyyyQq(string yyyyqq)
-        {
-            var yyyy = Convert.ToInt32(yyyyqq.Substring(0, 4));
-            var qq = Convert.ToInt32(yyyyqq.Substring(4));
-
-            var date = new DateTime(yyyy, 1, 1);
-            date = date.AddMonths((qq - 1) * 3);
-
-            var realYyyyQq = GetYyyyQq(date);
-            if (yyyyqq != realYyyyQq) throw new InvalidOperationException();
-
-            return date;
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="yyyyww"></param>
-        /// <returns>該周的某天</returns>
-        public static DateTime FromYyyyWw(string yyyyww)
-        {
-            var yyyy = Convert.ToInt32(yyyyww.Substring(0, 4));
-            var ww = Convert.ToInt32(yyyyww.Substring(4));
-
-            var date = new DateTime(yyyy, 1, 1);
-            date = date.AddDays(7 * ww - 7);
-
-            var realYyyyww = GetYyyyWw(date);
-            if (yyyyww != realYyyyww) throw new InvalidOperationException();
-
-            return date;
-        }
-
-        #endregion
-
         #region Week Operation
         //--- Week ---------
 
@@ -145,7 +91,61 @@ namespace CToolkit.v1_0.Timing
 
         #endregion
 
-        #region DateTime to String
+
+
+
+        #region DateTime / String
+
+        public static DateTime DateTimeParseExact(string s, string format = "yyyyMMdd") { return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture); }
+        public static DateTime DateTimeParseExact(string s, DateTime defaultDt, string format = "yyyyMMdd")
+        {
+            var dt = defaultDt;
+            DateTimeTryParseExact(s, out dt);
+            return dt;
+        }
+
+        public static bool DateTimeTryParseExact(string s, out DateTime result, string format = "yyyyMMdd") { return DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result); }
+
+        public static DateTime FromYyyy(string s) { return DateTimeParseExact(s, "yyyy"); }
+        public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
+        public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="yyyyqq"></param>
+        /// <returns>該季第一天</returns>
+        public static DateTime FromYyyyQq(string yyyyqq)
+        {
+            var yyyy = Convert.ToInt32(yyyyqq.Substring(0, 4));
+            var qq = Convert.ToInt32(yyyyqq.Substring(4));
+
+            var date = new DateTime(yyyy, 1, 1);
+            date = date.AddMonths((qq - 1) * 3);
+
+            var realYyyyQq = GetYyyyQq(date);
+            if (yyyyqq != realYyyyQq) throw new InvalidOperationException();
+
+            return date;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="yyyyww"></param>
+        /// <returns>該周的某天</returns>
+        public static DateTime FromYyyyWw(string yyyyww)
+        {
+            var yyyy = Convert.ToInt32(yyyyww.Substring(0, 4));
+            var ww = Convert.ToInt32(yyyyww.Substring(4));
+
+            var date = new DateTime(yyyy, 1, 1);
+            date = date.AddDays(7 * ww - 7);
+
+            var realYyyyww = GetYyyyWw(date);
+            if (yyyyww != realYyyyww) throw new InvalidOperationException();
+
+            return date;
+        }
+
 
         public static string GetYyyy(DateTime dt) { return dt.ToString("yyyy"); }
         public static string GetYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
@@ -161,7 +161,74 @@ namespace CToolkit.v1_0.Timing
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), weekOfYear);
         }
 
-        #endregion 
+
+
+        #endregion
+
+
+
+        #region Sign DateTime / String
+
+        public static DateTime FromSYyyy(string yyyy)
+        {
+            if (!yyyy.StartsWith("y")) throw new ArgumentException("錯誤的Sign");
+            yyyy = yyyy.Substring(1);
+            return FromYyyy(yyyy);
+        }
+
+        public static DateTime FromSYyyyMm(string yyyymm)
+        {
+            if (!yyyymm.StartsWith("m")) throw new ArgumentException("錯誤的Sign");
+            yyyymm = yyyymm.Substring(1);
+            return FromYyyyMm(yyyymm);
+        }
+
+        public static DateTime FromSYyyyMmDd(string yyyymmdd)
+        {
+            if (!yyyymmdd.StartsWith("d")) throw new ArgumentException("錯誤的Sign");
+            yyyymmdd = yyyymmdd.Substring(1);
+            return FromYyyyMmDd(yyyymmdd);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="yyyyqq"></param>
+        /// <returns>該季第一天</returns>
+        public static DateTime FromSYyyyQq(string yyyyqq)
+        {
+            if (!yyyyqq.StartsWith("q")) throw new ArgumentException("錯誤的Sign");
+            yyyyqq = yyyyqq.Substring(1);
+            return FromYyyyQq(yyyyqq);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="yyyyww"></param>
+        /// <returns>該周的某天</returns>
+        public static DateTime FromSYyyyWw(string yyyyww)
+        {
+            if (!yyyyww.StartsWith("w")) throw new ArgumentException("錯誤的Sign");
+            yyyyww = yyyyww.Substring(1);
+            return FromYyyyWw(yyyyww);
+        }
+
+        public static string GetSYyyy(DateTime dt) { return "y" + dt.ToString("yyyy"); }
+        public static string GetSYyyyMm(DateTime dt) { return "m" + dt.ToString("yyyyMM"); }
+        public static string GetSYyyyMmDd(DateTime dt) { return "d" + dt.ToString("yyyyMMdd"); }
+        public static string GetSYyyyQq(DateTime dt)
+        {
+            var qq = QuarterOfYear(dt);
+            return string.Format("q{0}{1:00}", dt.ToString("yyyy"), qq);
+        }
+        public static string GetSYyyyWw(DateTime dt)
+        {
+            var weekOfYear = CtkTimeUtil.GetWeekOfYear(dt);
+            return string.Format("w{0}{1:00}", dt.ToString("yyyy"), weekOfYear);
+        }
+        #endregion
+
 
 
 
