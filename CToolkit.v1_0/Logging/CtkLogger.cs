@@ -33,6 +33,7 @@ namespace CToolkit.v1_0.Logging
         public virtual void WriteSyn(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level = CtkLoggerEnumLevel.Info)
         {
             this.OnLogWrite(ea);
+            OnEveryLogWrite(this, ea);
         }
 
         public virtual void WriteAsyn(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level = CtkLoggerEnumLevel.Info)
@@ -48,10 +49,22 @@ namespace CToolkit.v1_0.Logging
         public event EventHandler<CtkLoggerEventArgs> evtLogWrite;
         void OnLogWrite(CtkLoggerEventArgs ea)
         {
-            if (this.evtLogWrite == null)
-                return;
+            if (this.evtLogWrite == null) return;
             this.evtLogWrite(this, ea);
         }
+        #endregion
+
+
+        #region Static
+
+
+        public static event EventHandler<CtkLoggerEventArgs> evtEveryLogWrite;
+        static void OnEveryLogWrite(object sender, CtkLoggerEventArgs ea)
+        {
+            if (evtEveryLogWrite == null) return;
+            evtEveryLogWrite(sender, ea);
+        }
+
         #endregion
 
     }

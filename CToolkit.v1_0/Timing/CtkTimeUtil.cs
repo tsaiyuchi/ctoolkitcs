@@ -109,6 +109,9 @@ namespace CToolkit.v1_0.Timing
         public static DateTime FromYyyy(string s) { return DateTimeParseExact(s, "yyyy"); }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
+        public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
+        public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
+        public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
         /// <summary>
         /// 
         /// </summary>
@@ -122,7 +125,7 @@ namespace CToolkit.v1_0.Timing
             var date = new DateTime(yyyy, 1, 1);
             date = date.AddMonths((qq - 1) * 3);
 
-            var realYyyyQq = GetYyyyQq(date);
+            var realYyyyQq = ToYyyyQq(date);
             if (yyyyqq != realYyyyQq) throw new InvalidOperationException();
 
             return date;
@@ -140,22 +143,25 @@ namespace CToolkit.v1_0.Timing
             var date = new DateTime(yyyy, 1, 1);
             date = date.AddDays(7 * ww - 7);
 
-            var realYyyyww = GetYyyyWw(date);
+            var realYyyyww = ToYyyyWw(date);
             if (yyyyww != realYyyyww) throw new InvalidOperationException();
 
             return date;
         }
 
 
-        public static string GetYyyy(DateTime dt) { return dt.ToString("yyyy"); }
-        public static string GetYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
-        public static string GetYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
-        public static string GetYyyyQq(DateTime dt)
+        public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
+        public static string ToYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
+        public static string ToYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
+        public static string ToYyyyMmDdHh(DateTime dt) { return dt.ToString("yyyyMMddHh"); }
+        public static string ToYyyyMmDdHhIi(DateTime dt) { return dt.ToString("yyyyMMddHhmm"); }
+        public static string ToYyyyMmDdHhIiSs(DateTime dt) { return dt.ToString("yyyyMMddHhmmss"); }
+        public static string ToYyyyQq(DateTime dt)
         {
             var qq = QuarterOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), qq);
         }
-        public static string GetYyyyWw(DateTime dt)
+        public static string ToYyyyWw(DateTime dt)
         {
             var weekOfYear = CtkTimeUtil.GetWeekOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), weekOfYear);

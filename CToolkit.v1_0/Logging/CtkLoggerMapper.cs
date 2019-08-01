@@ -34,19 +34,6 @@ namespace CToolkit.v1_0.Logging
         }
 
 
-        public void RegisterAllLogger(EventHandler<CtkLoggerEventArgs> evt, Func<string, bool> filter)
-        {
-            CtkLoggerMapper.Singleton.evtCreated += delegate (object ss, CtkLoggerMapperEventArgs ee)
-            {
-                if (!filter(ee.LoggerId)) return;
-                ee.Logger.evtLogWrite += evt;
-            };
-            foreach (var kv in CtkLoggerMapper.Singleton)
-            {
-                if (!filter(kv.Key)) continue;
-                kv.Value.evtLogWrite += evt;
-            }
-        }
 
 
 
@@ -62,25 +49,12 @@ namespace CToolkit.v1_0.Logging
 
 
 
-
-
-
-        //--- Static ---------------------------
-
-
+        #region Static
 
         static CtkLoggerMapper m_Singleton;
+        public static CtkLoggerMapper Singleton { get { if (m_Singleton == null) { m_Singleton = new CtkLoggerMapper(); } return m_Singleton; } }
 
-        public static CtkLoggerMapper Singleton
-        {
-            get
-            {
-
-                if (m_Singleton == null) m_Singleton = new CtkLoggerMapper();
-                return m_Singleton;
-            }
-
-        }
+        #endregion
 
     }
 }

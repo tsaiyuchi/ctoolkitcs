@@ -144,11 +144,9 @@ namespace CToolkit.v1_0
 
 
 
-        public static void RegisterAllLogger(EventHandler<CtkLoggerEventArgs> evt, Func<string, bool> filter = null)
-        {
-            if (filter == null) filter = (name) => true;
-            CtkLoggerMapper.Singleton.RegisterAllLogger(evt, filter);
-        }
+        public static void RegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> evt) { CtkLogger.evtEveryLogWrite += evt; }
+
+
 
 
     }
