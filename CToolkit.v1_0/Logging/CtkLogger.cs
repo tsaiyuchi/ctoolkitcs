@@ -39,9 +39,10 @@ namespace CToolkit.v1_0.Logging
         public virtual void WriteAsyn(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level = CtkLoggerEnumLevel.Info)
         {
             CtkUtil.RunWorkerAsyn(delegate (object sender, DoWorkEventArgs e)
-           {
-               this.OnLogWrite(ea);
-           });
+            {
+                this.OnLogWrite(ea);
+                OnEveryLogWrite(this, ea);
+            });
         }
 
 
