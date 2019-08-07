@@ -1,7 +1,7 @@
 
 
 cd ctoolkit.csharp
-git push https://tsaiyuchi@github.com/tsaiyuchi/ctoolkit.csharp.git
+git push
 cd ..
 
 

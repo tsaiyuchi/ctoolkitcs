@@ -5,7 +5,7 @@ cd ctoolkit.csharp
 git add --all
 git commit -m 'bat commit'
 git pull
-git push https://tsaiyuchi@github.com/tsaiyuchi/ctoolkit.csharp.git --all
+git push
 cd ..
 
 cd CwTech
