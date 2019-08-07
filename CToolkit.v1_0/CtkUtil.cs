@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -15,8 +17,15 @@ namespace CToolkit.v1_0
     public class CtkUtil
     {
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static string GetCurrentMethod()
+        {
+            var st = new StackTrace();
+            var sf = st.GetFrame(1);
 
-      
+            return sf.GetMethod().Name;
+        }
+
         public static bool EnableUnsafeHeaderParsing()
         {
             //Get the assembly that contains the internal class
@@ -101,7 +110,7 @@ namespace CToolkit.v1_0
             }
         }
 
- 
+
 
         public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
 
@@ -148,7 +157,7 @@ namespace CToolkit.v1_0
             }
         }
 
-    
+
         public static object TryCatch(Action theMethod, params object[] parameters)
         {
             try
