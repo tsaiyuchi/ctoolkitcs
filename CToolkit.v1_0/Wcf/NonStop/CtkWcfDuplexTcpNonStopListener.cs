@@ -1,47 +1,29 @@
-using CToolkit.v1_0.Protocol;
+﻿using CToolkit.v1_0.Protocol;
 using CToolkit.v1_0.Threading;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkit.v1_0.Wcf
+namespace CToolkit.v1_0.Wcf.DuplexTcp
 {
-
-
-    public class CtkWcfDuplexTcpClient<TService, TCallback> : IDisposable
-        , ICtkProtocolNonStopConnect
-        where TService : ICtkWcfDuplexOpService//Server提供的, 必須是interface
-        where TCallback : ICTkWcfDuplexOpCallback//提供給Server呼叫的
+    public class CtkWcfDuplexTcpNonStopListener<TService> : CtkWcfDuplexTcpListener<TService>, ICtkProtocolNonStopConnect
+         where TService : ICtkWcfDuplexTcpService
     {
-
-
-        public TService Channel;
-        public DuplexChannelFactory<TService> ChannelFactory;
-        public TCallback Callback;
-        CtkCancelTask NonStopTask;
-        public string Uri;
-        public string EntryAddress;
-        public NetTcpBinding Binding;
         protected int m_IntervalTimeOfConnectCheck = 5000;
+        ICTkWcfDuplexTcpCallback activeWorkClient;
+        CtkCancelTask NonStopTask;
 
-        ~CtkWcfDuplexTcpClient() { this.Dispose(false); }
 
 
-        public CtkWcfDuplexTcpClient(TCallback callbackInstance, NetTcpBinding _binding)
+        public CtkWcfDuplexTcpNonStopListener(TService _svrInst, NetTcpBinding _binding = null) : base(_svrInst, _binding)
         {
-            this.Callback = callbackInstance;
-            this.Binding = _binding;
         }
 
-
-
-
+        ~CtkWcfDuplexTcpNonStopListener() { this.Dispose(false); }
 
 
         #region ICtkProtocolNonStopConnect
@@ -57,18 +39,17 @@ namespace CToolkit.v1_0.Wcf
 
         public event EventHandler<CtkProtocolEventArgs> evtFirstConnect;
 
-        public object ActiveWorkClient { get { return this.Channel; } set { this.Channel = (TService)value; } }
+        public object ActiveWorkClient { get { return this.activeWorkClient; } set { this.activeWorkClient = value as ICTkWcfDuplexTcpCallback; } }
 
-        public bool IsLocalReadyConnect { get { return this.ChannelFactory != null && this.ChannelFactory.State <= CommunicationState.Opened; } }
+        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+
+        public bool IsLocalReadyConnect { get { return this.host != null && this.host.State <= CommunicationState.Opened; } }
 
         public bool IsNonStopRunning { get { return this.NonStopTask != null && this.NonStopTask.Task.Status < TaskStatus.RanToCompletion; } }
 
         public bool IsOpenRequesting { get { try { return Monitor.TryEnter(this, 10); } finally { Monitor.Exit(this); } } }
 
-        public bool IsRemoteConnected { get { return this.ChannelFactory.State == CommunicationState.Opened; } }
-
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-
+        public bool IsRemoteConnected { get { return this.GetAllChannels().Count > 0; } }
         public void AbortNonStopConnect()
         {
             if (this.NonStopTask != null)
@@ -80,32 +61,37 @@ namespace CToolkit.v1_0.Wcf
 
         public void ConnectIfNo()
         {
-            if (string.IsNullOrEmpty(this.Uri)) throw new ArgumentNullException("The Uri must has value");
             if (this.IsLocalReadyConnect) return;
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
+                if (this.IsLocalReadyConnect) return;
+                this.CleanDisconnected();
+                this.CleanHost();
+                this.NewHost();
 
-                var site = new InstanceContext(this.Callback);
-                var address = this.Uri;
-                if (this.EntryAddress != null) address = Path.Combine(this.Uri, this.EntryAddress);
-                var endpointAddress = new EndpointAddress(address);
-                this.ChannelFactory = new DuplexChannelFactory<TService>(site, this.Binding, endpointAddress);
-                this.ChannelFactory.Opened += (ss, ee) =>
+                this.host.Opened += (ss, ee) =>
                 {
                     var ea = new CtkWcfDuplexEventArgs();
-                    ea.WcfChannel = this.Channel;
+                    //ea.WcfChannel = this.GetCallback();//Listener(or call Host, Service) 開啟後, 並沒有Channel連線進來
                     this.OnFirstConnect(ea);
                 };
-                this.ChannelFactory.Closed += (ss, ee) =>
-                 {
-                     var ea = new CtkWcfDuplexEventArgs();
-                     ea.WcfChannel = this.Channel;
-                     this.OnDisconnect(ea);
-                 };
 
-                this.Channel = this.ChannelFactory.CreateChannel();
-                this.Channel.CtkSend(new CtkWcfMessage());
+
+                this.serviceInstance.evtReceiveMsg += (ss, ee) =>
+                {
+                    var ea = ee;
+                    ea.WcfChannel = this.GetCallback();
+                    this.OnDataReceive(ea);
+                };
+
+                this.host.Closed += (ss, ee) =>
+                {
+                    var ea = new CtkWcfDuplexEventArgs();
+                    //ea.WcfChannel = this.GetCallback();//Listerner關閉, 會關閉所有Channel, 並沒有特定哪一個
+                    this.OnDisconnect(ea);
+                };
+                this.Open();
             }
             finally
             {
@@ -116,17 +102,7 @@ namespace CToolkit.v1_0.Wcf
         public void Disconnect()
         {
             this.AbortNonStopConnect();
-            if (this.ChannelFactory != null)
-            {
-                using (var obj = this.ChannelFactory)
-                {
-                    obj.Abort();
-                    obj.Close();
-                }
-            }
-
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
-
+            this.Close();
         }
 
         public void NonStopConnectAsyn()
@@ -143,12 +119,10 @@ namespace CToolkit.v1_0.Wcf
                         this.ConnectIfNo();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
-                    Thread.Sleep(this.m_IntervalTimeOfConnectCheck);
+                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
                 }
 
             });
-
-
         }
 
 
@@ -162,7 +136,7 @@ namespace CToolkit.v1_0.Wcf
             var wcfmsg = msg.As<CtkWcfMessage>();
             if (wcfmsg != null)
             {
-                this.Channel.CtkSend(msg.As<CtkWcfMessage>());
+                this.activeWorkClient.CtkSend(msg.As<CtkWcfMessage>());
                 return;
             }
             throw new ArgumentException("No support type");
@@ -193,49 +167,20 @@ namespace CToolkit.v1_0.Wcf
             if (this.evtFirstConnect == null) return;
             this.evtFirstConnect(this, tcpstate);
         }
+
+
         #endregion
 
 
-        #region IDispose
+        #region IDisposable
 
-        bool disposed = false;
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-
-
-        public virtual void DisposeSelf()
+        public override void DisposeSelf()
         {
             this.Disconnect();
+            base.DisposeSelf();
         }
 
-
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposed)
-                return;
-
-            if (disposing)
-            {
-                // Free any managed objects here.
-            }
-
-            // Free any unmanaged objects here.
-            //
-            this.DisposeSelf();
-            disposed = true;
-        }
         #endregion
+
     }
-
-
-
-
-
-
 }

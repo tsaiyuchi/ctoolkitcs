@@ -5,7 +5,7 @@ using System.Linq;
 using System.ServiceModel.Channels;
 using System.Text;
 
-namespace CToolkit.v1_0.Wcf
+namespace CToolkit.v1_0.Wcf.DuplexTcp
 {
     public class CtkWcfDuplexEventArgs : CtkProtocolEventArgs
     {

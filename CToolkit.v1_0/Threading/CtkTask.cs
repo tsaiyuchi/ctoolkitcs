@@ -12,6 +12,13 @@ namespace CToolkit.v1_0.Threading
         public Task Task;
 
 
+        public static CtkTask Run(Action act)
+        {
+            var task = new CtkTask();
+            task.Task = Task.Factory.StartNew(act);
+            return task;
+        }
+
         public bool IsEnd() { return this.Task == null ? true : this.Task.IsCanceled || this.Task.IsFaulted || this.Task.IsCanceled; }
 
 
@@ -20,17 +27,8 @@ namespace CToolkit.v1_0.Threading
             if (this.Task == null) throw new InvalidOperationException("Task尚未設定");
             this.Task.Start();
         }
-
-
-        public static CtkTask Run(Action act)
-        {
-            var task = new CtkTask();
-            task.Task = Task.Factory.StartNew(act);
-            return task;
-        }
-
-
         public bool Wait(int milliseconds) { return this.Task.Wait(milliseconds); }
+        public void Wait() { this.Task.Wait(); }
 
 
         #region IDisposable

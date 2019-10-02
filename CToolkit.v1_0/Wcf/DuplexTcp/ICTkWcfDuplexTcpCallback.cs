@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace CToolkit.v1_0.Wcf
+namespace CToolkit.v1_0.Wcf.DuplexTcp
 {
-
-    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
-    public interface ICtkWcfDuplexOpService
+    public interface ICTkWcfDuplexTcpCallback 
     {
-
-
         //[OperationContract()]
         event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
 
@@ -22,8 +17,6 @@ namespace CToolkit.v1_0.Wcf
         [OperationContract()]
         CtkWcfMessage CtkSendReply(CtkWcfMessage msg);
 
+
     }
-
-
-
 }

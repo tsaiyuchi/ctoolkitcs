@@ -10,34 +10,36 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkit.v1_0.Wcf
+namespace CToolkit.v1_0.Wcf.DuplexTcp
 {
 
 
- 
 
-    public class CtkWcfDuplexTcpClientInst : ICTkWcfDuplexOpCallback
+    /// <summary>
+    /// 尚不完整, 除了自己的專案以外, 盡量不要用
+    /// </summary>
+    public class CtkWcfDuplexTcpClientInst : ICTkWcfDuplexTcpCallback
     {
 
         public static CtkWcfDuplexTcpClient<TService, TCallback> NewInst<TService, TCallback>(TCallback inst, NetTcpBinding binding = null)
-            where TService : ICtkWcfDuplexOpService
-            where TCallback : ICTkWcfDuplexOpCallback
+            where TService : ICtkWcfDuplexTcpService
+            where TCallback : ICTkWcfDuplexTcpCallback
         {
             if (binding == null) binding = new NetTcpBinding();
             return new CtkWcfDuplexTcpClient<TService, TCallback>(inst, binding);
         }
 
         public static CtkWcfDuplexTcpClient<TService, CtkWcfDuplexTcpClientInst> NewDefault<TService>(NetTcpBinding binding = null)
-            where TService : ICtkWcfDuplexOpService
+            where TService : ICtkWcfDuplexTcpService
         {
             if (binding == null) binding = new NetTcpBinding();
             return new CtkWcfDuplexTcpClient<TService, CtkWcfDuplexTcpClientInst>(new CtkWcfDuplexTcpClientInst(), binding);
         }
 
-        public static CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClientInst> NewDefault(NetTcpBinding binding = null)
+        public static CtkWcfDuplexTcpClient<ICtkWcfDuplexTcpService, CtkWcfDuplexTcpClientInst> NewDefault(NetTcpBinding binding = null)
         {
             if (binding == null) binding = new NetTcpBinding();
-            return new CtkWcfDuplexTcpClient<ICtkWcfDuplexOpService, CtkWcfDuplexTcpClientInst>(new CtkWcfDuplexTcpClientInst(), binding);
+            return new CtkWcfDuplexTcpClient<ICtkWcfDuplexTcpService, CtkWcfDuplexTcpClientInst>(new CtkWcfDuplexTcpClientInst(), binding);
         }
 
 

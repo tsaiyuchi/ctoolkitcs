@@ -158,24 +158,28 @@
     <Compile Include="TriggerDiagram\ICtkTdDiagram.cs" />
     <Compile Include="TriggerDiagram\ICtkTdContact.cs" />
     <Compile Include="TriggerDiagram\ICtkTdNode.cs" />
-    <Compile Include="Wcf\CtkWcfDuplexEventArgs.cs" />
-    <Compile Include="Wcf\CtkWcfDuplexTcpClientInst.cs" />
-    <Compile Include="Wcf\CtkWcfDuplexTcpListenerInst.cs" />
+    <Compile Include="Wcf\NetTcp\CtkWcfNetTcpClient.cs" />
+    <Compile Include="Wcf\NetTcp\CtkWcfNetTcpListener.cs" />
+    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpInst02.cs" />
+    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpInst01.cs" />
+    <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0201.cs" />
+    <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0202.cs" />
+    <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0102.cs" />
+    <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0101.cs" />
+    <Compile Include="Wcf\NonStop\CtkWcfDuplexTcpNonStopClient.cs" />
+    <Compile Include="Wcf\NonStop\CtkWcfDuplexTcpNonStopListener.cs" />
+    <Compile Include="Wcf\DuplexTcp\CtkWcfDuplexEventArgs.cs" />
+    <Compile Include="Wcf\DuplexTcp\CtkWcfDuplexTcpClientInst.cs" />
+    <Compile Include="Wcf\DuplexTcp\CtkWcfDuplexTcpListenerInst.cs" />
     <Compile Include="Wcf\CtkWcfMessage.cs" />
-    <Compile Include="Wcf\Example\CtkExampleCustomClient.cs" />
-    <Compile Include="Wcf\Example\CtkExampleCustomInstCallback.cs" />
-    <Compile Include="Wcf\Example\CtkExampleCustomInstListener.cs" />
-    <Compile Include="Wcf\Example\CtkExampleDefaultClient.cs" />
-    <Compile Include="Wcf\Example\CtkExampleCustomListener.cs" />
-    <Compile Include="Wcf\Example\CtkExampleDefaultListener.cs" />
-    <Compile Include="Wcf\CtkWcfChannelInfo.cs" />
-    <Compile Include="Wcf\CtkWcfDuplexTcpClient.cs" />
-    <Compile Include="Wcf\CtkWcfDuplexTcpListener.cs" />
-    <Compile Include="Wcf\Example\CtkWcfTestUri.cs" />
-    <Compile Include="Wcf\Example\ICtkExampleCustomListenerSubtract.cs" />
-    <Compile Include="Wcf\Example\ICtkExampleCustomListenerAdd.cs" />
-    <Compile Include="Wcf\ICTkWcfDuplexOpCallback.cs" />
-    <Compile Include="Wcf\ICtkWcfDuplexOpService.cs" />
+    <Compile Include="Wcf\DuplexTcp\CtkWcfChannelInfo.cs" />
+    <Compile Include="Wcf\DuplexTcp\CtkWcfDuplexTcpClient.cs" />
+    <Compile Include="Wcf\DuplexTcp\CtkWcfDuplexTcpListener.cs" />
+    <Compile Include="Wcf\DuplexTcp\ICTkWcfDuplexTcpCallback.cs" />
+    <Compile Include="Wcf\DuplexTcp\ICtkWcfDuplexTcpService.cs" />
+    <Compile Include="Wcf\WebJson\CtkWcfWebJsonListener.cs" />
+    <Compile Include="Wcf\WebJson\CtkWcfWebJsonListenerInst.cs" />
+    <Compile Include="Wcf\WebJson\ICtkWcfWebJsonListener.cs" />
     <Compile Include="Web\CtkIViewEditControl.cs" />
     <Compile Include="Web\CtkPath.cs" />
     <Compile Include="Web\CtkWebUtil.cs" />
@@ -226,10 +230,7 @@
     <None Include="ReadMe.MD" />
     <None Include="Tools\place_these_executables_in_same_folder_as_Cudafy.NET.dll_" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataAnalysis\" />
-    <Folder Include="StatisticalMethod\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -15,8 +15,6 @@ git pull
 git push
 cd ..
 
-
-
 cd ctoolkit.js
 git add --all
 git commit -m 'update'

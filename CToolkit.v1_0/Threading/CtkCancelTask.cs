@@ -14,6 +14,18 @@ namespace CToolkit.v1_0.Threading
 
         public void Cancel() { this.CancelTokenSource.Cancel(); }
 
+        #region IDisposable
+
+        protected override void DisposeSelf()
+        {
+            this.CancelTokenSource.Cancel();
+            this.Task.Wait(1000);
+            base.DisposeSelf();
+        }
+        #endregion
+
+
+        #region Static
 
         /// <summary>
         /// 
@@ -50,17 +62,8 @@ namespace CToolkit.v1_0.Threading
             return task;
         }
 
-
-
-        #region IDisposable
-
-        protected override void DisposeSelf()
-        {
-            this.CancelTokenSource.Cancel();
-            this.Task.Wait(1000);
-            base.DisposeSelf();
-        }
         #endregion
 
+      
     }
 }

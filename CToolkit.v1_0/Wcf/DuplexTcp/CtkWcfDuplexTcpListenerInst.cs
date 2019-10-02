@@ -9,36 +9,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkit.v1_0.Wcf
+namespace CToolkit.v1_0.Wcf.DuplexTcp
 {
 
 
 
-
+    /// <summary>
+    /// 尚不完整, 除了自己的專案以外, 盡量不要用
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class CtkWcfDuplexTcpListenerInst : ICtkWcfDuplexOpService
+    public class CtkWcfDuplexTcpListenerInst : ICtkWcfDuplexTcpService
     {
         //[ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(ICTkWcfDuplexOpCallback))]
         //無法同時繼承並宣告ServiceContract
 
 
         public event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
-
-
-        public static CtkWcfDuplexTcpListener<T> NewInst<T>(T svrInst, NetTcpBinding _binding = null) where T : class, ICtkWcfDuplexOpService
-        {
-            if (_binding == null) _binding = new NetTcpBinding();
-            return new CtkWcfDuplexTcpListener<T>(svrInst, _binding);
-        }
-
-
-        public static CtkWcfDuplexTcpListener<ICtkWcfDuplexOpService> NewDefault(NetTcpBinding _binding = null)
-        {
-            var svrInst = new CtkWcfDuplexTcpListenerInst();
-            if (_binding == null) _binding = new NetTcpBinding();
-            return NewInst<ICtkWcfDuplexOpService>(svrInst, _binding);
-        }
-
 
         public void CtkSend(CtkWcfMessage msg)
         {
@@ -62,6 +48,33 @@ namespace CToolkit.v1_0.Wcf
             if (this.evtReceiveMsg == null) return;
             this.evtReceiveMsg(this, ea);
         }
+
+
+
+
+        #region Static
+
+        public static CtkWcfDuplexTcpListener<T> NewInst<T>(T svrInst, NetTcpBinding _binding = null) where T : class, ICtkWcfDuplexTcpService
+        {
+            if (_binding == null) _binding = new NetTcpBinding();
+            return new CtkWcfDuplexTcpListener<T>(svrInst, _binding);
+        }
+
+        public static CtkWcfDuplexTcpListener<ICtkWcfDuplexTcpService> NewDefault(NetTcpBinding _binding = null)
+        {
+            var svrInst = new CtkWcfDuplexTcpListenerInst();
+            if (_binding == null) _binding = new NetTcpBinding();
+            return NewInst<ICtkWcfDuplexTcpService>(svrInst, _binding);
+        }
+
+
+
+
+
+
+        #endregion
+
+
     }
 
 

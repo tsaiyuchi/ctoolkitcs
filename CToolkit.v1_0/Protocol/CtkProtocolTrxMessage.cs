@@ -1,4 +1,5 @@
 ﻿using CToolkit.v1_0.Wcf;
+using CToolkit.v1_0.Wcf.DuplexTcp;
 using System;
 using System.Collections.Generic;
 using System.Linq;

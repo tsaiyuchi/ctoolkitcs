@@ -29,9 +29,6 @@ namespace CToolkit.v1_0.Timing
         //--- Week ---------
 
 
-
-
-
         /// <summary>
         /// 不超過當前日期的 dow(Day Of Week) (e.q.周二) 是哪天
         /// </summary>
@@ -112,6 +109,7 @@ namespace CToolkit.v1_0.Timing
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
         public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
         public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
+        public static DateTime FromDTime(string s) { return FromYyyyMmDdHhIiSs(s); }
         /// <summary>
         /// 
         /// </summary>
@@ -153,9 +151,10 @@ namespace CToolkit.v1_0.Timing
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
         public static string ToYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
         public static string ToYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
-        public static string ToYyyyMmDdHh(DateTime dt) { return dt.ToString("yyyyMMddHh"); }
-        public static string ToYyyyMmDdHhIi(DateTime dt) { return dt.ToString("yyyyMMddHhmm"); }
-        public static string ToYyyyMmDdHhIiSs(DateTime dt) { return dt.ToString("yyyyMMddHhmmss"); }
+        public static string ToYyyyMmDdHh(DateTime dt) { return dt.ToString("yyyyMMddHH"); }
+        public static string ToYyyyMmDdHhIi(DateTime dt) { return dt.ToString("yyyyMMddHHmm"); }
+        public static string ToYyyyMmDdHhIiSs(DateTime dt) { return dt.ToString("yyyyMMddHHmmss"); }
+        public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
         public static string ToYyyyQq(DateTime dt)
         {
             var qq = QuarterOfYear(dt);
@@ -220,22 +219,20 @@ namespace CToolkit.v1_0.Timing
             return FromYyyyWw(yyyyww);
         }
 
-        public static string GetSYyyy(DateTime dt) { return "y" + dt.ToString("yyyy"); }
-        public static string GetSYyyyMm(DateTime dt) { return "m" + dt.ToString("yyyyMM"); }
-        public static string GetSYyyyMmDd(DateTime dt) { return "d" + dt.ToString("yyyyMMdd"); }
-        public static string GetSYyyyQq(DateTime dt)
+        public static string ToSYyyy(DateTime dt) { return "y" + dt.ToString("yyyy"); }
+        public static string ToSYyyyMm(DateTime dt) { return "m" + dt.ToString("yyyyMM"); }
+        public static string ToSYyyyMmDd(DateTime dt) { return "d" + dt.ToString("yyyyMMdd"); }
+        public static string ToSYyyyQq(DateTime dt)
         {
             var qq = QuarterOfYear(dt);
             return string.Format("q{0}{1:00}", dt.ToString("yyyy"), qq);
         }
-        public static string GetSYyyyWw(DateTime dt)
+        public static string ToSYyyyWw(DateTime dt)
         {
             var weekOfYear = CtkTimeUtil.GetWeekOfYear(dt);
             return string.Format("w{0}{1:00}", dt.ToString("yyyy"), weekOfYear);
         }
         #endregion
-
-
 
 
         #region Linux Timestamp
@@ -297,6 +294,30 @@ namespace CToolkit.v1_0.Timing
         public static DateTime ToRocDateTime(DateTime dt) { return dt.AddYears(-RocYearToYear); }
 
         public static int ToYearFromRoc(int year) { return year + RocYearToYear; }
+        public static int ToRocYear(int year) { return year - RocYearToYear; }
+
+        #endregion
+
+
+        #region Transfer Date Time
+
+        /// <summary>
+        /// 取得當日指定的時分秒
+        /// </summary>
+        public static DateTime GetPrevTime(DateTime dt, int hour = 0, int minute = 0, int second = 0)
+        {
+            var diff = hour - dt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
+            if (diff >= 0) diff -= 24;
+            var mydt = dt.AddHours(diff);
+            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
+        }
+
+
+        #endregion
+
+        #region Compare
+
+        public static int CompareYyyyMmDd(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDd(dt1), ToYyyyMmDd(dt2)); }
 
         #endregion
 

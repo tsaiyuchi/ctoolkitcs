@@ -6,6 +6,10 @@ using System.Threading;
 
 namespace MvLib.Threading
 {
+    /// <summary>
+    /// 有最大/最小等待需求才需要用此類別.
+    /// 否則可以考慮用SpiWait
+    /// </summary>
     public class CtkSpinWait
     {
         public DateTime LastSpinTime = DateTime.Now;
@@ -115,6 +119,9 @@ namespace MvLib.Threading
 
 
 
+        #region Static
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -173,7 +180,7 @@ namespace MvLib.Threading
         }
 
 
-
+        #endregion
 
 
     }
