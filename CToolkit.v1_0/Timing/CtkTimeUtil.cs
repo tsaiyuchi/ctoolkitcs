@@ -103,13 +103,16 @@ namespace CToolkit.v1_0.Timing
 
         public static bool DateTimeTryParseExact(string s, out DateTime result, string format = "yyyyMMdd") { return DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result); }
 
+
+        public static DateTime FromDTime(string s) { return FromYyyyMmDdHhIiSs(s); }
+        public static bool FromDTimeTry(string s, out DateTime dt) { return FromYyyyMmDdHhIiSsTry(s, out dt); }
         public static DateTime FromYyyy(string s) { return DateTimeParseExact(s, "yyyy"); }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
         public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
         public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
-        public static DateTime FromDTime(string s) { return FromYyyyMmDdHhIiSs(s); }
+        public static bool FromYyyyMmDdHhIiSsTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMddHHmmss"); }
         /// <summary>
         /// 
         /// </summary>
@@ -128,6 +131,8 @@ namespace CToolkit.v1_0.Timing
 
             return date;
         }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -148,13 +153,14 @@ namespace CToolkit.v1_0.Timing
         }
 
 
+        public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
+
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
         public static string ToYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
         public static string ToYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
         public static string ToYyyyMmDdHh(DateTime dt) { return dt.ToString("yyyyMMddHH"); }
         public static string ToYyyyMmDdHhIi(DateTime dt) { return dt.ToString("yyyyMMddHHmm"); }
         public static string ToYyyyMmDdHhIiSs(DateTime dt) { return dt.ToString("yyyyMMddHHmmss"); }
-        public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
         public static string ToYyyyQq(DateTime dt)
         {
             var qq = QuarterOfYear(dt);
@@ -290,30 +296,41 @@ namespace CToolkit.v1_0.Timing
         #region ROC DateTime
 
         public static DateTime ToDateTimeFromRoc(DateTime dt) { return dt.AddYears(RocYearToYear); }
+        public static DateTime ToDateTimeFromRocYyyMmDd(string dt, char spliter)
+        {
+            var nums = dt.Split(spliter);
+            var yyy = Convert.ToInt32(nums[0]);
+            var mm = Convert.ToInt32(nums[1]);
+            var dd = Convert.ToInt32(nums[2]);
+            var datetime = new DateTime(yyy, mm, dd);
+            return ToDateTimeFromRoc(datetime);
+        }
 
         public static DateTime ToRocDateTime(DateTime dt) { return dt.AddYears(-RocYearToYear); }
 
-        public static int ToYearFromRoc(int year) { return year + RocYearToYear; }
         public static int ToRocYear(int year) { return year - RocYearToYear; }
 
+        public static int ToYearFromRoc(int year) { return year + RocYearToYear; }
         #endregion
 
 
         #region Transfer Date Time
 
         /// <summary>
-        /// 取得過往的指定時分秒
+        /// 取得下一個的日
         /// </summary>
-        public static DateTime GetPrevTime(DateTime dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
+        public static DateTime GetNextDay(DateTime dt, int day = 0, bool isIncludeToday = true)
         {
-            var diff = hour - dt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
+            var diff = day - dt.Day;//上一個期望時間, 若為正, 就代表己越過零點
             var mydt = dt;
-            if (isIncludeToday && diff > 0)
-                mydt = dt.AddHours(-24);
-            else if (!isIncludeToday && diff >= 0)
-                mydt = dt.AddHours(-24);
-            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
+            if (isIncludeToday && diff < 0)
+                mydt.AddMonths(1);
+            else if (!isIncludeToday && diff <= 0)
+                mydt.AddMonths(1);
+
+            return new DateTime(mydt.Year, mydt.Month, day);
         }
+
         /// <summary>
         /// 取得過往的指定時分秒
         /// </summary>
@@ -344,29 +361,35 @@ namespace CToolkit.v1_0.Timing
         }
 
         /// <summary>
-        /// 取得下一個的日
+        /// 取得過往的指定時分秒
         /// </summary>
-        public static DateTime GetNextDay(DateTime dt, int day = 0, bool isIncludeToday = true)
+        public static DateTime GetPrevTime(DateTime dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
         {
-            var diff = day - dt.Day;//上一個期望時間, 若為正, 就代表己越過零點
+            var diff = hour - dt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
             var mydt = dt;
-            if (isIncludeToday && diff < 0)
-                mydt.AddMonths(1);
-            else if (!isIncludeToday && diff <= 0)
-                mydt.AddMonths(1);
-
-            return new DateTime(mydt.Year, mydt.Month, day);
+            if (isIncludeToday && diff > 0)
+                mydt = dt.AddHours(-24);
+            else if (!isIncludeToday && diff >= 0)
+                mydt = dt.AddHours(-24);
+            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
         }
-
         #endregion
 
         #region Compare
 
-        public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
+        public static int CompareDTime(DateTime dt1, DateTime dt2) { return string.Compare(ToDTime(dt1), ToDTime(dt2)); }
+        public static int CompareDTime(DateTime dt1, string dt2) { return string.Compare(ToDTime(dt1), dt2); }
+        public static int CompareDTime(string dt1, DateTime dt2) { return string.Compare(dt1, ToDTime(dt2)); }
+
         public static int CompareYyyyMm(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
+
         public static int CompareYyyyMmDd(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDd(dt1), ToYyyyMmDd(dt2)); }
+        public static int CompareYyyyMmDd(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDd(dt1), dt2); }
+        public static int CompareYyyyMmDd(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDd(dt2)); }
+
         public static int CompareYyyyQq(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyQq(dt1), ToYyyyQq(dt2)); }
 
+        public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         #endregion
 
 

@@ -78,7 +78,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
                 };
 
 
-                this.serviceInstance.evtReceiveMsg += (ss, ee) =>
+                this.SvrInst.evtReceiveMsg += (ss, ee) =>
                 {
                     var ea = ee;
                     ea.WcfChannel = this.GetCallback();

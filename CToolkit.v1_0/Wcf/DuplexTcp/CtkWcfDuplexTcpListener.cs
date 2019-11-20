@@ -28,10 +28,10 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
         protected Binding binding;
         protected Dictionary<string, CtkWcfChannelInfo<ICTkWcfDuplexTcpCallback>> channelMapper = new Dictionary<string, CtkWcfChannelInfo<ICTkWcfDuplexTcpCallback>>();
         protected ServiceHost host;
-        protected TService serviceInstance;
+        public TService SvrInst;
         public CtkWcfDuplexTcpListener(TService _svrInst, NetTcpBinding _binding = null)
         {
-            this.serviceInstance = _svrInst;
+            this.SvrInst = _svrInst;
             this.binding = _binding;
         }
         ~CtkWcfDuplexTcpListener() { this.Dispose(false); }
@@ -98,7 +98,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
 
         public virtual void NewHost()
         {
-            var instance = this.serviceInstance;
+            var instance = this.SvrInst;
 
             if (instance == null)
                 this.host = new ServiceHost(typeof(TService), new Uri(this.Uri));
