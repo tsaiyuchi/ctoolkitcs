@@ -56,7 +56,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
                 var endpointAddress = new EndpointAddress(address);
                 this.ChannelFactory = new DuplexChannelFactory<TService>(site, this.Binding, endpointAddress);
 
-                beforeOpen?.Invoke(this.ChannelFactory);//一次性使用的東西, 可以不寫event
+                if (beforeOpen != null) beforeOpen.Invoke(this.ChannelFactory);//一次性使用的東西, 可以不寫event
 
 
                 this.Channel = this.ChannelFactory.CreateChannel();

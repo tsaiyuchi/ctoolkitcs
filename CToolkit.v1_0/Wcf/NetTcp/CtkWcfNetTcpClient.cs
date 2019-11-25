@@ -58,7 +58,7 @@ namespace CToolkit.v1_0.Wcf.NetTcp
                 if (this.Binding == null) this.Binding = new NetTcpBinding();
                 this.ChannelFactory = new ChannelFactory<TService>(this.Binding, endpointAddress);
 
-                beforeOpen?.Invoke(this.ChannelFactory);//一次性使用的東西, 可以不寫event
+                if (beforeOpen != null) beforeOpen.Invoke(this.ChannelFactory);//一次性使用的東西, 可以不寫event
 
 
                 this.Channel = this.ChannelFactory.CreateChannel();
