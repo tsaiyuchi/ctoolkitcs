@@ -16,4 +16,3 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_0\obj\Debug\CToolkit.v1_0.csproj
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_0\obj\Debug\CToolkit.v1_0.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_0\obj\Debug\CToolkit.v1_0.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_0\obj\Debug\CToolkit.v1_0.pdb
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_0\obj\Debug\CToolkit.v1_0.csprojAssemblyReference.cache

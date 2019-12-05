@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\CtkCryptMd5.cs" />
     <Compile Include="CtkAspectUtil.cs" />
     <Compile Include="Config\CtkConfigBase.cs" />
     <Compile Include="Config\CtkConfigCollectorBase.cs" />
