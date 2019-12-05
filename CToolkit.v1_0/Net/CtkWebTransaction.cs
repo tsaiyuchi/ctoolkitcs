@@ -95,7 +95,6 @@ namespace CToolkit.v1_0.Net
         public static string HttpRequest(HttpWebRequest wreq, string reqData, Encoding reqEncoding = null, Encoding respEncoding = null)
         {
             if (reqEncoding == null) reqEncoding = Encoding.UTF8;
-            if (respEncoding == null) respEncoding = Encoding.UTF8;
 
 
             if (string.Compare(wreq.Method, "POST", true) == 0)
@@ -108,12 +107,27 @@ namespace CToolkit.v1_0.Net
             }
 
             using (var wresp = (HttpWebResponse)wreq.GetResponse())
-            using (var wrespStream = wresp.GetResponseStream())
-            using (var reader = new System.IO.StreamReader(wrespStream, respEncoding))
-                return reader.ReadToEnd();
+            {
+                if (respEncoding== null 
+                    && (wresp.CharacterSet != null) 
+                    && (wresp.CharacterSet.Trim() != ""))
+                {
+                    try { respEncoding = Encoding.GetEncoding(wresp.CharacterSet); }
+                    catch (Exception) { }
+                }
+                using (var wrespStream = wresp.GetResponseStream())
+                using (var reader = new System.IO.StreamReader(wrespStream, respEncoding))
+                    return reader.ReadToEnd();
+            }
         }
 
 
         public static Regex RegexUrl() { return new Regex(@"^(?<proto>\w+)://[^/]+?(?<port>:\d+)?/", RegexOptions.Compiled); }
+
+
+
+
+
+
     }
 }

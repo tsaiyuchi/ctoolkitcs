@@ -93,7 +93,7 @@ namespace CToolkit.v1_0
             }
         }
 
-        public static T LoadXml<T>(String fn) where T : class, new()
+        public static T LoadXmlOrNew<T>(String fn) where T : class, new()
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
             var fi = new FileInfo(fn);
@@ -110,28 +110,26 @@ namespace CToolkit.v1_0
             }
         }
 
+        public static T LoadXml<T>(String fn)
+        {
+            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var fi = new FileInfo(fn);
+            if (!fi.Exists) return default(T);
+
+
+            using (var stm = fi.OpenRead())
+            {
+                return (T)seri.Deserialize(stm);
+            }
+        }
+
+
+
 
 
         public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
 
-        public static void RunWorkerAsyn(Action dlgt)
-        {
-            RunWorkerAsyn(delegate (object sender, DoWorkEventArgs e)
-            {
-                dlgt.DynamicInvoke();
-            });
-
-        }
-
-        public static void RunWorkerAsyn(DoWorkEventHandler work)
-        {
-            var bgworker = new BackgroundWorker();
-            bgworker.WorkerSupportsCancellation = true;
-            bgworker.DoWork += work;
-            bgworker.RunWorkerAsync();
-        }
-
-        public static void SaveToXmlFile(object obj, String fn)
+          public static void SaveToXmlFile(object obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(obj.GetType());
             var fi = new FileInfo(fn);
@@ -147,6 +145,18 @@ namespace CToolkit.v1_0
         public static void SaveToXmlFileT<T>(T obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var fi = new FileInfo(fn);
+
+            if (!fi.Directory.Exists) fi.Directory.Create();
+
+            using (var stm = fi.Open(FileMode.Create))
+            {
+                seri.Serialize(stm, obj);
+            }
+        }
+        public static void SaveToXmlFile(Type type, object obj, String fn)
+        {
+            var seri = new System.Xml.Serialization.XmlSerializer(type);
             var fi = new FileInfo(fn);
 
             if (!fi.Directory.Exists) fi.Directory.Create();

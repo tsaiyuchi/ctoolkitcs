@@ -45,7 +45,7 @@ namespace CToolkit.v1_0.Config
                 if(this.Filter != null)
                     if (!Filter(fi.Name)) continue;//沒通過就不加入
 
-                var config = CtkUtil.LoadXml<T>(fi.FullName);
+                var config = CtkUtil.LoadXmlOrNew<T>(fi.FullName);
                 this[fi.Name] = config;
 
                 //更新存在的

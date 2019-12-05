@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CToolkit.v1_0.Threading;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace CToolkit.v1_0.Logging
 
         public virtual void WriteAsyn(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level = CtkLoggerEnumLevel.Info)
         {
-            CtkUtil.RunWorkerAsyn(delegate (object sender, DoWorkEventArgs e)
+            CtkThreadingUtil.RunWorkerAsyn(delegate (object sender, DoWorkEventArgs e)
             {
                 this.OnLogWrite(ea);
                 OnEveryLogWrite(this, ea);

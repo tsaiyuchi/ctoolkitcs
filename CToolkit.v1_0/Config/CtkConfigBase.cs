@@ -10,7 +10,7 @@ namespace CToolkit.v1_0.Config
 
         public void SaveXml(string fn) { CtkUtil.SaveToXmlFile(this, fn); }
 
-        public static T LoadXml<T>(string fn) where T : class, new() { return CtkUtil.LoadXml<T>(fn); }
+        public static T LoadXml<T>(string fn) where T : class, new() { return CtkUtil.LoadXmlOrNew<T>(fn); }
 
 
     }
