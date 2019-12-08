@@ -10,7 +10,7 @@ cd ..
 
 cd CwTech
 git add --all
-git commit -m 'update'
+git commit -m 'update qsecs'
 git pull
 git push
 cd ..
