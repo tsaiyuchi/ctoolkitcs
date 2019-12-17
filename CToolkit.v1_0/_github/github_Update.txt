@@ -3,14 +3,14 @@
 
 cd ctoolkit.csharp
 git add --all
-git commit -m 'bat commit'
+git commit -m 'update'
 git pull
 git push
 cd ..
 
 cd CwTech
 git add --all
-git commit -m 'update qsecs'
+git commit -m 'device fix'
 git pull
 git push
 cd ..
