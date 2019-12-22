@@ -199,6 +199,7 @@
     <Compile Include="WinApiNative\CtkEnumKeyboardFlag.cs" />
     <Compile Include="WinApiNative\CtkEnumMouseFlag.cs" />
     <Compile Include="WinApiNative\CtkKernel32Lib.cs" />
+    <Compile Include="WinApiNative\CtkWinInetLib.cs" />
     <Compile Include="WinApiNative\CtkUser32Lib.cs" />
     <Compile Include="WinApiNative\CtkMdlHookHardwareStruct.cs" />
     <Compile Include="WinApiNative\CtkMdlHookKeyboardStruct.cs" />
