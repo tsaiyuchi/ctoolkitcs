@@ -10,10 +10,20 @@ cd ..
 
 cd CwTech
 git add --all
-git commit -m 'device fix'
+git commit -m 'refresh secs'
 git pull
 git push
 cd ..
+
+
+cd MvAssistant
+git add --all
+git commit -m 'no update'
+git pull
+git push
+cd ..
+
+
 
 cd ctoolkit.js
 git add --all

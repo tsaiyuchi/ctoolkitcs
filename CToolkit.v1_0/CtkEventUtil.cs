@@ -24,6 +24,12 @@ namespace CToolkit.v1_0
                 evt -= (EventHandler<T>)hdl;
         }
 
+        /// <summary>
+        /// 移除某個event裡的所有delegate
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <param name="target"></param>
+        /// <param name="flags"></param>
         public static void RemoveEventHandlers(Delegate evt, Object target
             , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
         {

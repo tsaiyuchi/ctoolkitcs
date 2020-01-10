@@ -106,7 +106,11 @@ namespace CToolkit.v1_0.Timing
 
         public static DateTime FromDTime(string s) { return FromYyyyMmDdHhIiSs(s); }
         public static bool FromDTimeTry(string s, out DateTime dt) { return FromYyyyMmDdHhIiSsTry(s, out dt); }
-        public static DateTime FromYyyy(string s) { return DateTimeParseExact(s, "yyyy"); }
+        public static DateTime FromYyyy(string s, int month = 1, int day = 1)
+        {
+            var dt = DateTimeParseExact(s, "yyyy");
+            return new DateTime(dt.Year, month, day);
+        }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
@@ -118,12 +122,12 @@ namespace CToolkit.v1_0.Timing
         /// </summary>
         /// <param name="yyyyqq"></param>
         /// <returns>該季第一天</returns>
-        public static DateTime FromYyyyQq(string yyyyqq)
+        public static DateTime FromYyyyQq(string yyyyqq, int day = 1)
         {
             var yyyy = Convert.ToInt32(yyyyqq.Substring(0, 4));
             var qq = Convert.ToInt32(yyyyqq.Substring(4));
 
-            var date = new DateTime(yyyy, 1, 1);
+            var date = new DateTime(yyyy, 1, day);
             date = date.AddMonths((qq - 1) * 3);
 
             var realYyyyQq = ToYyyyQq(date);
