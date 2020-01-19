@@ -45,12 +45,12 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
 
 
 
-        public event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
+        public event EventHandler<CtkWcfDuplexEventArgs> EhReceiveMsg;
 
         void OnReceiveMsg(CtkWcfDuplexEventArgs tcpstate)
         {
-            if (this.evtReceiveMsg == null) return;
-            this.evtReceiveMsg(this, tcpstate);
+            if (this.EhReceiveMsg == null) return;
+            this.EhReceiveMsg(this, tcpstate);
         }
 
 

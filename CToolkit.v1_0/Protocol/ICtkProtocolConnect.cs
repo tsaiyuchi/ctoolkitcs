@@ -20,11 +20,11 @@ namespace CToolkit.v1_0.Protocol
         void WriteMsg(CtkProtocolTrxMessage msg);
 
 
-        event EventHandler<CtkProtocolEventArgs> evtFirstConnect;
-        event EventHandler<CtkProtocolEventArgs> evtFailConnect;
-        event EventHandler<CtkProtocolEventArgs> evtDisconnect;
-        event EventHandler<CtkProtocolEventArgs> evtDataReceive;
-        event EventHandler<CtkProtocolEventArgs> evtErrorReceive;
+        event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
+        event EventHandler<CtkProtocolEventArgs> EhFailConnect;
+        event EventHandler<CtkProtocolEventArgs> EhDisconnect;
+        event EventHandler<CtkProtocolEventArgs> EhDataReceive;
+        event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
 
     }
 }

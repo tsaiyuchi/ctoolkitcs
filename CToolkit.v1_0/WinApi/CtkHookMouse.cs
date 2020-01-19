@@ -60,7 +60,7 @@ namespace CToolkit.v1_0.WinApi
 
         int HookProcCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            EventArgsMouse evtargs = null;
+            EventArgsMouse ehargs = null;
             if (nCode >= 0)
             {
                 try
@@ -73,28 +73,28 @@ namespace CToolkit.v1_0.WinApi
                     if (hookType == CtkEnumConst.WM_MOUSEWHEEL)
                         mouseDelta = (short)((mouseHookStruct.mouseData >> 16) & 0xffff);
 
-                    evtargs = new EventArgsMouse(hookType, mouseHookStruct.dx, mouseHookStruct.dy, mouseDelta);
+                    ehargs = new EventArgsMouse(hookType, mouseHookStruct.dx, mouseHookStruct.dy, mouseDelta);
 
                     if (hookType == CtkEnumConst.WM_MOUSEWHEEL)
-                        this.OnMouseWheel(evtargs);
+                        this.OnMouseWheel(ehargs);
 
                     else if (hookType == CtkEnumConst.WM_LBUTTONUP || hookType == CtkEnumConst.WM_RBUTTONUP || hookType == CtkEnumConst.WM_MBUTTONUP)
                     {
-                        this.OnMouseUp(evtargs);
+                        this.OnMouseUp(ehargs);
                         if (mouseHookStruct.dx == m_LastBTDownX && mouseHookStruct.dy == m_LastBTDownY)
-                            this.OnMouseClick(evtargs);
+                            this.OnMouseClick(ehargs);
                     }
                     else if (hookType == CtkEnumConst.WM_LBUTTONDOWN || hookType == CtkEnumConst.WM_RBUTTONDOWN || hookType == CtkEnumConst.WM_MBUTTONDOWN)
                     {
                         m_LastBTDownX = mouseHookStruct.dx;
                         m_LastBTDownY = mouseHookStruct.dy;
-                        this.OnMouseDown(evtargs);
+                        this.OnMouseDown(ehargs);
                     }
                     else if (m_OldX != mouseHookStruct.dx || m_OldY != mouseHookStruct.dy)
                     {
                         m_OldX = mouseHookStruct.dx;
                         m_OldY = mouseHookStruct.dy;
-                        this.OnMouseMove(evtargs);
+                        this.OnMouseMove(ehargs);
                     }
                 }
                 catch (Exception ex)
@@ -104,7 +104,7 @@ namespace CToolkit.v1_0.WinApi
                 }
             }
 
-            if (Monopolize || (evtargs != null && evtargs.Handled))
+            if (Monopolize || (ehargs != null && ehargs.Handled))
                 return -1;
 
 
@@ -117,20 +117,20 @@ namespace CToolkit.v1_0.WinApi
 
 
         //---HookCallback----------------------------------------------------------------
-        public event EventHandler<CtkEventArgsHookCallback> evtHookCallback;
-        protected void OnHookCallback(CtkEventArgsHookCallback evtargs)
+        public event EventHandler<CtkEventArgsHookCallback> EhHookCallback;
+        protected void OnHookCallback(CtkEventArgsHookCallback ehargs)
         {
-            if (evtHookCallback == null) return;
-            this.evtHookCallback(this, evtargs);
+            if (EhHookCallback == null) return;
+            this.EhHookCallback(this, ehargs);
         }
 
 
 
-        public event EventHandler<CtkEventArgsException> evtHookCallbackException;
+        public event EventHandler<CtkEventArgsException> EhHookCallbackException;
         protected void OnHookCallbackException(CtkEventArgsException ex)
         {
-            if (evtHookCallbackException == null) return;
-            this.evtHookCallbackException(this, ex);
+            if (EhHookCallbackException == null) return;
+            this.EhHookCallbackException(this, ex);
         }
 
 
@@ -192,36 +192,36 @@ namespace CToolkit.v1_0.WinApi
                 set { m_Handled = value; }
             }
         }
-        public event EventHandler<EventArgsMouse> evtMouseWheel;
-        protected void OnMouseWheel(EventArgsMouse evtargs)
+        public event EventHandler<EventArgsMouse> EhMouseWheel;
+        protected void OnMouseWheel(EventArgsMouse ehargs)
         {
-            if (evtMouseWheel == null) return;
-            this.evtMouseWheel(this, evtargs);
+            if (EhMouseWheel == null) return;
+            this.EhMouseWheel(this, ehargs);
         }
 
-        public event EventHandler<EventArgsMouse> evtMouseDown;
-        protected void OnMouseDown(EventArgsMouse evtargs)
+        public event EventHandler<EventArgsMouse> EhMouseDown;
+        protected void OnMouseDown(EventArgsMouse ehargs)
         {
-            if (evtMouseDown == null) return;
-            this.evtMouseDown(this, evtargs);
+            if (EhMouseDown == null) return;
+            this.EhMouseDown(this, ehargs);
         }
-        public event EventHandler<EventArgsMouse> evtMouseUp;
-        protected void OnMouseUp(EventArgsMouse evtargs)
+        public event EventHandler<EventArgsMouse> EhMouseUp;
+        protected void OnMouseUp(EventArgsMouse ehargs)
         {
-            if (evtMouseUp == null) return;
-            this.evtMouseUp(this, evtargs);
+            if (EhMouseUp == null) return;
+            this.EhMouseUp(this, ehargs);
         }
-        public event EventHandler<EventArgsMouse> evtMouseClick;
-        protected void OnMouseClick(EventArgsMouse evtargs)
+        public event EventHandler<EventArgsMouse> EhMouseClick;
+        protected void OnMouseClick(EventArgsMouse ehargs)
         {
-            if (evtMouseClick == null) return;
-            this.evtMouseClick(this, evtargs);
+            if (EhMouseClick == null) return;
+            this.EhMouseClick(this, ehargs);
         }
-        public event EventHandler<EventArgsMouse> evtMouseMove;
-        protected void OnMouseMove(EventArgsMouse evtargs)
+        public event EventHandler<EventArgsMouse> EhMouseMove;
+        protected void OnMouseMove(EventArgsMouse ehargs)
         {
-            if (evtMouseMove == null) return;
-            this.evtMouseMove(this, evtargs);
+            if (EhMouseMove == null) return;
+            this.EhMouseMove(this, ehargs);
         }
 
         #endregion

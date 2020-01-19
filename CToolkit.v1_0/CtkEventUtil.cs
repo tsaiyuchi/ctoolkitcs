@@ -15,30 +15,30 @@ namespace CToolkit.v1_0
         /// 移除某個event裡的所有delegate
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="evt"></param>
-        public static void RemoveEventHandlers<T>(EventHandler<T> evt) where T : EventArgs
+        /// <param name="eh"></param>
+        public static void RemoveEventHandlers<T>(EventHandler<T> eh) where T : EventArgs
         {
             //Delegate.RemoveAll(,)
-            var handlers = evt.GetInvocationList().ToList();
+            var handlers = eh.GetInvocationList().ToList();
             foreach (var hdl in handlers)
-                evt -= (EventHandler<T>)hdl;
+                eh -= (EventHandler<T>)hdl;
         }
 
         /// <summary>
         /// 移除某個event裡的所有delegate
         /// </summary>
-        /// <param name="evt"></param>
+        /// <param name="dlgt"></param>
         /// <param name="target"></param>
         /// <param name="flags"></param>
-        public static void RemoveEventHandlers(Delegate evt, Object target
+        public static void RemoveEventHandlers(Delegate dlgt, Object target
             , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
         {
             //Delegate.RemoveAll(,)
-            var theEvent = evt.Target.GetType().GetEvent(evt.Method.Name, flags);
-            var handlers = evt.GetInvocationList().ToList();
+            var theEvent = dlgt.Target.GetType().GetEvent(dlgt.Method.Name, flags);
+            var handlers = dlgt.GetInvocationList().ToList();
             foreach (var hdl in handlers)
                 if (hdl.Target == target)
-                    RemoveSubscriberEvenIfItsPrivate(theEvent, evt.Target, hdl, flags);
+                    RemoveSubscriberEvenIfItsPrivate(theEvent, dlgt.Target, hdl, flags);
         }
 
 

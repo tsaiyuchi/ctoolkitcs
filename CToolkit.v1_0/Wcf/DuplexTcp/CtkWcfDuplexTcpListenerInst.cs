@@ -24,7 +24,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
         //無法同時繼承並宣告ServiceContract
 
 
-        public event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
+        public event EventHandler<CtkWcfDuplexEventArgs> EhReceiveMsg;
 
         public void CtkSend(CtkWcfMessage msg)
         {
@@ -45,8 +45,8 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
 
         void OnReceiveMsg(CtkWcfDuplexEventArgs ea)
         {
-            if (this.evtReceiveMsg == null) return;
-            this.evtReceiveMsg(this, ea);
+            if (this.EhReceiveMsg == null) return;
+            this.EhReceiveMsg(this, ea);
         }
 
 

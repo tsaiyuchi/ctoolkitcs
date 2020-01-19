@@ -106,6 +106,11 @@ namespace CToolkit.v1_0.Timing
 
         public static DateTime FromDTime(string s) { return FromYyyyMmDdHhIiSs(s); }
         public static bool FromDTimeTry(string s, out DateTime dt) { return FromYyyyMmDdHhIiSsTry(s, out dt); }
+        public static DateTime? FromDTimeOrDefault(string s)
+        {
+            try { return FromYyyyMmDdHhIiSs(s); }
+            catch (Exception) { return null; }
+        }
         public static DateTime FromYyyy(string s, int month = 1, int day = 1)
         {
             var dt = DateTimeParseExact(s, "yyyy");

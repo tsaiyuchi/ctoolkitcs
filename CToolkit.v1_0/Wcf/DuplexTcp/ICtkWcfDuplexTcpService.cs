@@ -14,7 +14,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
 
 
         //[OperationContract()]
-        event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
+        event EventHandler<CtkWcfDuplexEventArgs> EhReceiveMsg;
 
         [OperationContract(IsOneWay = true)]
         void CtkSend(CtkWcfMessage msg);

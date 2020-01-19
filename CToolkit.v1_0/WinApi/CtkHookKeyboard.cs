@@ -83,21 +83,21 @@ namespace CToolkit.v1_0.WinApi
 
 
         //---HookCallback----------------------------------------------------------------
-        public event EventHandler<CtkEventArgsHookCallback> evtHookCallback;
-        protected void OnHookCallback(CtkEventArgsHookCallback evtargs)
+        public event EventHandler<CtkEventArgsHookCallback> EhHookCallback;
+        protected void OnHookCallback(CtkEventArgsHookCallback ehargs)
         {
-            if (evtHookCallback == null) return;
-            this.evtHookCallback(this, evtargs);
+            if (EhHookCallback == null) return;
+            this.EhHookCallback(this, ehargs);
         }
 
 
 
 
-        public event EventHandler<CtkEventArgsException> evtHookCallbackException;
+        public event EventHandler<CtkEventArgsException> EhHookCallbackException;
         protected void OnHookCallbackException(CtkEventArgsException ex)
         {
-            if (evtHookCallbackException == null) return;
-            this.evtHookCallbackException(this, ex);
+            if (EhHookCallbackException == null) return;
+            this.EhHookCallbackException(this, ex);
         }
 
 

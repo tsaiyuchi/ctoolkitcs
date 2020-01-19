@@ -48,11 +48,11 @@ namespace CToolkit.v1_0.Logging
 
 
         #region Event
-        public event EventHandler<CtkLoggerEventArgs> evtLogWrite;
+        public event EventHandler<CtkLoggerEventArgs> EhLogWrite;
         void OnLogWrite(CtkLoggerEventArgs ea)
         {
-            if (this.evtLogWrite == null) return;
-            this.evtLogWrite(this, ea);
+            if (this.EhLogWrite == null) return;
+            this.EhLogWrite(this, ea);
         }
         #endregion
 
@@ -60,11 +60,11 @@ namespace CToolkit.v1_0.Logging
         #region Static
 
 
-        public static event EventHandler<CtkLoggerEventArgs> evtEveryLogWrite;
+        public static event EventHandler<CtkLoggerEventArgs> EhEveryLogWrite;
         static void OnEveryLogWrite(object sender, CtkLoggerEventArgs ea)
         {
-            if (evtEveryLogWrite == null) return;
-            evtEveryLogWrite(sender, ea);
+            if (EhEveryLogWrite == null) return;
+            EhEveryLogWrite(sender, ea);
         }
 
         #endregion

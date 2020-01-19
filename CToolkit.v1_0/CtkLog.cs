@@ -144,7 +144,7 @@ namespace CToolkit.v1_0
 
 
 
-        public static void RegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> evt) { CtkLogger.evtEveryLogWrite += evt; }
+        public static void RegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite += eh; }
 
 
 

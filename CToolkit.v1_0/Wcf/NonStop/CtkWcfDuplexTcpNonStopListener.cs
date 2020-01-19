@@ -29,15 +29,15 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
         #region ICtkProtocolNonStopConnect
 
 
-        public event EventHandler<CtkProtocolEventArgs> evtDataReceive;
+        public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
 
-        public event EventHandler<CtkProtocolEventArgs> evtDisconnect;
+        public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
 
-        public event EventHandler<CtkProtocolEventArgs> evtErrorReceive;
+        public event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
 
-        public event EventHandler<CtkProtocolEventArgs> evtFailConnect;
+        public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
 
-        public event EventHandler<CtkProtocolEventArgs> evtFirstConnect;
+        public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         public object ActiveWorkClient { get { return this.activeWorkClient; } set { this.activeWorkClient = value as ICTkWcfDuplexTcpCallback; } }
 
@@ -78,7 +78,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
                 };
 
 
-                this.SvrInst.evtReceiveMsg += (ss, ee) =>
+                this.SvrInst.EhReceiveMsg += (ss, ee) =>
                 {
                     var ea = ee;
                     ea.WcfChannel = this.GetCallback();
@@ -144,28 +144,28 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
 
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
-            if (this.evtDataReceive == null) return;
-            this.evtDataReceive(this, ea);
+            if (this.EhDataReceive == null) return;
+            this.EhDataReceive(this, ea);
         }
         void OnDisconnect(CtkProtocolEventArgs tcpstate)
         {
-            if (this.evtDisconnect == null) return;
-            this.evtDisconnect(this, tcpstate);
+            if (this.EhDisconnect == null) return;
+            this.EhDisconnect(this, tcpstate);
         }
         void OnErrorReceive(CtkProtocolEventArgs ea)
         {
-            if (this.evtErrorReceive == null) return;
-            this.evtErrorReceive(this, ea);
+            if (this.EhErrorReceive == null) return;
+            this.EhErrorReceive(this, ea);
         }
         void OnFailConnect(CtkProtocolEventArgs tcpstate)
         {
-            if (this.evtFailConnect == null) return;
-            this.evtFailConnect(this, tcpstate);
+            if (this.EhFailConnect == null) return;
+            this.EhFailConnect(this, tcpstate);
         }
         void OnFirstConnect(CtkProtocolEventArgs tcpstate)
         {
-            if (this.evtFirstConnect == null) return;
-            this.evtFirstConnect(this, tcpstate);
+            if (this.EhFirstConnect == null) return;
+            this.EhFirstConnect(this, tcpstate);
         }
 
 

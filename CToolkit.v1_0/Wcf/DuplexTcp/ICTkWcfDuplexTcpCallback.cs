@@ -9,7 +9,7 @@ namespace CToolkit.v1_0.Wcf.DuplexTcp
     public interface ICTkWcfDuplexTcpCallback 
     {
         //[OperationContract()]
-        event EventHandler<CtkWcfDuplexEventArgs> evtReceiveMsg;
+        event EventHandler<CtkWcfDuplexEventArgs> EhReceiveMsg;
 
         [OperationContract(IsOneWay = true)]
         void CtkSend(CtkWcfMessage msg);

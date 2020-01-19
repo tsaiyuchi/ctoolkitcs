@@ -38,12 +38,12 @@ namespace CToolkit.v1_0.Logging
 
 
         #region Event
-        public event EventHandler<CtkLoggerMapperEventArgs> evtCreated;
+        public event EventHandler<CtkLoggerMapperEventArgs> EhCreated;
         void OnCreated(CtkLoggerMapperEventArgs ea)
         {
-            if (this.evtCreated == null)
+            if (this.EhCreated == null)
                 return;
-            this.evtCreated(this, ea);
+            this.EhCreated(this, ea);
         }
         #endregion
 
