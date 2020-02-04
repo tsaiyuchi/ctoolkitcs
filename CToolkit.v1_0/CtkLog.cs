@@ -60,9 +60,13 @@ namespace CToolkit.v1_0
         /// <param name="msg"></param>
         /// <param name="args"></param>
         public static void InfoNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
+        public static void InfoNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Info); }
         public static void WarnNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
+        public static void WarnNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Warn); }
         public static void ErrorNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
+        public static void ErrorNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Error); }
         public static void FatalNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+        public static void FatalNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Fatal); }
 
         #endregion
 

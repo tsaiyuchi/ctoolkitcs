@@ -48,6 +48,10 @@ namespace CToolkit.v1_0.Logging
 
 
         #region Event
+
+        /// <summary>
+        /// Event Naming: Prepare, Eh, After
+        /// </summary>
         public event EventHandler<CtkLoggerEventArgs> EhLogWrite;
         void OnLogWrite(CtkLoggerEventArgs ea)
         {

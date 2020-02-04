@@ -89,9 +89,7 @@ namespace CToolkit.v1_0.Timing
         #endregion
 
 
-
-
-        #region DateTime / String
+        #region Normal DateTime / String
 
         public static DateTime DateTimeParseExact(string s, string format = "yyyyMMdd") { return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture); }
         public static DateTime DateTimeParseExact(string s, DateTime defaultDt, string format = "yyyyMMdd")
@@ -118,6 +116,7 @@ namespace CToolkit.v1_0.Timing
         }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
+        public static bool FromYyyyMmDdTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMdd"); }
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
         public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
         public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
@@ -149,6 +148,7 @@ namespace CToolkit.v1_0.Timing
         /// <returns>¸Ó©Pªº¬Y¤Ñ</returns>
         public static DateTime FromYyyyWw(string yyyyww)
         {
+            
             var yyyy = Convert.ToInt32(yyyyww.Substring(0, 4));
             var ww = Convert.ToInt32(yyyyww.Substring(4));
 
@@ -184,7 +184,6 @@ namespace CToolkit.v1_0.Timing
 
 
         #endregion
-
 
 
         #region Sign DateTime / String
@@ -302,6 +301,7 @@ namespace CToolkit.v1_0.Timing
 
         #endregion
 
+
         #region ROC DateTime
 
         public static DateTime ToDateTimeFromRoc(DateTime dt) { return dt.AddYears(RocYearToYear); }
@@ -384,6 +384,7 @@ namespace CToolkit.v1_0.Timing
         }
         #endregion
 
+
         #region Compare
 
         public static int CompareDTime(DateTime dt1, DateTime dt2) { return string.Compare(ToDTime(dt1), ToDTime(dt2)); }
@@ -400,8 +401,25 @@ namespace CToolkit.v1_0.Timing
         public static int CompareYyyyMmDd(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDd(dt2)); }
 
         public static int CompareYyyyQq(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyQq(dt1), ToYyyyQq(dt2)); }
+        public static int CompareYyyyQq(DateTime dt1, string dt2) { return string.Compare(ToYyyyQq(dt1), dt2); }
+        public static int CompareYyyyQq(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyQq(dt2)); }
 
         public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
+        public static int CompareYyyyWw(DateTime dt1, string dt2) { return string.Compare(ToYyyyWw(dt1), dt2); }
+        public static int CompareYyyyWw(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyWw(dt2)); }
+
+        public static int CompareYyyyMmDdHh(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHh(dt1), ToYyyyMmDdHh(dt2)); }
+        public static int CompareYyyyMmDdHh(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHh(dt1), dt2); }
+        public static int CompareYyyyMmDdHh(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHh(dt2)); }
+
+        public static int CompareYyyyMmDdHhIi(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHhIi(dt1), ToYyyyMmDdHhIi(dt2)); }
+        public static int CompareYyyyMmDdHhIi(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHhIi(dt1), dt2); }
+        public static int CompareYyyyMmDdHhIi(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHhIi(dt2)); }
+
+        public static int CompareYyyyMmDdHhIiSs(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHhIiSs(dt1), ToYyyyMmDdHhIiSs(dt2)); }
+        public static int CompareYyyyMmDdHhIiSs(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHhIiSs(dt1), dt2); }
+        public static int CompareYyyyMmDdHhIiSs(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHhIiSs(dt2)); }
+
         #endregion
 
 
