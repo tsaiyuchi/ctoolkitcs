@@ -75,6 +75,7 @@
     <Compile Include="Config\CtkConfigCollector.cs" />
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkException.cs" />
+    <Compile Include="CtkGenericEventArgs.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />
     <Compile Include="IO\CtkStreamSegment.cs" />
     <Compile Include="IO\CtkStreamSegmentBuffer.cs" />

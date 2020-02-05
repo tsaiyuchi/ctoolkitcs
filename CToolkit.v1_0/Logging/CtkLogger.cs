@@ -1,5 +1,6 @@
 ﻿using CToolkit.v1_0.Threading;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +11,10 @@ namespace CToolkit.v1_0.Logging
 {
     public class CtkLogger
     {
+
+        protected ConcurrentQueue<CtkLoggerEventArgs> queue = new ConcurrentQueue<CtkLoggerEventArgs>();
+        CtkCancelTask task;
+
         /// <summary>
         /// 預設寫Log是用非同步
         /// </summary>
@@ -30,19 +35,36 @@ namespace CToolkit.v1_0.Logging
 
 
 
-
-        public virtual void WriteSyn(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level = CtkLoggerEnumLevel.Info)
+        public virtual void WriteSyn(CtkLoggerEventArgs ea)
         {
             this.OnLogWrite(ea);
             OnEveryLogWrite(this, ea);
         }
 
-        public virtual void WriteAsyn(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level = CtkLoggerEnumLevel.Info)
+        public virtual void WriteAsyn(CtkLoggerEventArgs ea)
         {
-            CtkThreadingUtil.RunWorkerAsyn(delegate (object sender, DoWorkEventArgs e)
+            this.queue.Enqueue(ea);
+
+            if (task != null)
             {
-                this.OnLogWrite(ea);
-                OnEveryLogWrite(this, ea);
+                //若還沒結束執行, 先return
+                if (!task.IsEnd()) return;
+                //若之前有, 把它清乾淨
+                using (var obj = this.task)
+                    if (!obj.IsEnd())
+                        obj.Cancel();
+            }
+
+
+            this.task = CtkCancelTask.RunLoopUntilCancel(() =>
+            {
+                CtkLoggerEventArgs myea;
+                if (!this.queue.TryDequeue(out myea)) return true;//取不出來就下次再取
+
+                this.WriteSyn(ea);
+
+                //若Count等於零, 這個task會結束, IsEnd() = true
+                return this.queue.Count > 0;
             });
         }
 
