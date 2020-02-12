@@ -19,7 +19,7 @@ namespace CToolkit.v1_0.Threading
             return task;
         }
 
-        public bool IsEnd() { return this.Task == null ? true : this.Task.IsCanceled || this.Task.IsFaulted || this.Task.IsCanceled; }
+        public bool IsEnd() { return this.Task == null ? true : this.Task.IsCompleted || this.Task.IsFaulted || this.Task.IsCanceled; }
 
 
         public void Start()
