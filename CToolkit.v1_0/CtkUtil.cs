@@ -129,7 +129,7 @@ namespace CToolkit.v1_0
 
         public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
 
-          public static void SaveToXmlFile(object obj, String fn)
+        public static void SaveToXmlFile(object obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(obj.GetType());
             var fi = new FileInfo(fn);
@@ -180,6 +180,36 @@ namespace CToolkit.v1_0
                 return ex;
             }
         }
+
+
+
+
+        public static int RandomInt()
+        {
+            var rnd = new Random((int)DateTime.Now.Ticks);
+            var cnt = rnd.Next(32);
+            for (var idx = 0; idx < cnt; idx++) rnd.Next();
+
+            return rnd.Next();
+        }
+        public static int RandomInt(int max)
+        {
+            var rnd = new Random((int)DateTime.Now.Ticks);
+            var cnt = rnd.Next(32);
+            for (var idx = 0; idx < cnt; idx++) rnd.Next();
+
+            return rnd.Next(max);
+        }
+        public static int RandomInt(int min, int max)
+        {
+            var rnd = new Random((int)DateTime.Now.Ticks);
+            var cnt = rnd.Next(32);
+            for (var idx = 0; idx < cnt; idx++) rnd.Next();
+
+            return rnd.Next(min, max);
+        }
+
+
     }
 
 

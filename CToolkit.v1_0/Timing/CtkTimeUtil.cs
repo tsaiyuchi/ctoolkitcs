@@ -103,12 +103,13 @@ namespace CToolkit.v1_0.Timing
 
 
         public static DateTime FromDTime(string s) { return FromYyyyMmDdHhIiSs(s); }
-        public static bool FromDTimeTry(string s, out DateTime dt) { return FromYyyyMmDdHhIiSsTry(s, out dt); }
         public static DateTime? FromDTimeOrDefault(string s)
         {
             try { return FromYyyyMmDdHhIiSs(s); }
             catch (Exception) { return null; }
         }
+
+        public static bool FromDTimeTry(string s, out DateTime dt) { return FromYyyyMmDdHhIiSsTry(s, out dt); }
         public static DateTime FromYyyy(string s, int month = 1, int day = 1)
         {
             var dt = DateTimeParseExact(s, "yyyy");
@@ -116,11 +117,15 @@ namespace CToolkit.v1_0.Timing
         }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
-        public static bool FromYyyyMmDdTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMdd"); }
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
+
         public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
+
         public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
+
         public static bool FromYyyyMmDdHhIiSsTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMddHHmmss"); }
+
+        public static bool FromYyyyMmDdTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMdd"); }
         /// <summary>
         /// 
         /// </summary>
@@ -148,7 +153,7 @@ namespace CToolkit.v1_0.Timing
         /// <returns>該周的某天</returns>
         public static DateTime FromYyyyWw(string yyyyww)
         {
-            
+
             var yyyy = Convert.ToInt32(yyyyww.Substring(0, 4));
             var ww = Convert.ToInt32(yyyyww.Substring(4));
 
@@ -304,22 +309,32 @@ namespace CToolkit.v1_0.Timing
 
         #region ROC DateTime
 
-        public static DateTime ToDateTimeFromRoc(DateTime dt) { return dt.AddYears(RocYearToYear); }
-        public static DateTime ToDateTimeFromRocYyyMmDd(string dt, char spliter)
+        public static DateTime FromRoc(string s, string format = "yyy.MM.dd")
+        {
+            var roc = DateTime.ParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None);
+            return CtkTimeUtil.FromRoc(roc);
+        }
+        public static DateTime FromRoc(DateTime dt) { return dt.AddYears(RocYearToYear); }
+        public static DateTime FromRocSpliter(string dt, char spliter)
         {
             var nums = dt.Split(spliter);
-            var yyy = Convert.ToInt32(nums[0]);
+            var yyy = ToYearFromRoc(Convert.ToInt32(nums[0]));//會遇到潤2月, 因此先轉
             var mm = Convert.ToInt32(nums[1]);
             var dd = Convert.ToInt32(nums[2]);
-            var datetime = new DateTime(yyy, mm, dd);
-            return ToDateTimeFromRoc(datetime);
+            return new DateTime(yyy, mm, dd);
         }
-
-        public static DateTime ToRocDateTime(DateTime dt) { return dt.AddYears(-RocYearToYear); }
-
+        public static bool FromRocTry(string s, out DateTime result, string format = "yyy.MM.dd")
+        {
+            if (!DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                return false;
+            result = CtkTimeUtil.FromRoc(result);
+            return true;
+        }
+        public static DateTime ToRoc(DateTime dt) { return dt.AddYears(-RocYearToYear); }
         public static int ToRocYear(int year) { return year - RocYearToYear; }
-
         public static int ToYearFromRoc(int year) { return year + RocYearToYear; }
+
+
         #endregion
 
 
@@ -387,18 +402,37 @@ namespace CToolkit.v1_0.Timing
 
         #region Compare
 
+        public static int CompareDTime(string dt1, string dt2) { return string.Compare(dt1, dt2); }
         public static int CompareDTime(DateTime dt1, DateTime dt2) { return string.Compare(ToDTime(dt1), ToDTime(dt2)); }
         public static int CompareDTime(DateTime dt1, string dt2) { return string.Compare(ToDTime(dt1), dt2); }
         public static int CompareDTime(string dt1, DateTime dt2) { return string.Compare(dt1, ToDTime(dt2)); }
 
-        public static int CompareYyyyMm(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
         public static int CompareYyyy(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyy(dt1), ToYyyy(dt2)); }
         public static int CompareYyyy(DateTime dt1, string dt2) { return string.Compare(ToYyyy(dt1), dt2); }
         public static int CompareYyyy(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyy(dt2)); }
 
+        public static int CompareYyyyMm(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
         public static int CompareYyyyMmDd(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDd(dt1), ToYyyyMmDd(dt2)); }
         public static int CompareYyyyMmDd(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDd(dt1), dt2); }
         public static int CompareYyyyMmDd(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDd(dt2)); }
+
+        public static int CompareYyyyMmDdHh(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHh(dt1), ToYyyyMmDdHh(dt2)); }
+
+        public static int CompareYyyyMmDdHh(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHh(dt1), dt2); }
+
+        public static int CompareYyyyMmDdHh(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHh(dt2)); }
+
+        public static int CompareYyyyMmDdHhIi(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHhIi(dt1), ToYyyyMmDdHhIi(dt2)); }
+
+        public static int CompareYyyyMmDdHhIi(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHhIi(dt1), dt2); }
+
+        public static int CompareYyyyMmDdHhIi(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHhIi(dt2)); }
+
+        public static int CompareYyyyMmDdHhIiSs(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHhIiSs(dt1), ToYyyyMmDdHhIiSs(dt2)); }
+
+        public static int CompareYyyyMmDdHhIiSs(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHhIiSs(dt1), dt2); }
+
+        public static int CompareYyyyMmDdHhIiSs(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHhIiSs(dt2)); }
 
         public static int CompareYyyyQq(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyQq(dt1), ToYyyyQq(dt2)); }
         public static int CompareYyyyQq(DateTime dt1, string dt2) { return string.Compare(ToYyyyQq(dt1), dt2); }
@@ -407,19 +441,6 @@ namespace CToolkit.v1_0.Timing
         public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         public static int CompareYyyyWw(DateTime dt1, string dt2) { return string.Compare(ToYyyyWw(dt1), dt2); }
         public static int CompareYyyyWw(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyWw(dt2)); }
-
-        public static int CompareYyyyMmDdHh(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHh(dt1), ToYyyyMmDdHh(dt2)); }
-        public static int CompareYyyyMmDdHh(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHh(dt1), dt2); }
-        public static int CompareYyyyMmDdHh(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHh(dt2)); }
-
-        public static int CompareYyyyMmDdHhIi(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHhIi(dt1), ToYyyyMmDdHhIi(dt2)); }
-        public static int CompareYyyyMmDdHhIi(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHhIi(dt1), dt2); }
-        public static int CompareYyyyMmDdHhIi(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHhIi(dt2)); }
-
-        public static int CompareYyyyMmDdHhIiSs(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHhIiSs(dt1), ToYyyyMmDdHhIiSs(dt2)); }
-        public static int CompareYyyyMmDdHhIiSs(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDdHhIiSs(dt1), dt2); }
-        public static int CompareYyyyMmDdHhIiSs(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDdHhIiSs(dt2)); }
-
         #endregion
 
 
