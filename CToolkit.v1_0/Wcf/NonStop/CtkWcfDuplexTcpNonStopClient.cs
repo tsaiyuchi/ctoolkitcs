@@ -110,7 +110,7 @@ namespace CToolkit.v1_0.Wcf.NonStop
         {
             AbortNonStopConnect();
 
-            this.NonStopTask = CtkCancelTask.Run((ct) =>
+            this.NonStopTask = CtkCancelTask.RunOnce((ct) =>
             {
                 while (!this.disposed && !ct.IsCancellationRequested)
                 {

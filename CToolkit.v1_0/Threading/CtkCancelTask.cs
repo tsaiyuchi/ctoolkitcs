@@ -32,7 +32,7 @@ namespace CToolkit.v1_0.Threading
         /// </summary>
         /// <param name="funcIsContinue">if return ture then continue</param>
         /// <returns></returns>
-        public static CtkCancelTask RunLoopUntilCancel(Func<bool> funcIsContinue)
+        public static CtkCancelTask RunLoop(Func<bool> funcIsContinue)
         {
             var task = new CtkCancelTask();
             var ct = task.CancelTokenSource.Token;
@@ -50,7 +50,7 @@ namespace CToolkit.v1_0.Threading
 
 
 
-        public static CtkCancelTask Run(Action<CancellationToken> act)
+        public static CtkCancelTask RunOnce(Action<CancellationToken> act)
         {
             var task = new CtkCancelTask();
             var ct = task.CancelTokenSource.Token;

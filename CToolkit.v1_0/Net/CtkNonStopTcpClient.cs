@@ -19,7 +19,7 @@ namespace CToolkit.v1_0.Net
         public IPEndPoint remoteEP;
         protected int m_IntervalTimeOfConnectCheck = 5000;
         TcpClient activeWorkClient;
-        ManualResetEvent connectMre = new ManualResetEvent(true);
+        ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         Thread threadNonStopConnect;// = new BackgroundWorker();
         public CtkNonStopTcpClient() : base() { }
         public CtkNonStopTcpClient(IPEndPoint remoteEP)
@@ -45,41 +45,48 @@ namespace CToolkit.v1_0.Net
             if (!this.activeWorkClient.Connected) return;
 
             var stm = this.activeWorkClient.GetStream();
-            stm.Write(buff, offset, length);
+            stm.BeginWrite(buff, offset, length, new AsyncCallback((ar) =>
+            {
+                //CtkLog.WriteNs(this, "" + ar.IsCompleted);
+            }), this);
+
 
         }
 
         void ClientEndConnectCallback(IAsyncResult ar)
         {
-            var stateea = new CtkNonStopTcpStateEventArgs();
-            var buffer = stateea.TrxMessageBuffer;
+            var myea = new CtkNonStopTcpStateEventArgs();
+            var trxBuffer = myea.TrxMessageBuffer;
             try
             {
                 Monitor.Enter(this);//一定要等到進去
                 var state = (CtkNonStopTcpClient)ar.AsyncState;
-                stateea.Sender = state;
                 var client = state.activeWorkClient;
-                stateea.workClient = client;
                 client.EndConnect(ar);
 
-
+                myea.Sender = state;
+                myea.workClient = client;
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                    throw new CtkException("連線失敗");
+                {
+                    myea.Message = "Connection Fail";
+                    this.OnFailConnect(myea);
+                    return;
+                }
 
                 //呼叫他人不應影響自己運作, catch起來
-                try { this.OnFirstConnect(stateea); }
+                try { this.OnFirstConnect(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
                 var stream = client.GetStream();
-                stream.BeginRead(buffer.Buffer, 0, buffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
+                stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
 
 
             }
             catch (SocketException ex)
             {
-                stateea.Message = ex.Message;
-                stateea.Exception = ex;
-                this.OnFailConnect(stateea);
+                myea.Message = ex.Message;
+                myea.Exception = ex;
+                this.OnFailConnect(myea);
             }
             catch (Exception ex)
             {
@@ -87,7 +94,7 @@ namespace CToolkit.v1_0.Net
             }
             finally
             {
-                this.connectMre.Set();
+                this.mreIsConnecting.Set();
                 Monitor.Exit(this);
             }
         }
@@ -97,19 +104,23 @@ namespace CToolkit.v1_0.Net
         {
             try
             {
-                var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-                var ctkBuffer = stateea.TrxMessageBuffer;
-                var client = stateea.workClient;
-                if (client == null || client.Client == null || !client.Connected) return;
-                NetworkStream stream = client.GetStream();
+                //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+                var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+                var client = myea.workClient;
+                if(! ar.IsCompleted || client == null || client.Client == null || !client.Connected)
+                {
+                    myea.Message = "Read Fail";
+                    return;
+                }
 
-                // Call EndRead.
+                var ctkBuffer = myea.TrxMessageBuffer;
+                NetworkStream stream = client.GetStream();
                 int bytesRead = stream.EndRead(ar);
                 ctkBuffer.Length = bytesRead;
                 //呼叫他人不應影響自己運作, catch起來
-                try { this.OnDataReceive(stateea); }
+                try { this.OnDataReceive(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
-                stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
+                stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
 
             }
             catch (IOException ex) { CtkLog.Write(ex); }
@@ -136,7 +147,7 @@ namespace CToolkit.v1_0.Net
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsLocalReadyConnect { get { return this.IsRemoteConnected; } }//Local連線成功=遠端連線成功
         public bool IsNonStopRunning { get { return this.threadNonStopConnect != null && this.threadNonStopConnect.IsAlive; } }
-        public bool IsOpenRequesting { get { return !this.connectMre.WaitOne(10); } }
+        public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return this.activeWorkClient == null ? false : this.activeWorkClient.Connected; } }
         public void AbortNonStopConnect()
         {
@@ -153,8 +164,8 @@ namespace CToolkit.v1_0.Net
 
                 //在Lock後才判斷, 避免判斷無連線後, 另一邊卻連線好了
                 if (this.activeWorkClient != null && this.activeWorkClient.Connected) return;//連線中直接離開
-                if (!connectMre.WaitOne(10)) return;//連線中就離開
-                this.connectMre.Reset();//先卡住, 不讓後面的再次進行連線
+                if (!mreIsConnecting.WaitOne(10)) return;//連線中就離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
                 if (this.activeWorkClient != null)
                 {
@@ -234,7 +245,7 @@ namespace CToolkit.v1_0.Net
                 this.WriteBytes(msgBuffer.Buffer, msgBuffer.Offset, msgBuffer.Length);
                 return;
             }
-            
+
             var msgBytes = msg.As<byte[]>();
             if (msgBytes != null)
             {

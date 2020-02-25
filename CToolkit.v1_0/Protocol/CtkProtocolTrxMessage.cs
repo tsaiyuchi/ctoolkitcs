@@ -20,5 +20,23 @@ namespace CToolkit.v1_0.Protocol
 
         public bool Is<T>() { return this.TrxMessage is T; }
         public T As<T>() where T : class { return this.TrxMessage as T; }
+
+        public string GetString(Encoding encoding = null)
+        {
+            if (encoding == null) encoding = Encoding.UTF8;
+
+            var bufferMsg = this.As<CtkProtocolBufferMessage>();
+            if (bufferMsg != null)
+                return bufferMsg.GetString(encoding);
+
+            if (this.TrxMessage is String)
+                return this.TrxMessage as string;
+
+            if (this.TrxMessage is byte[])
+                return encoding.GetString(this.TrxMessage as byte[]);
+
+            return null;
+        }
+
     }
 }

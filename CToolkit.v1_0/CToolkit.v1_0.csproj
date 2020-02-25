@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compress\CtkCompressUtil.cs" />
     <Compile Include="Cryptography\CtkCryptMd5.cs" />
     <Compile Include="CtkAspectUtil.cs" />
     <Compile Include="Config\CtkConfigBase.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Config\CtkConfigCollector.cs" />
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkException.cs" />
+    <Compile Include="CtkFileFormat.cs" />
     <Compile Include="CtkGenericEventArgs.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />
     <Compile Include="IO\CtkStreamSegment.cs" />
@@ -163,10 +165,8 @@
     <Compile Include="Timing\CtkTimeTick.cs" />
     <Compile Include="Timing\CtkTimeMilliSecond.cs" />
     <Compile Include="Timing\CtkTimeSecond.cs" />
-    <Compile Include="TriggerDiagram\ICtkTdWire.cs" />
     <Compile Include="TriggerDiagram\ICtkTdBlock.cs" />
     <Compile Include="TriggerDiagram\ICtkTdDiagram.cs" />
-    <Compile Include="TriggerDiagram\ICtkTdContact.cs" />
     <Compile Include="TriggerDiagram\ICtkTdNode.cs" />
     <Compile Include="Wcf\NetTcp\CtkWcfNetTcpClient.cs" />
     <Compile Include="Wcf\NetTcp\CtkWcfNetTcpListener.cs" />

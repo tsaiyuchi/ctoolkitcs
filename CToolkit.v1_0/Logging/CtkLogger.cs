@@ -34,9 +34,10 @@ namespace CToolkit.v1_0.Logging
         }
         protected virtual void WriteAsyn(CtkLoggerEventArgs ea)
         {
-            lock (this)
+            this.queue.Enqueue(ea);
+            try
             {
-                this.queue.Enqueue(ea);
+                if (!Monitor.TryEnter(this, 1000)) return;
                 if (this.task != null)
                 {
                     //若還沒結束執行, 先return
@@ -48,7 +49,7 @@ namespace CToolkit.v1_0.Logging
                 }
 
 
-                this.task = CtkCancelTask.RunLoopUntilCancel(() =>
+                this.task = CtkCancelTask.RunLoop(() =>
                 {
                     lock (this)
                     {
@@ -61,15 +62,16 @@ namespace CToolkit.v1_0.Logging
                     }
                 });
             }
+            finally { Monitor.Exit(this); }
         }
         protected virtual void WriteSyn(CtkLoggerEventArgs ea)
         {
             this.OnLogWrite(ea);
             OnEveryLogWrite(this, ea);
         }
-        
-        
-        
+
+
+
         #region Event
 
         /// <summary>

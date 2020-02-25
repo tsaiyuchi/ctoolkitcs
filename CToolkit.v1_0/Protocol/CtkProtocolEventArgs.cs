@@ -11,10 +11,7 @@ namespace CToolkit.v1_0.Protocol
         public Exception Exception;
         public string Message;
         public object Sender;
-
         public CtkProtocolTrxMessage TrxMessage;
-
-
 
     }
 }

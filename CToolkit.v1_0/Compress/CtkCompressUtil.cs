@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkit.v1_0.TriggerDiagram
+namespace CToolkit.v1_0.Compress
 {
-    public interface ICtkTdWire
+    public class CtkCompressUtil
     {
 
 
+     
     }
 }
