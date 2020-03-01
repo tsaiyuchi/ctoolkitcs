@@ -1,0 +1,18 @@
+
+cd ctoolkit.csharp
+git add --all
+git commit -m 'merge'
+git push
+git checkout develop
+cd ..
+
+
+
+cd CwTech
+git add --all
+git commit -m 'merge'
+git push
+git checkout develop
+cd ..
+
+

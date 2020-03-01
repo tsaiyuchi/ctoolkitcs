@@ -1,0 +1,113 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.0/",
+    "signature": "b2bdf323d9b8ec3ce81353ed18cd967b28aac6cc"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
+      "CToolkit.v1_1.Std/1.1.0.1": {
+        "dependencies": {
+          "CUDAfy.NET": "1.29.5576.13786",
+          "MathNet.Filtering": "0.6.0",
+          "NETStandard.Library": "2.0.3",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "CToolkit.v1_1.Std.dll": {}
+        }
+      },
+      "CUDAfy.NET/1.29.5576.13786": {
+        "runtime": {
+          "lib/net40/Cudafy.NET.dll": {
+            "assemblyVersion": "1.29.5576.13786",
+            "fileVersion": "1.29.5576.13786"
+          }
+        }
+      },
+      "MathNet.Filtering/0.6.0": {
+        "dependencies": {
+          "MathNet.Numerics": "4.6.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Filtering.dll": {
+            "assemblyVersion": "0.6.0.0",
+            "fileVersion": "0.6.0.0"
+          }
+        }
+      },
+      "MathNet.Numerics/4.6.0": {
+        "runtime": {
+          "lib/netstandard2.0/MathNet.Numerics.dll": {
+            "assemblyVersion": "4.6.0.0",
+            "fileVersion": "4.6.0.0"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CToolkit.v1_1.Std/1.1.0.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CUDAfy.NET/1.29.5576.13786": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jrEKZd3qfSqGHWBcLh/+erXKUTrtJwHcRPHGKILFCNIbmSSUypwrGyG88fr1pSqfbB7pUlzqkOBcvK26KWCz2w==",
+      "path": "cudafy.net/1.29.5576.13786",
+      "hashPath": "cudafy.net.1.29.5576.13786.nupkg.sha512"
+    },
+    "MathNet.Filtering/0.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eDs7/PJdE59cUvffz9hgKOceZ2W+9qwS85vpIaJxS2XhbMnF9UAt9Mp0eHhBWUFKISq8RRityQd7lWfX2XX4LQ==",
+      "path": "mathnet.filtering/0.6.0",
+      "hashPath": "mathnet.filtering.0.6.0.nupkg.sha512"
+    },
+    "MathNet.Numerics/4.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-IkuK+/N8Q7iNkset+NOV8H6sW+WLs4jew9fyh6w50/hy/kMeKVac8vh39+0XD7xt7mZW2tEMOpHeOyvDDwailA==",
+      "path": "mathnet.numerics/4.6.0",
+      "hashPath": "mathnet.numerics.4.6.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bLpT1f/SFlO1CzqXG12KnJzpZs6lv24uX2Rzi4Fmm0noJpNlnWRVryuO3yK18Ca04t/YHcO1e1Z0WDfjseqNzw==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    }
+  }
+}

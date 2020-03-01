@@ -1,0 +1,23 @@
+
+
+cd ctoolkit.csharp
+git push
+cd ..
+
+
+cd CwTech
+git push
+cd ..
+
+
+
+cd ctoolkit.aspx.csharp
+git push
+cd ..
+
+
+cd ctoolkit.python
+git push
+cd ..
+
+

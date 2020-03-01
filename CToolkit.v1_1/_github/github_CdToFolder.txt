@@ -1,0 +1,5 @@
+
+cd d:
+cd ycProject
+cd github
+

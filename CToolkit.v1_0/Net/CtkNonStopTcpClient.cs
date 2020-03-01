@@ -39,6 +39,12 @@ namespace CToolkit.v1_0.Net
 
         ~CtkNonStopTcpClient() { this.Dispose(false); }
 
+        /// <summary>
+        /// Remember use stream.Flush() to force data send, Tcp Client always write data into buffer.
+        /// </summary>
+        /// <param name="buff"></param>
+        /// <param name="offset"></param>
+        /// <param name="length"></param>
         public void WriteBytes(byte[] buff, int offset, int length)
         {
             if (this.activeWorkClient == null) return;

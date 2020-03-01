@@ -1,0 +1,17 @@
+
+
+cd ctoolkit.csharp
+git checkout master
+git pull
+git merge develop
+cd ..
+
+
+cd CwTech
+git checkout master
+git pull
+git merge develop
+cd ..
+
+
+
