@@ -2585,7 +2585,7 @@
     "version": "1.1.0.1",
     "restore": {
       "projectUniqueName": "D:\\ycProject\\github\\ctoolkit.csharp\\CToolkit.v1_1.Std\\CToolkit.v1_1.Std.csproj",
-      "projectName": "CToolkit.v1_1.Std",
+      "projectName": "CToolkit.v1_1",
       "projectPath": "D:\\ycProject\\github\\ctoolkit.csharp\\CToolkit.v1_1.Std\\CToolkit.v1_1.Std.csproj",
       "packagesPath": "C:\\Users\\tsaiy\\.nuget\\packages\\",
       "outputPath": "D:\\ycProject\\github\\ctoolkit.csharp\\CToolkit.v1_1.Std\\obj\\",

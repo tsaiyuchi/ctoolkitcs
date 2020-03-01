@@ -8,6 +8,7 @@
     <Authors>CToolkit</Authors>
     <Company>CToolkit</Company>
     <Product>CToolkit</Product>
+    <PackageId>CToolkit.v1_1</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
