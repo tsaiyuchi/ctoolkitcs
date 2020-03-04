@@ -71,7 +71,6 @@
     <Compile Include="Config\CtkConfigCollectorBase.cs" />
     <Compile Include="Config\CtkConfigCollectorFolder.cs" />
     <Compile Include="Cryptography\CtkCryptMd5.cs" />
-    <Compile Include="CtkAspectUtil.cs" />
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkEventUtil.cs" />
     <Compile Include="CtkException.cs" />
@@ -93,8 +92,6 @@
     <Compile Include="DigitalPort\CtkNonStopSerialPortEventArgs.cs" />
     <Compile Include="DigitalPort\CtkSerialPortCfg.cs" />
     <Compile Include="Extension\Numberic\CtkExtNumberic.cs" />
-    <Compile Include="ICtkContextFlow.cs" />
-    <Compile Include="ICtkContextFlowRun.cs" />
     <Compile Include="IO\CtkStreamSegment.cs" />
     <Compile Include="IO\CtkStreamSegmentBuffer.cs" />
     <Compile Include="Logging\CtkLogger.cs" />
@@ -151,20 +148,10 @@
     <Compile Include="Protocol\ICtkProtocolConnect.cs" />
     <Compile Include="Protocol\ICtkProtocolNonStopConnect.cs" />
     <Compile Include="Security\CtkMd5.cs" />
-    <Compile Include="Text\CtkFormat.cs" />
-    <Compile Include="Text\CtkRegular.cs" />
     <Compile Include="Threading\CtkCancelTask.cs" />
     <Compile Include="Threading\CtkSpinWait.cs" />
     <Compile Include="Threading\CtkTask.cs" />
     <Compile Include="Threading\CtkThreadingUtil.cs" />
-    <Compile Include="Timing\CtkTime.cs" />
-    <Compile Include="Timing\CtkTimeMilliSecond.cs" />
-    <Compile Include="Timing\CtkTimeSecond.cs" />
-    <Compile Include="Timing\CtkTimeTick.cs" />
-    <Compile Include="Timing\CtkTimeUtil.cs" />
-    <Compile Include="TriggerDiagram\ICtkTdBlock.cs" />
-    <Compile Include="TriggerDiagram\ICtkTdDiagram.cs" />
-    <Compile Include="TriggerDiagram\ICtkTdNode.cs" />
     <Compile Include="Wcf\CtkWcfMessage.cs" />
     <Compile Include="Wcf\DuplexTcp\CtkWcfChannelInfo.cs" />
     <Compile Include="Wcf\DuplexTcp\CtkWcfDuplexEventArgs.cs" />
@@ -243,4 +230,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "CToolkit.*" "../../../../CwTech/DLL/CToolkit.v1.1"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

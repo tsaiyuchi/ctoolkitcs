@@ -91,13 +91,13 @@ namespace CToolkit.v1_1.Net
 
         #region ReceiveData
 
-        public event Action<CtkTcpSocketSync, CtkTcpSocketStateEventArgs> eventReceiveData;
+        public event Action<CtkTcpSocketSync, CtkTcpSocketStateEventArgs> EhReceiveData;
         public void OnReceiveData(CtkTcpSocketStateEventArgs state)
         {
-            if (this.eventReceiveData == null)
+            if (this.EhReceiveData == null)
                 return;
 
-            this.eventReceiveData(this, state);
+            this.EhReceiveData(this, state);
         }
 
         #endregion
