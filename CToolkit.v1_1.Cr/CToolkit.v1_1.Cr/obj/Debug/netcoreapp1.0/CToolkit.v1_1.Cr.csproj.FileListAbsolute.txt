@@ -1,0 +1,12 @@
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\bin\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.deps.json
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\bin\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\bin\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\bin\Debug\netcoreapp1.0\CToolkit.v1_1.Std.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\bin\Debug\netcoreapp1.0\CToolkit.v1_1.Std.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.csprojAssemblyReference.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.csproj.CoreCompileInputs.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.AssemblyInfoInputs.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.AssemblyInfo.cs
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.csproj.CopyComplete
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Cr\CToolkit.v1_1.Cr\obj\Debug\netcoreapp1.0\CToolkit.v1_1.Cr.pdb

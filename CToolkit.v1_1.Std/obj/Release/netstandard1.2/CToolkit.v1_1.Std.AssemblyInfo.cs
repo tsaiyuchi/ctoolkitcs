@@ -12,7 +12,7 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("CToolkit")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.1.0.2")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.1.0.2")]
 [assembly: System.Reflection.AssemblyProductAttribute("CToolkit")]

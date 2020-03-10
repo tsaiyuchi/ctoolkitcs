@@ -1,0 +1,9 @@
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\bin\Release\netstandard1.2\CToolkit.v1_1.Std.deps.json
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\bin\Release\netstandard1.2\CToolkit.v1_1.Std.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\bin\Release\netstandard1.2\CToolkit.v1_1.Std.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Release\netstandard1.2\CToolkit.v1_1.Std.csprojAssemblyReference.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Release\netstandard1.2\CToolkit.v1_1.Std.csproj.CoreCompileInputs.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Release\netstandard1.2\CToolkit.v1_1.Std.AssemblyInfoInputs.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Release\netstandard1.2\CToolkit.v1_1.Std.AssemblyInfo.cs
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Release\netstandard1.2\CToolkit.v1_1.Std.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Release\netstandard1.2\CToolkit.v1_1.Std.pdb

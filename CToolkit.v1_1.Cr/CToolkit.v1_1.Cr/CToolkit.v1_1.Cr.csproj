@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <RootNamespace>CToolkit.v1_1</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="CToolkit.v1_1.Std">
+      <HintPath>..\..\..\CwTech\DLL\CToolkit.v1.1\CToolkit.v1_1.Std.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
