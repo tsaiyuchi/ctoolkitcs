@@ -6,3 +6,4 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Debug\netstandard1.2\C
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Debug\netstandard1.2\CToolkit.v1_1.Std.AssemblyInfo.cs
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Debug\netstandard1.2\CToolkit.v1_1.Std.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Debug\netstandard1.2\CToolkit.v1_1.Std.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\obj\Debug\netstandard1.2\CToolkit.v1_1.Std.csprojAssemblyReference.cache

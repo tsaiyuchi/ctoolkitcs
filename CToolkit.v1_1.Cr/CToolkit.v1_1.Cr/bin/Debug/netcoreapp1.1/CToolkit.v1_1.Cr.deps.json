@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v1.1",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v1.1": {
+      "CToolkit.v1_1.Cr/1.0.0": {
+        "runtime": {
+          "CToolkit.v1_1.Cr.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CToolkit.v1_1.Cr/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

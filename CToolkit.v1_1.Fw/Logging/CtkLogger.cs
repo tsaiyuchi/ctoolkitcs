@@ -35,9 +35,9 @@ namespace CToolkit.v1_1.Logging
         protected virtual void WriteAsyn(CtkLoggerEventArgs ea)
         {
             this.queue.Enqueue(ea);
+            if (!Monitor.TryEnter(this, 1000)) return;
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;
                 if (this.task != null)
                 {
                     //若還沒結束執行, 先return
