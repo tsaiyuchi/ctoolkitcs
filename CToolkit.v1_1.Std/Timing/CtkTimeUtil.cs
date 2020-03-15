@@ -415,6 +415,7 @@ namespace CToolkit.v1_1.Timing
         public static int CompareYyyyMmDd(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDd(dt1), ToYyyyMmDd(dt2)); }
         public static int CompareYyyyMmDd(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDd(dt1), dt2); }
         public static int CompareYyyyMmDd(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDd(dt2)); }
+        public static int CompareYyyyMmDd(string dt1, string dt2) { return string.Compare(dt1, dt2); }
 
         public static int CompareYyyyMmDdHh(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDdHh(dt1), ToYyyyMmDdHh(dt2)); }
 

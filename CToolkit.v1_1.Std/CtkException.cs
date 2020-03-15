@@ -5,12 +5,10 @@ using System.Text;
 
 namespace CToolkit.v1_1
 {
-    [Serializable]
     public class CtkException : Exception
     {
         public CtkException() : base() { }
         public CtkException(string message) : base(message) { }
-        protected CtkException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         public CtkException(string message, Exception innerException) : base(message, innerException) { }
 
 
