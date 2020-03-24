@@ -171,6 +171,7 @@ namespace CToolkit.v1_1.Timing
 
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
         public static string ToYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
+        public static string ToYyyyMm(DateTime? dt) { return dt.HasValue ? ToYyyyMm(dt.Value) : null; }
         public static string ToYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
         public static string ToYyyyMmDdHh(DateTime dt) { return dt.ToString("yyyyMMddHH"); }
         public static string ToYyyyMmDdHhIi(DateTime dt) { return dt.ToString("yyyyMMddHHmm"); }
@@ -185,6 +186,7 @@ namespace CToolkit.v1_1.Timing
             var weekOfYear = CtkTimeUtil.GetWeekOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), weekOfYear);
         }
+        public static string ToYyyyWw(DateTime? dt) { return dt.HasValue ? ToYyyyWw(dt.Value) : null; }
 
 
 
@@ -387,16 +389,20 @@ namespace CToolkit.v1_1.Timing
         /// <summary>
         /// 取得過往的指定時分秒
         /// </summary>
-        public static DateTime GetPrevTime(DateTime dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
+        public static DateTime GetPrevTime(DateTime? dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
         {
-            var diff = hour - dt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
-            var mydt = dt;
+            var mydt = dt.HasValue ? dt.Value : DateTime.Now;
+
+            var diff = hour - mydt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
             if (isIncludeToday && diff > 0)
-                mydt = dt.AddHours(-24);
+                mydt = mydt.AddHours(-24);
             else if (!isIncludeToday && diff >= 0)
-                mydt = dt.AddHours(-24);
+                mydt = mydt.AddHours(-24);
             return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
         }
+
+
+
         #endregion
 
 
@@ -412,6 +418,7 @@ namespace CToolkit.v1_1.Timing
         public static int CompareYyyy(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyy(dt2)); }
 
         public static int CompareYyyyMm(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
+        public static int CompareYyyyMm(DateTime? dt1, DateTime? dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
         public static int CompareYyyyMmDd(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMmDd(dt1), ToYyyyMmDd(dt2)); }
         public static int CompareYyyyMmDd(DateTime dt1, string dt2) { return string.Compare(ToYyyyMmDd(dt1), dt2); }
         public static int CompareYyyyMmDd(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyMmDd(dt2)); }
@@ -440,6 +447,7 @@ namespace CToolkit.v1_1.Timing
         public static int CompareYyyyQq(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyQq(dt2)); }
 
         public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
+        public static int CompareYyyyWw(DateTime? dt1, DateTime? dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         public static int CompareYyyyWw(DateTime dt1, string dt2) { return string.Compare(ToYyyyWw(dt1), dt2); }
         public static int CompareYyyyWw(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyWw(dt2)); }
         #endregion
