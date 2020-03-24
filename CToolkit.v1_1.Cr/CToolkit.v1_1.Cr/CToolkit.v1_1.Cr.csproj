@@ -3,7 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <RootNamespace>CToolkit.v1_1</RootNamespace>
+    <Authors>CToolkit</Authors>
+    <Company>CToolkit</Company>
+    <Product>CToolkit</Product>
+    <Version>1.1.0.4</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="CToolkit.v1_1.Std">

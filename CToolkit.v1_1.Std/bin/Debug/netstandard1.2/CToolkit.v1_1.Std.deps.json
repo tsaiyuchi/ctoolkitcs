@@ -1,16 +1,18 @@
 {
   "runtimeTarget": {
     "name": ".NETStandard,Version=v1.2/",
-    "signature": "8986a9fca35534f87b53eeb1e5031af8b29ce49b"
+    "signature": "462c95b831f48d019591baf6fbd14d3a1248979f"
   },
   "compilationOptions": {},
   "targets": {
     ".NETStandard,Version=v1.2": {},
     ".NETStandard,Version=v1.2/": {
-      "CToolkit.v1_1.Std/1.1.0.3": {
+      "CToolkit.v1_1.Std/1.1.0.4": {
         "dependencies": {
           "NETStandard.Library": "1.6.1",
-          "System.Reflection": "4.3.0"
+          "System.IO": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Xml.XmlSerializer": "4.3.0"
         },
         "runtime": {
           "CToolkit.v1_1.Std.dll": {}
@@ -280,11 +282,18 @@
           "System.Runtime": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
         }
+      },
+      "System.Xml.XmlSerializer/4.3.0": {
+        "dependencies": {
+          "System.IO": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Xml.ReaderWriter": "4.3.0"
+        }
       }
     }
   },
   "libraries": {
-    "CToolkit.v1_1.Std/1.1.0.3": {
+    "CToolkit.v1_1.Std/1.1.0.4": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -526,6 +535,13 @@
       "sha512": "sha512-Mc1o7OYn7a3MFSZBSCZ2aOwbSbgk6uuybFVeZrekTumkQ21Ox6BnOHH+uZbQDlBUnJNN0c5mjroHaKonggAKxA==",
       "path": "system.xml.xdocument/4.3.0",
       "hashPath": "system.xml.xdocument.4.3.0.nupkg.sha512"
+    },
+    "System.Xml.XmlSerializer/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MYoTCP7EZ98RrANESW05J5ZwskKDoN0AuZ06ZflnowE50LTpbR5yRg3tHckTVm5j/m47stuGgCrCHWePyHS70Q==",
+      "path": "system.xml.xmlserializer/4.3.0",
+      "hashPath": "system.xml.xmlserializer.4.3.0.nupkg.sha512"
     }
   }
 }

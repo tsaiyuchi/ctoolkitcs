@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace CToolkit.v1_1.Compress
 {
-  public   class CtkCompressUtil
+    public class CtkCompressUtil
     {
 
-     public static   void ExtractEntries(ZipArchive archive, string zipPath, string destPath)
+        public static void ExtractEntries(ZipArchive archive, string zipPath, string destPath)
         {
 
             var query = from row in archive.Entries

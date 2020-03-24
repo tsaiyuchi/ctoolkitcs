@@ -77,11 +77,11 @@
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkEventUtil.cs" />
     <Compile Include="CtkFileFormat.cs" />
+    <Compile Include="CtkUtilFw.cs" />
     <Compile Include="CtkGenericEventArgs.cs" />
     <Compile Include="CtkLog.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />
     <Compile Include="CtkObject.cs" />
-    <Compile Include="CtkUtil.cs" />
     <Compile Include="Data\CtkCsvEnumReadType.cs" />
     <Compile Include="Data\CtkCsvReader.cs" />
     <Compile Include="Data\CtkCsvWriter.cs" />

@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.2</TargetFramework>
     <RootNamespace>CToolkit.v1_1</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.0.3</Version>
+    <Version>1.1.0.4</Version>
     <Authors>CToolkit</Authors>
     <Company>CToolkit</Company>
     <Product>CToolkit</Product>
@@ -12,7 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IO" Version="4.3.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

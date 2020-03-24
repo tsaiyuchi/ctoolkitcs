@@ -1,30 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CToolkit.v1_1
 {
-    public class CtkUtil
+    public class CtkUtilFw
     {
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static string GetCurrentMethod()
-        {
-            var st = new StackTrace();
-            var sf = st.GetFrame(1);
-
-            return sf.GetMethod().Name;
-        }
 
         public static bool EnableUnsafeHeaderParsing()
         {
@@ -56,40 +43,25 @@ namespace CToolkit.v1_1
             return false;
         }
 
-
-
-        public static string GetMemberName<T, TValue>(Expression<Func<T, TValue>> memberAccess)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static string GetCurrentMethod()
         {
-            var body = memberAccess.Body;
-            var member = body as MemberExpression;
-            if (member != null) return member.Member.Name;
+            var st = new StackTrace();
+            var sf = st.GetFrame(1);
 
-            var unary = body as UnaryExpression;
-            if (unary != null)
-            {
-                if (unary.Method != null) return unary.Method.Name;
-            }
-            throw new ArgumentException();
-
+            return sf.GetMethod().Name;
         }
 
-        public static string GetMethodName<T>(Expression<Func<T, Delegate>> expression)
+        public static T LoadXml<T>(String fn)
         {
-            var unaryExpression = (UnaryExpression)expression.Body;
-            var methodCallExpression = (MethodCallExpression)unaryExpression.Operand;
+            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var fi = new FileInfo(fn);
+            if (!fi.Exists) return default(T);
 
-            var IsNET45 = Type.GetType("System.Reflection.ReflectionContext", false) != null;
-            if (IsNET45)
+
+            using (var stm = fi.OpenRead())
             {
-                var methodCallObject = (ConstantExpression)methodCallExpression.Object;
-                var methodInfo = (MethodInfo)methodCallObject.Value;
-                return methodInfo.Name;
-            }
-            else
-            {
-                var methodInfoExpression = (ConstantExpression)methodCallExpression.Arguments.Last();
-                var methodInfo = (MemberInfo)methodInfoExpression.Value;
-                return methodInfo.Name;
+                return (T)seri.Deserialize(stm);
             }
         }
 
@@ -110,28 +82,22 @@ namespace CToolkit.v1_1
             }
         }
 
-        public static T LoadXml<T>(String fn)
-        {
-            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            var fi = new FileInfo(fn);
-            if (!fi.Exists) return default(T);
-
-
-            using (var stm = fi.OpenRead())
-            {
-                return (T)seri.Deserialize(stm);
-            }
-        }
-
-
-
-
-
-        public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
-
         public static void SaveToXmlFile(object obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(obj.GetType());
+            var fi = new FileInfo(fn);
+
+            if (!fi.Directory.Exists) fi.Directory.Create();
+
+            using (var stm = fi.Open(FileMode.Create))
+            {
+                seri.Serialize(stm, obj);
+            }
+        }
+
+        public static void SaveToXmlFile(Type type, object obj, String fn)
+        {
+            var seri = new System.Xml.Serialization.XmlSerializer(type);
             var fi = new FileInfo(fn);
 
             if (!fi.Directory.Exists) fi.Directory.Create();
@@ -154,19 +120,6 @@ namespace CToolkit.v1_1
                 seri.Serialize(stm, obj);
             }
         }
-        public static void SaveToXmlFile(Type type, object obj, String fn)
-        {
-            var seri = new System.Xml.Serialization.XmlSerializer(type);
-            var fi = new FileInfo(fn);
-
-            if (!fi.Directory.Exists) fi.Directory.Create();
-
-            using (var stm = fi.Open(FileMode.Create))
-            {
-                seri.Serialize(stm, obj);
-            }
-        }
-
 
         public static object TryCatch(Action theMethod, params object[] parameters)
         {
@@ -180,39 +133,5 @@ namespace CToolkit.v1_1
                 return ex;
             }
         }
-
-
-
-
-        public static int RandomInt()
-        {
-            var rnd = new Random((int)DateTime.Now.Ticks);
-            var cnt = rnd.Next(32);
-            for (var idx = 0; idx < cnt; idx++) rnd.Next();
-
-            return rnd.Next();
-        }
-        public static int RandomInt(int max)
-        {
-            var rnd = new Random((int)DateTime.Now.Ticks);
-            var cnt = rnd.Next(32);
-            for (var idx = 0; idx < cnt; idx++) rnd.Next();
-
-            return rnd.Next(max);
-        }
-        public static int RandomInt(int min, int max)
-        {
-            var rnd = new Random((int)DateTime.Now.Ticks);
-            var cnt = rnd.Next(32);
-            for (var idx = 0; idx < cnt; idx++) rnd.Next();
-
-            return rnd.Next(min, max);
-        }
-
-
     }
-
-
-
-
 }
