@@ -88,6 +88,82 @@ namespace CToolkit.v1_1.Timing
 
         #endregion
 
+        #region Month Operation
+
+        public static DateTime GetFirstDayOfMonth(DateTime dt) { return new DateTime(dt.Year, dt.Month, 1); }
+        public static DateTime GetLastDayOfMonth(DateTime dt) { return GetFirstDayOfMonth(dt).AddMonths(1).AddDays(-1); }
+
+        #endregion
+
+
+
+        #region Transfer Date Time
+
+        /// <summary>
+        /// 取得下一個的日
+        /// </summary>
+        public static DateTime GetNextDay(DateTime dt, int day = 0, bool isIncludeToday = true)
+        {
+            var diff = day - dt.Day;//上一個期望時間, 若為正, 就代表己越過零點
+            var mydt = dt;
+            if (isIncludeToday && diff < 0)
+                mydt.AddMonths(1);
+            else if (!isIncludeToday && diff <= 0)
+                mydt.AddMonths(1);
+
+            return new DateTime(mydt.Year, mydt.Month, day);
+        }
+
+        /// <summary>
+        /// 取得過往的指定時分秒
+        /// </summary>
+        public static DateTime GetNextTime(DateTime dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
+        {
+            var diff = hour - dt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
+            var mydt = dt;
+            if (isIncludeToday && diff < 0)
+                mydt = dt.AddHours(24);
+            else if (!isIncludeToday && diff <= 0)
+                mydt = dt.AddHours(24);
+            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
+        }
+
+        /// <summary>
+        /// 取得己過往的日
+        /// </summary>
+        public static DateTime GetPrevDay(DateTime dt, int day = 0, bool isIncludeToday = true)
+        {
+            var diff = day - dt.Day;//上一個期望時間, 若為正, 就代表己越過零點
+            var mydt = dt;
+            if (isIncludeToday && diff > 0)
+                mydt.AddMonths(-1);
+            else if (!isIncludeToday && diff >= 0)
+                mydt.AddMonths(-1);
+
+            return new DateTime(mydt.Year, mydt.Month, day);
+        }
+
+        /// <summary>
+        /// 取得過往的指定時分秒
+        /// </summary>
+        public static DateTime GetPrevTime(DateTime? dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
+        {
+            var mydt = dt.HasValue ? dt.Value : DateTime.Now;
+
+            var diff = hour - mydt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
+            if (isIncludeToday && diff > 0)
+                mydt = mydt.AddHours(-24);
+            else if (!isIncludeToday && diff >= 0)
+                mydt = mydt.AddHours(-24);
+            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
+        }
+
+
+
+        #endregion
+
+
+
 
         #region Normal DateTime / String
 
@@ -335,72 +411,6 @@ namespace CToolkit.v1_1.Timing
         public static DateTime ToRoc(DateTime dt) { return dt.AddYears(-RocYearToYear); }
         public static int ToRocYear(int year) { return year - RocYearToYear; }
         public static int ToYearFromRoc(int year) { return year + RocYearToYear; }
-
-
-        #endregion
-
-
-        #region Transfer Date Time
-
-        /// <summary>
-        /// 取得下一個的日
-        /// </summary>
-        public static DateTime GetNextDay(DateTime dt, int day = 0, bool isIncludeToday = true)
-        {
-            var diff = day - dt.Day;//上一個期望時間, 若為正, 就代表己越過零點
-            var mydt = dt;
-            if (isIncludeToday && diff < 0)
-                mydt.AddMonths(1);
-            else if (!isIncludeToday && diff <= 0)
-                mydt.AddMonths(1);
-
-            return new DateTime(mydt.Year, mydt.Month, day);
-        }
-
-        /// <summary>
-        /// 取得過往的指定時分秒
-        /// </summary>
-        public static DateTime GetNextTime(DateTime dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
-        {
-            var diff = hour - dt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
-            var mydt = dt;
-            if (isIncludeToday && diff < 0)
-                mydt = dt.AddHours(24);
-            else if (!isIncludeToday && diff <= 0)
-                mydt = dt.AddHours(24);
-            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
-        }
-
-        /// <summary>
-        /// 取得己過往的日
-        /// </summary>
-        public static DateTime GetPrevDay(DateTime dt, int day = 0, bool isIncludeToday = true)
-        {
-            var diff = day - dt.Day;//上一個期望時間, 若為正, 就代表己越過零點
-            var mydt = dt;
-            if (isIncludeToday && diff > 0)
-                mydt.AddMonths(-1);
-            else if (!isIncludeToday && diff >= 0)
-                mydt.AddMonths(-1);
-
-            return new DateTime(mydt.Year, mydt.Month, day);
-        }
-
-        /// <summary>
-        /// 取得過往的指定時分秒
-        /// </summary>
-        public static DateTime GetPrevTime(DateTime? dt, int hour = 0, int minute = 0, int second = 0, bool isIncludeToday = true)
-        {
-            var mydt = dt.HasValue ? dt.Value : DateTime.Now;
-
-            var diff = hour - mydt.Hour;//上一個期望時間, 若為正, 就代表己越過零點
-            if (isIncludeToday && diff > 0)
-                mydt = mydt.AddHours(-24);
-            else if (!isIncludeToday && diff >= 0)
-                mydt = mydt.AddHours(-24);
-            return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
-        }
-
 
 
         #endregion

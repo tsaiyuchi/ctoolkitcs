@@ -100,6 +100,11 @@ namespace CToolkit.v1_1.Numeric
                 IsUseCudafy = false;
                 CtkLog.WarnNs(this, ex.StackTrace);
             }
+            catch (Exception ex)
+            {
+                IsUseCudafy = false;
+                CtkLog.WarnNs(this, ex.StackTrace);
+            }
             return null;
         }
         /// <summary>
