@@ -48,22 +48,22 @@ namespace CToolkit.v1_1
         /// 在 owningObject 中, 移除所有與 targetObj 有關 event 的 delegate
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="owningObject"></param>
-        /// <param name="targetObj"></param>
-        public static void RemoveEventHandlersFromOwningByTarget(Object owningObject, Object targetObj
+        /// <param name="eventOwning"></param>
+        /// <param name="dlgtObj"></param>
+        public static void RemoveEventHandlersFromOwningByTarget(Object eventOwning, Object dlgtObj
             , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
         {
-            if (owningObject == null || targetObj == null) return;
+            if (eventOwning == null || dlgtObj == null) return;
 
-            foreach (DelegateInfo eventFromOwningObject in GetDelegates(owningObject, flags))
+            foreach (DelegateInfo eventFromOwningObject in GetDelegates(eventOwning, flags))
             {
                 //Run過所有訂閱者
                 foreach (Delegate subscriber in eventFromOwningObject.GetInvocationList())
                 {
-                    if (subscriber.Target == targetObj)
+                    if (subscriber.Target == dlgtObj)
                     {
                         EventInfo theEvent = eventFromOwningObject.GetEventInfo(flags);
-                        RemoveSubscriberEvenIfItsPrivate(theEvent, owningObject, subscriber, flags);
+                        RemoveSubscriberEvenIfItsPrivate(theEvent, eventOwning, subscriber, flags);
                     }
                 }
             }

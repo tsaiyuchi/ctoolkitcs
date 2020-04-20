@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v1.1": {
-      "CToolkit.v1_1.Cr/1.1.0.4": {
+      "CToolkit.v1_1.Cr/1.1.0.5": {
         "dependencies": {
           "System.Net.NetworkInformation": "4.3.0"
         },
@@ -39,7 +39,7 @@
     }
   },
   "libraries": {
-    "CToolkit.v1_1.Cr/1.1.0.4": {
+    "CToolkit.v1_1.Cr/1.1.0.5": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
