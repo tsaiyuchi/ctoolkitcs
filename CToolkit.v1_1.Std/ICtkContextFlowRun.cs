@@ -14,7 +14,7 @@ namespace CToolkit.v1_1
         /// Exec: 執行特定功能, 若有需要, 可自行重複執行此作業
         /// </summary>
         /// <returns></returns>
-        int CfExec();
+        int CfRunOnce();
 
         /// <summary>
         /// 會持續執行特定功能的method
@@ -22,13 +22,13 @@ namespace CToolkit.v1_1
         /// 若不做事, 請直接return
         /// </summary>
         /// <returns></returns>
-        int CfRun();
+        int CfRunLoop();
 
         /// <summary>
         /// 會持續執行特定功能的method
         /// 需實作非同步作業, e.q. 開啟一個Thread/Task後離開函式
         /// </summary>
         /// <returns></returns>
-        int CfRunAsyn();
+        int CfRunLoopAsyn();
     }
 }

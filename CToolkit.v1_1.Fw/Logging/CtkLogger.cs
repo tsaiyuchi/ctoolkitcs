@@ -51,15 +51,15 @@ namespace CToolkit.v1_1.Logging
 
                 this.task = CtkCancelTask.RunLoop(() =>
                 {
+                    CtkLoggerEventArgs myea;
                     lock (this)
                     {
-                        CtkLoggerEventArgs myea;
                         if (!this.queue.TryDequeue(out myea)) return true;//取不出來就下次再取
-                        this.WriteSyn(myea);
-
-                        //若Count等於零, 這個task會結束, IsEnd() = true
-                        return this.queue.Count > 0;
                     }
+                    this.WriteSyn(myea);
+
+                    //若Count等於零, 這個task會結束, IsEnd() = true
+                    return this.queue.Count > 0;
                 });
             }
             finally { Monitor.Exit(this); }

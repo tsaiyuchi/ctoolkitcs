@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
@@ -152,6 +153,24 @@ namespace CToolkit.v1_1.Net
             IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
             IPAddress[] addr = ipEntry.AddressList;
             return new List<IPAddress>(addr);
+        }
+
+
+        public static List<string> GetMacAddress()
+        {
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+
+            List<string> macList = new List<string>();
+            foreach (var nic in nics)
+            {
+                // 因為電腦中可能有很多的網卡(包含虛擬的網卡)，
+                // 我只需要 Ethernet 網卡的 MAC
+                if (nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                {
+                    macList.Add(nic.GetPhysicalAddress().ToString());
+                }
+            }
+            return macList;
         }
     }
 }

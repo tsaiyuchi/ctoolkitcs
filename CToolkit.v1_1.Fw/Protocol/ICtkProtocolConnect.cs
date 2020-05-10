@@ -8,9 +8,19 @@ namespace CToolkit.v1_1.Protocol
 {
     public interface ICtkProtocolConnect
     {
-        bool IsLocalReadyConnect { get; }//Local連線成功=遠端連線成功
+        /// <summary>
+        /// 若為Client, Local連線成功=遠端連線成功.
+        /// 若為Server, 開啟聆聽即為準備好連線
+        /// </summary>
+        bool IsLocalReadyConnect { get; }
+        /// <summary>
+        /// 遠端真的連線成功
+        /// </summary>
         bool IsRemoteConnected { get; }
-        bool IsOpenRequesting { get; }//用途是避免重複要求連線
+        /// <summary>
+        /// 用途是避免重複要求連線
+        /// </summary>
+        bool IsOpenRequesting { get; }
 
         void ConnectIfNo();
         void Disconnect();
