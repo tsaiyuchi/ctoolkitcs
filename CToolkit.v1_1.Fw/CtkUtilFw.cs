@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -133,5 +134,28 @@ namespace CToolkit.v1_1
                 return ex;
             }
         }
+
+
+        public static byte[] SerializeBinary(object obj)
+        {
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                ms.Flush();
+                return ms.ToArray();
+            }
+        }
+
+        public static T DeserializeBinary<T>(byte[] dataArray)
+        {
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream(dataArray))
+            {
+                var obj = bf.Deserialize(ms);
+                return (T)obj;
+            }
+        }
+
     }
 }

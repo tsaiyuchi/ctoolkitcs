@@ -207,7 +207,7 @@ namespace CToolkit.v1_1.Net
             CtkNetUtil.DisposeTcpClient(this.activeWorkClient);
 
             //一旦結束就死了, 需要重new, 所以清掉event沒問題
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
 
         }
 

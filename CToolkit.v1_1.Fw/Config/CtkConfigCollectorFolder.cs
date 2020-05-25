@@ -42,11 +42,15 @@ namespace CToolkit.v1_1.Config
             if (!di.Exists) di.Create();
             foreach (var fi in di.GetFiles())
             {
-                if(this.Filter != null)
+                if (this.Filter != null)
                     if (!Filter(fi.Name)) continue;//沒通過就不加入
 
-                var config = CtkUtilFw.LoadXmlOrNew<T>(fi.FullName);
-                this[fi.Name] = config;
+                try
+                {
+                    var config = CtkUtilFw.LoadXmlOrNew<T>(fi.FullName);
+                    this[fi.Name] = config;
+                }
+                catch (Exception ex) { CtkLog.WriteNs(this, ex.Message); }
 
                 //更新存在的
                 orignalConfigs[fi.Name] = true;

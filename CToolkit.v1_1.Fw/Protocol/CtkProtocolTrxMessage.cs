@@ -9,6 +9,9 @@ namespace CToolkit.v1_1.Protocol
 {
     public class CtkProtocolTrxMessage
     {
+        /// <summary>
+        /// CtkProtocolBufferMessage, String, Byte[]
+        /// </summary>
         public Object TrxMessage;
         public static CtkProtocolTrxMessage Create(Object msg) { return new CtkProtocolTrxMessage() { TrxMessage = msg }; }
         public static CtkProtocolTrxMessage Create(byte[] msg, int offset, int length) { return new CtkProtocolBufferMessage() { Buffer = msg, Offset = offset, Length = length }; }
@@ -37,6 +40,31 @@ namespace CToolkit.v1_1.Protocol
 
             return null;
         }
+
+        public CtkProtocolBufferMessage ToBuffer(Encoding encoding = null)
+        {
+            if (encoding == null) encoding = Encoding.UTF8;
+
+            var bufferMsg = this.As<CtkProtocolBufferMessage>();
+            if (bufferMsg != null) return bufferMsg;
+
+            var buffer = new byte[0];
+            if (this.TrxMessage is String)
+                buffer = encoding.GetBytes(this.TrxMessage as String);
+            else if (this.TrxMessage is byte[])
+                buffer = this.TrxMessage as byte[];
+            else return null;
+
+
+            bufferMsg = new CtkProtocolBufferMessage();
+            bufferMsg.Buffer = buffer;
+            bufferMsg.Offset = 0;
+            bufferMsg.Length = buffer.Length;
+            return bufferMsg;
+        }
+
+
+
 
     }
 }

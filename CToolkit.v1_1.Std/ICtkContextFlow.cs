@@ -40,4 +40,31 @@ namespace CToolkit.v1_1
     /// 而 Dispose(void) 則是給外面程式使用
     /// 
     /// </Note>
+    /// 
+
+    /// <Note>
+    /// Context Flow .CfFree, Dispose, Close 的順序?
+    ///     結論: CfFree -> Dispose -> Close
+    ///     
+    /// 並非所有物件會實作Context Flow:
+    /// 假設A物件有Close Function, B物件繼承A物件且實作Context Flow
+    /// 那麼B物件應當在CfFree中, 呼叫Close以確保關閉
+    /// 同理, Dispose也應當呼叫Close
+    /// 且Close亦可被單獨執行
+    /// 
+    /// 那麼 CfFree 與 Dispose 的順序?
+    /// CfFree理當被執行, 而 Dispose 可能由使用者或系統認定回收時 執行
+    /// (1) 即:CfFree 應當呼叫 Dispose 代表由使用者認定回收
+    /// 
+    /// 那 Dispose 在系統認定回收時 是否要執行CfFree
+    /// (1) Reject: Context Flow .CfFree 是使用者認定的行為, 不應由系統執行
+    /// (2) Accept: 系統認定回收的物件一般不會強求存在, 因此可以執行 CfFree
+    /// 衝突產生-> 暫定(1)為最佳解
+    ///     因為(2)的可執行不代表要執行
+    ///     且 即然己在Dispose釋放資源了, 也不用擔心沒執行CfFree
+    ///     再者 若真存在需要 UnLoad -> Free 的物件, 你也應照程序完成
+    /// 
+    /// 
+    /// </Note>
+
 }

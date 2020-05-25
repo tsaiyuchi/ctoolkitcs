@@ -277,7 +277,7 @@ namespace CToolkit.v1_1.Net
             if (this.m_tcpListener != null) this.m_tcpListener.Stop();
 
             //一旦結束就死了, 需要重new, 所以清掉event沒問題
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
 
 
         }
@@ -400,7 +400,7 @@ namespace CToolkit.v1_1.Net
         {
             try { this.Disconnect(); }
             catch (Exception ex) { CtkLog.Write(ex); }
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
 
         }
 

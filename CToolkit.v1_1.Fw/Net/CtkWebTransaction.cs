@@ -118,7 +118,7 @@ namespace CToolkit.v1_1.Net
                     && (wresp.CharacterSet.Trim() != ""))
                 {
                     try { respEncoding = Encoding.GetEncoding(wresp.CharacterSet); }
-                    catch (Exception) { }
+                    catch (Exception) { respEncoding = Encoding.UTF8; }
                 }
                 using (var wrespStream = wresp.GetResponseStream())
                 using (var reader = new System.IO.StreamReader(wrespStream, respEncoding))

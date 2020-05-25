@@ -151,7 +151,8 @@ namespace CToolkit.v1_1
 
 
         public static void RegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite += eh; }
-
+        public static void UnRegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite -= eh; }
+        public static void UnRegisterEveryLogWriteByOwner(object owner) { CtkEventUtil.RemoveEventHandlersOfTypeByTarget(typeof(CtkLogger), owner); }
 
 
 

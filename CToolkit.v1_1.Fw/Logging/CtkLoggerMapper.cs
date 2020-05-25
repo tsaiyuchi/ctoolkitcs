@@ -14,7 +14,7 @@ namespace CToolkit.v1_1.Logging
 
         ~CtkLoggerMapper()
         {
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
 
         public CtkLogger Get(String id = "")

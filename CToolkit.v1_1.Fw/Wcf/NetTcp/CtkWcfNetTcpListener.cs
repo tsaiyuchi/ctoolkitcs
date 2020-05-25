@@ -57,7 +57,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
                 }
             }
 
-            CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//關閉就代表此類別不用了
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);//關閉就代表此類別不用了
         }
 
         public virtual void NewHost()
@@ -99,7 +99,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
         void CleanHost()
         {
             //CtkEventUtil.RemoveEventHandlersFromOwningByFilter(this, (dlgt) => true);//不用清除自己的
-            CtkEventUtil.RemoveEventHandlersFromOwningByTarget(this.host, this);
+            CtkEventUtil.RemoveEventHandlersOfOwnerByTarget(this.host, this);
         }
 
 
