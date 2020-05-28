@@ -44,6 +44,7 @@ namespace CToolkit.v1_1.Net
         {
             this.IsActively = isAct;
 
+            if (this.IsRemoteConnected) return;
 
             lock (this) this.m_isOpenRequesting = true;
 
