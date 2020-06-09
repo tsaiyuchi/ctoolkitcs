@@ -73,7 +73,8 @@
     <Compile Include="Config\CtkConfigCollector.cs" />
     <Compile Include="Config\CtkConfigCollectorBase.cs" />
     <Compile Include="Config\CtkConfigCollectorFolder.cs" />
-    <Compile Include="Cryptography\CtkCryptMd5.cs" />
+    <Compile Include="Cryptography\CtkCryptographyUtil.cs" />
+    <Compile Include="Cryptography\CtkCryptographyRsa.cs" />
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkEventUtil.cs" />
     <Compile Include="CtkFileFormat.cs" />
@@ -93,7 +94,8 @@
     <Compile Include="DigitalPort\CtkNonStopSerialPort.cs" />
     <Compile Include="DigitalPort\CtkNonStopSerialPortEventArgs.cs" />
     <Compile Include="DigitalPort\CtkSerialPortCfg.cs" />
-    <Compile Include="Extension\Numberic\CtkExtNumberic.cs" />
+    <Compile Include="Extension\CtkExtNumberic.cs" />
+    <Compile Include="Extension\CtkExtProtocol.cs" />
     <Compile Include="IO\CtkStreamSegment.cs" />
     <Compile Include="IO\CtkStreamSegmentBuffer.cs" />
     <Compile Include="Logging\CtkLogger.cs" />
@@ -143,12 +145,6 @@
     <Compile Include="Paint\CtkJetColor.cs" />
     <Compile Include="Paint\CtkRgbColor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocol\CtkProtocolBufferMessage.cs" />
-    <Compile Include="Protocol\CtkProtocolEventArgs.cs" />
-    <Compile Include="Protocol\CtkProtocolTrxMessage.cs" />
-    <Compile Include="Protocol\CtkProtocolUtil.cs" />
-    <Compile Include="Protocol\ICtkProtocolConnect.cs" />
-    <Compile Include="Protocol\ICtkProtocolNonStopConnect.cs" />
     <Compile Include="Security\CtkMd5.cs" />
     <Compile Include="Threading\CtkCancelTask.cs" />
     <Compile Include="Threading\CtkSpinWait.cs" />
@@ -224,7 +220,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "CToolkit.*" "../../../../CwTech/DLL/CToolkit.v1_1"
-copy "CToolkit.*" "../../../../MvAssistant/vssol/DLL/CToolkit.v1_1"</PostBuildEvent>
+    <PostBuildEvent>copy "CToolkit.*" "../../../../CwTech/DLL/CToolkit.v1_1"</PostBuildEvent>
   </PropertyGroup>
 </Project>

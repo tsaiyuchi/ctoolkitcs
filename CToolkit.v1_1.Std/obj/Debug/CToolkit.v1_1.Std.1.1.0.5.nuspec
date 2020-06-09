@@ -10,6 +10,7 @@
     <dependencies>
       <group targetFramework=".NETStandard1.2">
         <dependency id="NETStandard.Library" version="1.6.1" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="12.0.3" exclude="Build,Analyzers" />
         <dependency id="System.IO" version="4.3.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection" version="4.3.0" exclude="Build,Analyzers" />
         <dependency id="System.Xml.XmlSerializer" version="4.3.0" exclude="Build,Analyzers" />

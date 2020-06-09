@@ -156,7 +156,7 @@ namespace CToolkit.v1_1.Net
         }
 
 
-        public static List<string> GetMacAddress()
+        public static List<string> GetMacAddressEnthernet()
         {
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
 

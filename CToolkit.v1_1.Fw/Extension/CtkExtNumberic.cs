@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkit.v1_1.Extension.Numberic
+namespace CToolkit.v1_1.Extension
 {
     public static class CtkExtNumberic
     {
-        public static double ValueOrZero(this Nullable<double> val)
+        public static double CtkValueOrZero(this Nullable<double> val)
         {
             if (val.HasValue)
                 return val.Value;
@@ -23,21 +23,21 @@ namespace CToolkit.v1_1.Extension.Numberic
             return defVal;
         }
 
-        public static decimal ValueOrZero(this Nullable<decimal> val)
+        public static decimal CtkValueOrZero(this Nullable<decimal> val)
         {
             if (val.HasValue)
                 return val.Value;
             return 0;
         }
 
-        public static double DoubleValueOrZero(this Nullable<decimal> val)
+        public static double CtkDoubleValueOrZero(this Nullable<decimal> val)
         {
             if (val.HasValue)
                 return (double)val.Value;
             return 0;
         }
 
-        public static decimal CtkParseVal(this Nullable<decimal> val)
+        public static decimal CtkCtkParseVal(this Nullable<decimal> val)
         {
             if (val.HasValue)
                 return val.Value;

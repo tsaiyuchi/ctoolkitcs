@@ -113,13 +113,13 @@ namespace CToolkit.v1_1.Net
 
             using (var wresp = (HttpWebResponse)wreq.GetResponse())
             {
-                if (respEncoding == null
-                    && (wresp.CharacterSet != null)
-                    && (wresp.CharacterSet.Trim() != ""))
+                if (respEncoding == null && !string.IsNullOrEmpty(wresp.CharacterSet))
                 {
                     try { respEncoding = Encoding.GetEncoding(wresp.CharacterSet); }
-                    catch (Exception) { respEncoding = Encoding.UTF8; }
+                    catch (Exception) { }
                 }
+                if (respEncoding == null) { respEncoding = Encoding.UTF8; }
+
                 using (var wrespStream = wresp.GetResponseStream())
                 using (var reader = new System.IO.StreamReader(wrespStream, respEncoding))
                     return reader.ReadToEnd();
@@ -141,14 +141,13 @@ namespace CToolkit.v1_1.Net
 
             using (var wresp = (HttpWebResponse)wreq.GetResponse())
             {
-                if (respEncoding == null
-                    && (wresp.CharacterSet != null)
-                    && (wresp.CharacterSet.Trim() != ""))
+                if (respEncoding == null && !string.IsNullOrEmpty(wresp.CharacterSet))
                 {
                     try { respEncoding = Encoding.GetEncoding(wresp.CharacterSet); }
                     catch (Exception) { }
                 }
-                if (respEncoding == null) respEncoding = Encoding.UTF8;
+                if (respEncoding == null) { respEncoding = Encoding.UTF8; }
+
 
 
 

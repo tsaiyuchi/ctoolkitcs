@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace CToolkit.v1_1
 {
@@ -18,7 +20,7 @@ namespace CToolkit.v1_1
     {
 
 
-      
+
 
 
         public static string GetMemberName<T, TValue>(Expression<Func<T, TValue>> memberAccess)
@@ -56,14 +58,33 @@ namespace CToolkit.v1_1
             }
         }
 
-    
+
         public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
 
-       
 
-   
+        #region Serialize
+
+        public static T XmlDeserialize<T>(String xml) where T : class, new()
+        {
+            var seri = new XmlSerializer(typeof(T));
+            using (var xr = XmlReader.Create(new StringReader(xml)))
+                return seri.Deserialize(xr) as T;
+        }
+
+        public static string XmlSerialize(object obj)
+        {
+            var seri = new XmlSerializer(obj.GetType());
+            using (var sw = new StringWriter())
+            using (var xw = XmlWriter.Create(sw))
+            {
+                seri.Serialize(xw, obj);
+                return sw.ToString();
+            }
+        }
 
 
+
+        #endregion
 
 
         public static int RandomInt()

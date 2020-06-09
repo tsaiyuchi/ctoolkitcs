@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace CToolkit.v1_1.Cryptography
 {
-    public class CtkCryptMd5
+    public class CtkCryptographyUtil
     {
+
+        #region MD5
+
         public static string ToMd5(string source)
         {
             using (MD5 md5Hash = MD5.Create())
@@ -59,5 +63,42 @@ namespace CToolkit.v1_1.Cryptography
                 return false;
             }
         }
+
+        #endregion
+
+
+        #region RSA
+        public static Tuple<string, string> RsaGenKey()
+        {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+
+            var publicKey = rsa.ToXmlString(false);
+            var privateKey = rsa.ToXmlString(true);
+
+            return Tuple.Create<string, string>(publicKey, privateKey);
+        }
+
+        public static string RsaEncrypt(string publicKey, string content)
+        {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(publicKey);
+
+            var encryptString = Convert.ToBase64String(rsa.Encrypt(Encoding.UTF8.GetBytes(content), false));
+
+            return encryptString;
+        }
+        public static string RsaDecrypt(string privateKey, string encryptedContent)
+        {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(privateKey);
+
+            var decryptString = Encoding.UTF8.GetString(rsa.Decrypt(Convert.FromBase64String(encryptedContent), false));
+
+            return decryptString;
+        }
+
+        #endregion
+
+
     }
 }

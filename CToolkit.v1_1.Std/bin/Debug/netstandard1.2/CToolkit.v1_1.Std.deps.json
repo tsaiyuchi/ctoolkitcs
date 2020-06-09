@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETStandard,Version=v1.2/",
-    "signature": "462c95b831f48d019591baf6fbd14d3a1248979f"
+    "signature": "7e972afa8084c44554b0929078c97bde6a318723"
   },
   "compilationOptions": {},
   "targets": {
@@ -10,12 +10,20 @@
       "CToolkit.v1_1.Std/1.1.0.5": {
         "dependencies": {
           "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "12.0.3",
           "System.IO": "4.3.0",
           "System.Reflection": "4.3.0",
           "System.Xml.XmlSerializer": "4.3.0"
         },
         "runtime": {
           "CToolkit.v1_1.Std.dll": {}
+        }
+      },
+      "Microsoft.CSharp/4.3.0": {
+        "dependencies": {
+          "System.Dynamic.Runtime": "4.3.0",
+          "System.Linq.Expressions": "4.3.0",
+          "System.Runtime": "4.3.0"
         }
       },
       "Microsoft.NETCore.Platforms/1.1.0": {},
@@ -55,6 +63,20 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
+      "Newtonsoft.Json/12.0.3": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.3.0",
+          "NETStandard.Library": "1.6.1",
+          "System.ComponentModel.TypeConverter": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
+          }
+        }
+      },
       "runtime.native.System/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0",
@@ -72,6 +94,45 @@
         "dependencies": {
           "System.Runtime": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.ComponentModel/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.ComponentModel.Primitives/4.3.0": {
+        "dependencies": {
+          "System.ComponentModel": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ComponentModel.Primitives.dll": {
+            "assemblyVersion": "4.1.1.0",
+            "fileVersion": "4.6.24705.1"
+          }
+        }
+      },
+      "System.ComponentModel.TypeConverter/4.3.0": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.ComponentModel": "4.3.0",
+          "System.ComponentModel.Primitives": "4.3.0",
+          "System.Globalization": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Extensions": "4.3.0",
+          "System.Reflection.Primitives": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0",
+          "System.Threading": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ComponentModel.TypeConverter.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.6.24705.1"
+          }
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -92,6 +153,14 @@
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0",
           "Microsoft.NETCore.Targets": "1.1.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Dynamic.Runtime/4.3.0": {
+        "dependencies": {
+          "System.Linq.Expressions": "4.3.0",
+          "System.ObjectModel": "4.3.0",
+          "System.Reflection": "4.3.0",
           "System.Runtime": "4.3.0"
         }
       },
@@ -228,6 +297,11 @@
           "System.Runtime": "4.3.0"
         }
       },
+      "System.Runtime.Serialization.Primitives/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
       "System.Text.Encoding/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0",
@@ -298,6 +372,13 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Microsoft.CSharp/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-THgBJeGddhZTkmIx1dzdIXKg3GeeeHH7HRW9ZoEQCsi57imm+tDYLjjOjudIaUcGL3VZ90UE8VqGt0QQN25w9A==",
+      "path": "microsoft.csharp/4.3.0",
+      "hashPath": "microsoft.csharp.4.3.0.nupkg.sha512"
+    },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",
       "serviceable": true,
@@ -318,6 +399,13 @@
       "sha512": "sha512-GR5IS9jMsfkp5KYJkRscvbfjybBiJREVKxTB5s0aapbHZZMnEdTmhay0sA61BT7NnDVkBIS5xKIXxnWXesocNA==",
       "path": "netstandard.library/1.6.1",
       "hashPath": "netstandard.library.1.6.1.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
     },
     "runtime.native.System/4.3.0": {
       "type": "package",
@@ -340,6 +428,27 @@
       "path": "system.collections.concurrent/4.3.0",
       "hashPath": "system.collections.concurrent.4.3.0.nupkg.sha512"
     },
+    "System.ComponentModel/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0zeSn2/t/MDuhrWSKZpmPwt8thk0/6wgXii2gUwhUOMzgjDGuJviulfPCrCjlpzHFOETmvAyGFs9ZfDeApimzQ==",
+      "path": "system.componentmodel/4.3.0",
+      "hashPath": "system.componentmodel.4.3.0.nupkg.sha512"
+    },
+    "System.ComponentModel.Primitives/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-j8GUkCpM8V4d4vhLIIoBLGey2Z5bCkMVNjEZseyAlm4n5arcsJOeI3zkUP+zvZgzsbLTYh4lYeP/ZD/gdIAPrw==",
+      "path": "system.componentmodel.primitives/4.3.0",
+      "hashPath": "system.componentmodel.primitives.4.3.0.nupkg.sha512"
+    },
+    "System.ComponentModel.TypeConverter/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-16pQ6P+EdhcXzPiEK4kbA953Fu0MNG2ovxTZU81/qsCd1zPRsKc3uif5NgvllCY598k6bI0KUyKW8fanlfaDQg==",
+      "path": "system.componentmodel.typeconverter/4.3.0",
+      "hashPath": "system.componentmodel.typeconverter.4.3.0.nupkg.sha512"
+    },
     "System.Diagnostics.Debug/4.3.0": {
       "type": "package",
       "serviceable": true,
@@ -360,6 +469,13 @@
       "sha512": "sha512-KhRQ02fE/80Xfm9fKB3dA2hsYf3nJEaIKUKlYnLh4X11z0E7n8weT8517OCYAr9ZMx0JyZHYnpo8wbWIj/fzBw==",
       "path": "system.diagnostics.tracing/4.3.0",
       "hashPath": "system.diagnostics.tracing.4.3.0.nupkg.sha512"
+    },
+    "System.Dynamic.Runtime/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8yosFu719l97IpX90AudJRM+Z49JcMb37O0R99e2jABRKd1zd3G6Rete69WqLcEv0SkbkQ3QzGZzSd6CrOohAg==",
+      "path": "system.dynamic.runtime/4.3.0",
+      "hashPath": "system.dynamic.runtime.4.3.0.nupkg.sha512"
     },
     "System.Globalization/4.3.0": {
       "type": "package",
@@ -479,6 +595,13 @@
       "sha512": "sha512-04gnCHbap6qCVawzzQU0IFB+sHlIqOb8XkpT4IwvrrsgmgANIV3sZNTCpOKg9XF47d+CjwBkFmqDOCX9MHkOHQ==",
       "path": "system.runtime.numerics/4.3.0",
       "hashPath": "system.runtime.numerics.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime.Serialization.Primitives/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Wz+0KOukJGAlXjtKr+5Xpuxf8+c8739RI1C+A2BoQZT+wMCCoMDDdO8/4IRHfaVINqL78GO8dW8G2lW/e45Mcw==",
+      "path": "system.runtime.serialization.primitives/4.3.0",
+      "hashPath": "system.runtime.serialization.primitives.4.3.0.nupkg.sha512"
     },
     "System.Text.Encoding/4.3.0": {
       "type": "package",

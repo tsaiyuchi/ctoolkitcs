@@ -53,6 +53,11 @@ namespace CToolkit.v1_1
             return sf.GetMethod().Name;
         }
 
+
+
+
+        #region Serialization
+
         public static T LoadXml<T>(String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
@@ -155,6 +160,21 @@ namespace CToolkit.v1_1
                 var obj = bf.Deserialize(ms);
                 return (T)obj;
             }
+        }
+
+        #endregion
+
+        public static string GetExecutingVersion()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetName().Version.ToString();
+        }
+
+
+        public static string GetEntryVersion()
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            return assembly.GetName().Version.ToString();
         }
 
     }

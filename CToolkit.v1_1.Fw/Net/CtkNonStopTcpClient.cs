@@ -329,14 +329,11 @@ namespace CToolkit.v1_1.Net
         }
 
 
-
-
-
-
         void DisposeSelf()
         {
             try { this.Disconnect(); }
             catch (Exception ex) { CtkLog.Write(ex); }
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
 
         #endregion

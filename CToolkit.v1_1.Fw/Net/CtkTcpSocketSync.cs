@@ -14,6 +14,7 @@ namespace CToolkit.v1_1.Net
         public bool IsActively = false;
         public IPEndPoint Local;
         public IPEndPoint Remote;
+        ~CtkTcpSocketSync() { this.Dispose(false); }
 
         protected Socket m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         protected bool m_isOpenRequesting = false;
@@ -44,7 +45,7 @@ namespace CToolkit.v1_1.Net
         {
             this.IsActively = isAct;
 
-            if (this.IsRemoteConnected) return;
+            if (this.IsOpenRequesting || this.IsRemoteConnected) return;
 
             lock (this) this.m_isOpenRequesting = true;
 
@@ -81,17 +82,16 @@ namespace CToolkit.v1_1.Net
                 this.IsWaitTcpReceive = true;
                 while (this.IsWaitTcpReceive && !this.disposed)
                 {
-                    var state = new CtkTcpSocketStateEventArgs()
+                    var ea = new CtkProtocolEventArgs()
                     {
-                        sender = this,
-                        workSocket = this.WorkSocket,//Actively socket 為連線的socket本身
-                        buffer = new byte[1518]
+                        Sender = this,
                     };
+                    ea.TrxMessage = new CtkProtocolBufferMessage(1518);
+                    var trxBuffer = ea.TrxMessage.ToBuffer();
 
-                    state.dataSize = state.workSocket.Receive(state.buffer, 0, state.buffer.Length, SocketFlags.None);
-                    if (state.dataSize == 0)
-                        break;
-                    this.OnReceiveData(state);
+                    trxBuffer.Length = this.WorkSocket.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
+                    if (trxBuffer.Length == 0) break;
+                    this.OnDataReceive(ea);
                 }
             }
             finally
@@ -107,6 +107,11 @@ namespace CToolkit.v1_1.Net
         #region ICtkProtocolConnect
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
+        protected void OnDataReceive(CtkProtocolEventArgs ea)
+        {
+            if (this.EhDataReceive == null) return;
+            this.EhDataReceive(this, ea);
+        }
 
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
 
@@ -139,21 +144,12 @@ namespace CToolkit.v1_1.Net
             finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
 
         }
-        #endregion
-
-
-        #region ReceiveData
-
-        public event Action<CtkTcpSocketSync, CtkTcpSocketStateEventArgs> EhDatReceivea;
-        public void OnReceiveData(CtkTcpSocketStateEventArgs state)
-        {
-            if (this.EhDatReceivea == null)
-                return;
-
-            this.EhDatReceivea(this, state);
-        }
 
         #endregion
+
+
+
+
 
 
 
@@ -168,8 +164,11 @@ namespace CToolkit.v1_1.Net
         public void DisposeSelf()
         {
             this.IsWaitTcpReceive = false;
-            CtkNetUtil.DisposeSocket(this.WorkSocket);
-            CtkNetUtil.DisposeSocket(this.m_connSocket);
+            try { CtkNetUtil.DisposeSocket(this.WorkSocket); }
+            catch (Exception ex) { CtkLog.WarnNs(this, ex); }
+            try { CtkNetUtil.DisposeSocket(this.m_connSocket); }
+            catch (Exception ex) { CtkLog.WarnNs(this, ex); }
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
         protected virtual void Dispose(bool disposing)
         {

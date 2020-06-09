@@ -61,7 +61,7 @@ namespace CToolkit.v1_1
                 {
                     if (subscriber.Target == target)
                     {
-                        EventInfo theEvent =eventOfOwning.GetEventInfo(flags);
+                        EventInfo theEvent = eventOfOwning.GetEventInfo(flags);
                         RemoveSubscriberEvenIfItsPrivate(theEvent, target, subscriber, flags);
                     }
                 }
