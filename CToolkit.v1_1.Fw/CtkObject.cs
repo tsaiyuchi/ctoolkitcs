@@ -15,9 +15,9 @@ namespace CToolkit.v1_1
 
         #region Xml Serialization
 
-        public static T XmlDeserialize<T>(string xml, IEnumerable<Type> types = null) { return (T)XmlDeserialize(typeof(T), xml, types); }
+        public static T XmlDeserialize<T>(string xml, IEnumerable<System.Type> types = null) { return (T)XmlDeserialize(typeof(T), xml, types); }
 
-        public static Object XmlDeserialize(Type type, string xml, IEnumerable<Type> types = null)
+        public static Object XmlDeserialize(System.Type type, string xml, IEnumerable<System.Type> types = null)
         {
             var seri = new XmlSerializer(type);
             if (types != null) seri = new XmlSerializer(type, types.ToArray());
@@ -30,9 +30,9 @@ namespace CToolkit.v1_1
 
 
 
-        public static T XmlDeserialize<T>(byte[] buffer, IEnumerable<Type> types = null) { return (T)XmlDeserialize(typeof(T), buffer, types); }
+        public static T XmlDeserialize<T>(byte[] buffer, IEnumerable<System.Type> types = null) { return (T)XmlDeserialize(typeof(T), buffer, types); }
 
-        public static Object XmlDeserialize(Type type, byte[] buffer, IEnumerable<Type> types = null)
+        public static Object XmlDeserialize(System.Type type, byte[] buffer, IEnumerable<System.Type> types = null)
         {
             var seri = new XmlSerializer(type);
             if (types != null) seri = new XmlSerializer(type, types.ToArray());
@@ -45,7 +45,7 @@ namespace CToolkit.v1_1
 
 
 
-        public static byte[] XmlSerializeToBytes<T>(T obj, IEnumerable<Type> types = null)
+        public static byte[] XmlSerializeToBytes<T>(T obj, IEnumerable<System.Type> types = null)
         {
             var seri = new XmlSerializer(obj.GetType());
             if (types != null) seri = new XmlSerializer(obj.GetType(), types.ToArray());
@@ -57,7 +57,7 @@ namespace CToolkit.v1_1
             }
         }
 
-        public static string XmlSerializeToString<T>(T obj, IEnumerable<Type> types = null)
+        public static string XmlSerializeToString<T>(T obj, IEnumerable<System.Type> types = null)
         {
             var seri = new XmlSerializer(obj.GetType());
             if (types != null) seri = new XmlSerializer(obj.GetType(), types.ToArray());
@@ -73,26 +73,26 @@ namespace CToolkit.v1_1
 
         #region Data Contract Serialization
 
-        public static Object DataContractDeserialize(Type type, MemoryStream stream, IEnumerable<Type> types = null)
+        public static Object DataContractDeserialize(System.Type type, MemoryStream stream, IEnumerable<System.Type> types = null)
         {
             var seri = new DataContractSerializer(type);
             if (types != null) seri = new DataContractSerializer(type, types);
             return seri.ReadObject(stream);
         }
-        public static Object DataContractDeserialize(Type type, byte[] buffer, IEnumerable<Type> types = null)
+        public static Object DataContractDeserialize(System.Type type, byte[] buffer, IEnumerable<System.Type> types = null)
         {
             using (var stm = new MemoryStream(buffer))
                 return DataContractDeserialize(type, stm, types);
         }
-        public static T DataContractDeserialize<T>(MemoryStream stream, IEnumerable<Type> types = null) { return (T)DataContractDeserialize(typeof(T), stream, types); }
-        public static T DataContractDeserialize<T>(byte[] buffer, IEnumerable<Type> types = null) { return (T)DataContractDeserialize(typeof(T), buffer, types); }
+        public static T DataContractDeserialize<T>(MemoryStream stream, IEnumerable<System.Type> types = null) { return (T)DataContractDeserialize(typeof(T), stream, types); }
+        public static T DataContractDeserialize<T>(byte[] buffer, IEnumerable<System.Type> types = null) { return (T)DataContractDeserialize(typeof(T), buffer, types); }
 
-        public static byte[] DataContractSerializeToByte<T>(T obj, IEnumerable<Type> types = null)
+        public static byte[] DataContractSerializeToByte<T>(T obj, IEnumerable<System.Type> types = null)
         {
             using (var stm = DataContractSerializeToStream(obj))
                 return stm.ToArray();//.GetBuffer();
         }
-        public static MemoryStream DataContractSerializeToStream<T>(T obj, IEnumerable<Type> types = null)
+        public static MemoryStream DataContractSerializeToStream<T>(T obj, IEnumerable<System.Type> types = null)
         {
             var type = obj.GetType();
             var seri = new DataContractSerializer(type);

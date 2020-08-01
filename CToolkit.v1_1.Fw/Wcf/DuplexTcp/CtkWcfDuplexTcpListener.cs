@@ -23,7 +23,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         where TService : ICtkWcfDuplexTcpService
     {
 
-        public Dictionary<string, Type> AddressMapInterface = new Dictionary<string, Type>();
+        public Dictionary<string, System.Type> AddressMapInterface = new Dictionary<string, System.Type>();
         public string Uri;
         protected Binding binding;
         protected Dictionary<string, CtkWcfChannelInfo<ICTkWcfDuplexTcpCallback>> channelMapper = new Dictionary<string, CtkWcfChannelInfo<ICTkWcfDuplexTcpCallback>>();

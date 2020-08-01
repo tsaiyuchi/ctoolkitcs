@@ -36,3 +36,5 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\System.ValueTuple.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\System.ValueTuple.xml

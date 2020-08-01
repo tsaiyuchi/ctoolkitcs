@@ -18,7 +18,7 @@ namespace CToolkit.v1_1.Wcf.WebJson
         where TService : ICtkWcfWebJsonListener
     {
 
-        public Dictionary<string, Type> AddressMapInterface = new Dictionary<string, Type>();
+        public Dictionary<string, System.Type> AddressMapInterface = new Dictionary<string, System.Type>();
         public string Uri;
         protected Binding binding;
         protected ServiceHost host;

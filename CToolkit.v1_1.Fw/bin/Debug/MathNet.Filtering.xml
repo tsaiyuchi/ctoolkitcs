@@ -4,6 +4,183 @@
         <name>MathNet.Filtering</name>
     </assembly>
     <members>
+        <member name="T:MathNet.Filtering.Butterworth.Designer">
+            <summary>
+            Computes the minimum order and the cutoff frequencies, starting from the design parameters of a Butterworth filter.
+            </summary>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.Designer.LowPass(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Designs a low-pass Butterworth filter according to the specification.
+            </summary>
+            <param name="passbandFreq">Passband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="stopbandFreq">Stopband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>Minimum required filter order and computed cutoff frequency.</returns>
+            <exception cref="T:System.ArgumentException">Passband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Stopband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Passband ripple must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband corner frequency must be greater than passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be greater than passband ripple.</exception>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.Designer.HighPass(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Designs a high-pass Butterworth filter according to the specification.
+            </summary>
+            <param name="stopbandFreq">Stopband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="passbandFreq">Passband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>Minimum required filter order and computed cutoff frequency.</returns>
+            <exception cref="T:System.ArgumentException">Passband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Stopband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Passband ripple must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband corner frequency must be lesser than passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be greater than passband ripple.</exception>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.Designer.BandPass(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Designs a band-pass Butterworth filter according to the specification.
+            </summary>
+            <param name="lowStopbandFreq">Lower stopband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="lowPassbandFreq">Lower passband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="highPassbandFreq">Higher passband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="highStopbandFreq">Higher stopband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>Minimum required filter order and computed cutoff frequency.</returns>
+            <exception cref="T:System.ArgumentException">Lower passband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Lower stopband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Higher passband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Higher stopband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Passband ripple must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Lower stopband corner frequency must be lesser than lower passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Lower passband corner frequency must be lesser than higher passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Higher stopband corner frequency must be greater than higher passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be greater than passband ripple.</exception>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.Designer.BandStop(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Designs a band-stop Butterworth filter according to the specification.
+            </summary>
+            <param name="lowPassbandFreq">Lower passband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="lowStopbandFreq">Lower stopband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="highStopbandFreq">Higher stopband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="highPassbandFreq">Higher passband corner frequency, normalized to Nyquist frequency.</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>Minimum required filter order and computed cutoff frequency.</returns>
+            <exception cref="T:System.ArgumentException">Lower passband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Lower stopband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Higher passband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Higher stopband corner frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Passband ripple must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Lower stopband corner frequency must be greater than lower passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Lower stopband corner frequency must be lesser than higher passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Higher stopband corner frequency must be lesser than higher passband corner frequency.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be greater than passband ripple.</exception>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.Designer.Notch(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Designs a notch Butterworth filter according to the specification.
+            </summary>
+            <param name="centralFreq">Filter central frequency, normalized to Nyquist frequency.</param>
+            <param name="Q">Quality factor.</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>Minimum required filter order and computed cutoff frequency.</returns>
+            <exception cref="T:System.ArgumentException">Central frequency is not in [0,1] range.</exception>
+            <exception cref="T:System.ArgumentException">Q must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Passband ripple must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Stopband attenuation must be a finite number.</exception>
+            <exception cref="T:System.ArgumentException">Invalid quality factor.</exception>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.Designer.CutoffFrequencies(System.Double,System.Double,System.Double)">
+            <summary>
+            Computes the cutoff frequencies for a band-pass or a band-stop filter.
+            </summary>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.LowPass(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Computes the IIR coefficients for a low-pass Butterworth filter.
+            </summary>
+            <param name="passbandFreq">Passband corner frequency (in Hz).</param>
+            <param name="stopbandFreq">Stopband corner frequency (in Hz).</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>IIR coefficients.</returns>
+            <seealso cref="M:MathNet.Filtering.Butterworth.Designer.LowPass(System.Double,System.Double,System.Double,System.Double)"/>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.HighPass(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Computes the IIR coefficients for a high-pass Butterworth filter.
+            </summary>
+            <param name="stopbandFreq">Stopband corner frequency (in Hz).</param>
+            <param name="passbandFreq">Passband corner frequency (in Hz).</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>IIR coefficients.</returns>
+            <seealso cref="M:MathNet.Filtering.Butterworth.Designer.HighPass(System.Double,System.Double,System.Double,System.Double)"/>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.BandPass(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Computes the IIR coefficients for a band-pass Butterworth filter.
+            </summary>
+            <param name="lowStopbandFreq">Lower stopband corner frequency (in Hz).</param>
+            <param name="lowPassbandFreq">Lower passband corner frequency (in Hz).</param>
+            <param name="highPassbandFreq">Higher passband corner frequency (in Hz).</param>
+            <param name="highStopbandFreq">Higher stopband corner frequency (in Hz).</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>IIR coefficients.</returns>
+            <seealso cref="M:MathNet.Filtering.Butterworth.Designer.BandPass(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)"/>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.BandStop(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Computes the IIR coefficients for a band-stop Butterworth filter.
+            </summary>
+            <param name="lowPassbandFreq">Lower passband corner frequency (in Hz).</param>
+            <param name="lowStopbandFreq">Lower stopband corner frequency (in Hz).</param>
+            <param name="highStopbandFreq">Higher stopband corner frequency (in Hz).</param>
+            <param name="highPassbandFreq">Higher passband corner frequency (in Hz).</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>IIR coefficients.</returns>
+            <seealso cref="M:MathNet.Filtering.Butterworth.Designer.BandStop(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)"/>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.Notch(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Computes the IIR coefficients for a notch Butterworth filter.
+            </summary>
+            <param name="centralFreq">Filter central frequency.</param>
+            <param name="Q">Quality factor.</param>
+            <param name="passbandRipple">Maximum allowed passband ripple.</param>
+            <param name="stopbandAttenuation">Minimum required stopband attenuation.</param>
+            <returns>IIR coefficients.</returns>
+            <seealso cref="M:MathNet.Filtering.Butterworth.Designer.Notch(System.Double,System.Double,System.Double,System.Double)"/>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.TransferFunction(System.UInt32)">
+            <summary>
+            Computes the transfer function for a generic Butterworth filter.
+            </summary>
+            <param name="n">Order of the filter.</param>
+            <returns>The triplet gain, zeros and poles of the transfer function</returns>
+        </member>
+        <member name="M:MathNet.Filtering.Butterworth.IirCoefficients.Coefficients(System.Double,System.Numerics.Complex[],System.Numerics.Complex[],System.Double)">
+            <summary>
+            Returns the list of IIR coefficients for a generic Butterworth filter.
+            </summary>
+            <param name="gain">Filter gain.</param>
+            <param name="zeros">Filter zeros list.</param>
+            <param name="poles">Filter poles list.</param>
+            <param name="T">Sampling time (inverse of sampling frequency).</param>
+            <returns>The list of IIR coefficients.</returns>
+        </member>
         <member name="T:MathNet.Filtering.Channel.IChannelSource">
             <summary>
             Sample Provider
@@ -305,6 +482,57 @@
             Reset internal state (not coefficients!).
             </summary>
         </member>
+        <member name="T:MathNet.Filtering.Helpers.MathFunctions">
+            <summary>
+            Collection of mathematical functions used across the project.
+            </summary>
+        </member>
+        <member name="M:MathNet.Filtering.Helpers.MathFunctions.WarpFrequency(System.Double,System.Double)">
+            <summary>
+            Computes the warped frequency.
+            </summary>
+            <param name="cutoffFrequency">Digital cutoff frequency.</param>
+            <param name="samplingTime">Sampling time (computed as the reverse of the sampling frequency).</param>
+            <returns>Warped frequency.</returns>
+        </member>
+        <member name="M:MathNet.Filtering.Helpers.MathFunctions.PolynomialCoefficients(System.Numerics.Complex[])">
+            <summary>
+            Computes the coefficients of the polynomial whose solutions are roots are given as input parameter.
+            </summary>
+            <param name="roots">Roots of the polynomial.</param>
+            <returns>Polynomial coefficients.</returns>
+        </member>
+        <member name="T:MathNet.Filtering.Helpers.Validators">
+            <summary>
+            Exposes some common validation rules. Even though those check can be implemented in-place,
+            it was deemed useful to keep them in a separate file to let the utilizers focus only on their goal.
+            </summary>
+        </member>
+        <member name="M:MathNet.Filtering.Helpers.Validators.CheckDouble(System.Double,System.String)">
+            <summary>
+            Checks that a double is a finite number.
+            </summary>
+            <param name="value">Value to check.</param>
+            <param name="parameterName">Parameter name for presentation purposes.</param>
+            <exception cref="T:System.ArgumentException">If the parameter is NaN or Infinity.</exception>
+        </member>
+        <member name="M:MathNet.Filtering.Helpers.Validators.CheckFrequency(System.Double,System.String)">
+            <summary>
+            Checks that a frequency is normalized to the Nyquist rate, meaning that must be in [0;1] range.
+            </summary>
+            <param name="frequency">Frequency to check.</param>
+            <param name="parameterName">Parameter name for presentation purposes.</param>
+            <exception cref="T:System.ArgumentException">If the parameter is not in [0;1] range.</exception>
+            <seealso cref="M:MathNet.Filtering.Helpers.Validators.CheckDouble(System.Double,System.String)"/>
+        </member>
+        <member name="M:MathNet.Filtering.Helpers.Validators.CheckNull(System.Object,System.String)">
+            <summary>
+            Explicitly checks that an object is not null
+            </summary>
+            <param name="obj">Object to check.</param>
+            <param name="parameterName">Parameter name for presentation purposes.</param>
+            <exception cref="T:System.ArgumentNullException">If the parameter is null.</exception>
+        </member>
         <member name="T:MathNet.Filtering.IIR.IirCoefficients">
             <summary>
             IirCoefficients provides basic coefficient evaluation
@@ -350,7 +578,7 @@
         </member>
         <member name="T:MathNet.Filtering.IIR.OnlineIirFilter">
             <summary>
-            Infinite Impulse Response (FIR) Filters need much
+            Infinite Impulse Response (IIR) Filters need much
             less coefficients (and are thus much faster) than
             comparable FIR Filters, but are potentially unstable.
             IIR Filters are always online and causal. This IIR
@@ -586,6 +814,93 @@
             <summary>
               Looks up a localized string similar to State Transition should be square matrix with same rows/cols as state variables..
             </summary>
+        </member>
+        <member name="T:MathNet.Filtering.TransferFunctions.BilinearTransform">
+            <summary>
+            Transform the list of zeros and poles (adjusting the gain accordingly) of a transfer function through the bilinear transform.
+            </summary>
+        </member>
+        <member name="M:MathNet.Filtering.TransferFunctions.BilinearTransform.Apply(System.Double,System.Numerics.Complex[],System.Numerics.Complex[],System.Double)">
+            <summary>
+            Applies the bilinear transform starting from the set of zeros and poles.
+            </summary>
+            <param name="gain">Transfer function gain.</param>
+            <param name="zeros">List of zeros.</param>
+            <param name="poles">List of poles.</param>
+            <param name="samplingTime">Sampling time, computed as the inverse of sampling frequency.</param>
+            <returns>Recomputed gain, list of zeros and list of poles.</returns>
+            <exception cref="T:System.ArgumentException">The gain must be a finite value.</exception>
+            <exception cref="T:System.ArgumentException">The sampling time must be a finite value.</exception>
+            <exception cref="T:System.ArgumentNullException">The list of zeros must be not null.</exception>
+            <exception cref="T:System.ArgumentNullException">The list of poles must be not null.</exception>
+            <exception cref="T:System.ArgumentException">The number of poles must at least be equal to the number of zeros.</exception>
+            <remarks>
+            For performance reasons, the method edits the input list of zeros and poles in-place when feasible,
+            so the input and output arrays might be the same object.
+            </remarks>
+        </member>
+        <member name="T:MathNet.Filtering.TransferFunctions.TransferFunctionTransformer">
+            <summary>
+            Transforms the zeros, the poles and the gain of a low-pass or band-pass prototype to the required filter type.
+            </summary>
+        </member>
+        <member name="M:MathNet.Filtering.TransferFunctions.TransferFunctionTransformer.LowPass(System.Double,System.Numerics.Complex[],System.Numerics.Complex[],System.Double)">
+            <summary>
+            Recomputes the gain and the list of zeros and poles for a low-pass filter.
+            </summary>
+            <param name="gain">Initial gain.</param>
+            <param name="zeros">List of zeros.</param>
+            <param name="poles">List of poles.</param>
+            <param name="wc">Cutoff frequency.</param>
+            <returns>Recomputed gain, list of zeros and list of poles.</returns>
+            <remarks>
+            For performance reasons, the method edits the input list of zeros and poles in place, so the input and output
+            arrays are actually the same object.
+            </remarks>
+        </member>
+        <member name="M:MathNet.Filtering.TransferFunctions.TransferFunctionTransformer.HighPass(System.Double,System.Numerics.Complex[],System.Numerics.Complex[],System.Double)">
+            <summary>
+            Recomputes the gain and the list of zeros and poles for a high-pass filter.
+            </summary>
+            <param name="gain">Initial gain.</param>
+            <param name="zeros">List of zeros.</param>
+            <param name="poles">List of poles.</param>
+            <param name="wc">Cutoff frequency.</param>
+            <returns>Recomputed gain, list of zeros and list of poles.</returns>
+            <remarks>
+            For performance reasons, the method edits the input list of zeros and poles in place, so the input and output
+            arrays are actually the same object.
+            </remarks>
+        </member>
+        <member name="M:MathNet.Filtering.TransferFunctions.TransferFunctionTransformer.BandPass(System.Double,System.Numerics.Complex[],System.Numerics.Complex[],System.Double,System.Double)">
+            <summary>
+            Recomputes the gain and the list of zeros and poles for a band-pass filter.
+            </summary>
+            <param name="gain">Initial gain.</param>
+            <param name="zeros">List of zeros.</param>
+            <param name="poles">List of poles.</param>
+            <param name="wc1">Lower cutoff frequency.</param>
+            <param name="wc2">Higher cutoff frequency.</param>
+            <returns>Recomputed gain, list of zeros and list of poles.</returns>
+            <remarks>
+            For performance reasons, the method edits the input list of zeros and poles in place, so the input and output
+            arrays are actually the same object.
+            </remarks>
+        </member>
+        <member name="M:MathNet.Filtering.TransferFunctions.TransferFunctionTransformer.BandStop(System.Double,System.Numerics.Complex[],System.Numerics.Complex[],System.Double,System.Double)">
+            <summary>
+            Recomputes the gain and the list of zeros and poles for a band-stop filter.
+            </summary>
+            <param name="gain">Initial gain.</param>
+            <param name="zeros">List of zeros.</param>
+            <param name="poles">List of poles.</param>
+            <param name="wc1">Lower cutoff frequency.</param>
+            <param name="wc2">Higher cutoff frequency.</param>
+            <returns>Recomputed gain, list of zeros and list of poles.</returns>
+            <remarks>
+            For performance reasons, the method edits the input list of zeros and poles in place, so the input and output
+            arrays are actually the same object.
+            </remarks>
         </member>
         <member name="T:MathNet.Filtering.Windowing.BartlettHannWindow">
             <summary>

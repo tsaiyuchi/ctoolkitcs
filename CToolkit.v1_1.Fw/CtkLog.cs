@@ -135,8 +135,8 @@ namespace CToolkit.v1_1
         public static CtkLogger GetAssemblyLogger(Object sender)
         {
             var type = sender.GetType();
-            if (sender is Type)
-                type = sender as Type;
+            if (sender is System.Type)
+                type = sender as System.Type;
 
             var name = type.Assembly.FullName;
             return CtkLoggerMapper.Singleton.Get(name);

@@ -23,6 +23,7 @@ namespace CToolkit.v1_1.Timing
 
 
         public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
+        public static int HalfOfYear(DateTime dt) { return (dt.Month - 1) / 6 + 1; }
 
 
         #region Week Operation
@@ -221,6 +222,19 @@ namespace CToolkit.v1_1.Timing
             return date;
         }
 
+        public static DateTime FromYyyyHyhy(string yyyyhyhy, int day = 1)
+        {
+            var yyyy = Convert.ToInt32(yyyyhyhy.Substring(0, 4));
+            var hyhy = Convert.ToInt32(yyyyhyhy.Substring(4));
+
+            var date = new DateTime(yyyy, 1, day);
+            date = date.AddMonths((hyhy - 1) * 6);
+
+            var realYyyyHyhy = ToYyyyHyhy(date);
+            if (yyyyhyhy != realYyyyHyhy) throw new InvalidOperationException();
+
+            return date;
+        }
 
         /// <summary>
         /// 
@@ -256,6 +270,11 @@ namespace CToolkit.v1_1.Timing
         {
             var qq = QuarterOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), qq);
+        }
+        public static string ToYyyyHyhy(DateTime dt)
+        {
+            var Hyhy = HalfOfYear(dt);
+            return string.Format("{0}{1:00}", dt.ToString("yyyy"), Hyhy);
         }
         public static string ToYyyyWw(DateTime dt)
         {

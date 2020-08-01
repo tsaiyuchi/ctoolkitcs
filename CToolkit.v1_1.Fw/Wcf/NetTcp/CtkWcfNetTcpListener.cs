@@ -25,7 +25,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
         /// <summary>
         /// Type必須為Interface
         /// </summary>
-        public Dictionary<string, Type> AddressMap = new Dictionary<string, Type>();
+        public Dictionary<string, System.Type> AddressMap = new Dictionary<string, System.Type>();
         public string Uri;
         protected Binding binding;
         protected ServiceHost host;
@@ -69,8 +69,8 @@ namespace CToolkit.v1_1.Wcf.NetTcp
             {
                 if (typeof(Object).Equals(instance.GetType())) throw new ArgumentException("不應使用Object作為服務本體");
 
-                if (instance is Type)
-                    this.host = new ServiceHost(instance as Type, new Uri(this.Uri));
+                if (instance is System.Type)
+                    this.host = new ServiceHost(instance as System.Type, new Uri(this.Uri));
                 else
                     this.host = new ServiceHost(instance, new Uri(this.Uri));
             }

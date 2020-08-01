@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace CToolkit.v1_1
             if (aNetAssembly != null)
             {
                 //Use the assembly in order to get the internal type for the internal class
-                Type aSettingsType = aNetAssembly.GetType("System.Net.Configuration.SettingsSectionInternal");
+                System.Type aSettingsType = aNetAssembly.GetType("System.Net.Configuration.SettingsSectionInternal");
                 if (aSettingsType != null)
                 {
                     //Use the internal static property to get an instance of the internal settings class.
@@ -52,6 +53,19 @@ namespace CToolkit.v1_1
 
             return sf.GetMethod().Name;
         }
+
+        public static string GetExecutingVersion()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetName().Version.ToString();
+        }
+        public static string GetEntryVersion()
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            return assembly.GetName().Version.ToString();
+        }
+
+
 
 
 
@@ -101,7 +115,7 @@ namespace CToolkit.v1_1
             }
         }
 
-        public static void SaveToXmlFile(Type type, object obj, String fn)
+        public static void SaveToXmlFile(System.Type type, object obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(type);
             var fi = new FileInfo(fn);
@@ -164,18 +178,47 @@ namespace CToolkit.v1_1
 
         #endregion
 
-        public static string GetExecutingVersion()
+        #region Dispose
+
+        public static void DisposeObjTry(IDisposable obj, Action<Exception> exceptionHandler = null)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            return assembly.GetName().Version.ToString();
+            try
+            {
+                if (obj == null) return;
+                obj.Dispose();
+            }
+            catch (Exception ex)
+            {
+                if (exceptionHandler == null) exceptionHandler(ex);
+                else CtkLog.Write(ex);
+            }
+
+        }
+        public static void DisposeObjTry(IEnumerable<IDisposable> objs, Action<Exception> exceptionHandler = null)
+        {
+            foreach (var obj in objs) DisposeObjTry(obj, exceptionHandler);
         }
 
+        #endregion
 
-        public static string GetEntryVersion()
+        #region Foreach
+
+        public static void ForeachTry<T>(IEnumerable<T> list, Action<T> act, Action<Exception> exceptionHandler = null)
         {
-            var assembly = Assembly.GetEntryAssembly();
-            return assembly.GetName().Version.ToString();
+            foreach (var obj in list)
+            {
+                try { act(obj); }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler == null) exceptionHandler(ex);
+                    else CtkLog.Write(ex);
+                }
+            }
         }
+
+        #endregion
+
+
 
     }
 }

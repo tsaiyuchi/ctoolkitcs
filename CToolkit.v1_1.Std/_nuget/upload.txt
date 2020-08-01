@@ -1,0 +1,6 @@
+﻿
+
+在套件管理器主控台
+
+dotnet nuget push D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Std\bin\Debug\CToolkit.v1_1.Std.1.1.0.6.nupkg -k oy2aokazunftnckyjlyas3sbury5ejcurfkkkbn3my24du -s https://api.nuget.org/v3/index.json
+

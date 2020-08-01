@@ -49,7 +49,7 @@ namespace CToolkit.v1_1
         /// <param name="dlgt"></param>
         /// <param name="target"></param>
         /// <param name="flags"></param>
-        public static void RemoveEventHandlersOfTypeByTarget(Type type, Object target
+        public static void RemoveEventHandlersOfTypeByTarget(System.Type type, Object target
             , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
         {
             //傳入類型代表要處理static類型的EventHandler
@@ -161,7 +161,7 @@ namespace CToolkit.v1_1
             return delegates.ToArray();
         }
 
-        private static DelegateInfo[] GetDelegates(Type owningType, BindingFlags flags)
+        private static DelegateInfo[] GetDelegates(System.Type owningType, BindingFlags flags)
         {
 
             var delegates = new List<DelegateInfo>();
@@ -206,14 +206,14 @@ namespace CToolkit.v1_1
             public readonly Delegate delegateInformation;
             public readonly FieldInfo fieldInfo;
             public readonly object owningObject;
-            public readonly Type owningType;
+            public readonly System.Type owningType;
 
             public DelegateInfo(Delegate delegateInformation, FieldInfo fieldInfo, object owningObject)
             {
                 this.delegateInformation = delegateInformation;
                 this.fieldInfo = fieldInfo;
                 this.owningObject = owningObject;
-                if (owningObject is Type) this.owningType = owningObject as Type;
+                if (owningObject is System.Type) this.owningType = owningObject as System.Type;
             }
 
             public EventInfo GetEventInfo(BindingFlags flags)

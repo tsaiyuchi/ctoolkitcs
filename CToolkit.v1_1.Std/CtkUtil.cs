@@ -23,6 +23,7 @@ namespace CToolkit.v1_1
 
 
 
+
         public static string GetMemberName<T, TValue>(Expression<Func<T, TValue>> memberAccess)
         {
             var body = memberAccess.Body;
@@ -62,31 +63,6 @@ namespace CToolkit.v1_1
         public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
 
 
-        #region Serialize
-
-        public static T XmlDeserialize<T>(String xml) where T : class, new()
-        {
-            var seri = new XmlSerializer(typeof(T));
-            using (var xr = XmlReader.Create(new StringReader(xml)))
-                return seri.Deserialize(xr) as T;
-        }
-
-        public static string XmlSerialize(object obj)
-        {
-            var seri = new XmlSerializer(obj.GetType());
-            using (var sw = new StringWriter())
-            using (var xw = XmlWriter.Create(sw))
-            {
-                seri.Serialize(xw, obj);
-                return sw.ToString();
-            }
-        }
-
-
-
-        #endregion
-
-
         public static int RandomInt()
         {
             var rnd = new Random((int)DateTime.Now.Ticks);
@@ -111,6 +87,91 @@ namespace CToolkit.v1_1
 
             return rnd.Next(min, max);
         }
+
+        #region Type Guid
+
+        public static Guid? TypeGuid(System.Type type)
+        {
+
+            var attrs = type.GetTypeInfo().GetCustomAttributes(typeof(GuidAttribute), false);
+            var attr = attrs.FirstOrDefault() as GuidAttribute;
+            if (attr == null) return null;
+            return Guid.Parse(attr.Value);
+        }
+        public static Guid? TypeGuid<T>()
+        {
+            var type = typeof(T);
+            return TypeGuid(type);
+        }
+
+        public static Guid? TypeGuiInst(object inst)
+        {
+            var type = inst.GetType();
+            return TypeGuid(type);
+        }
+
+        #endregion
+
+
+
+        #region Serialize
+
+        public static T XmlDeserialize<T>(String xml) where T : class, new()
+        {
+            var seri = new XmlSerializer(typeof(T));
+            using (var xr = XmlReader.Create(new StringReader(xml)))
+                return seri.Deserialize(xr) as T;
+        }
+
+        public static string XmlSerialize(object obj)
+        {
+            var seri = new XmlSerializer(obj.GetType());
+            using (var sw = new StringWriter())
+            using (var xw = XmlWriter.Create(sw))
+            {
+                seri.Serialize(xw, obj);
+                return sw.ToString();
+            }
+        }
+
+        #endregion
+
+
+        #region Dispose
+        public static void DisposeObj(IDisposable obj)
+        {
+            if (obj == null) return;
+            obj.Dispose();
+        }
+
+        public static void DisposeObjN(ref IDisposable obj)
+        {
+            if (obj == null) return;
+            obj.Dispose();
+            obj = null;
+        }
+
+
+        public static void DisposeObj(IEnumerable<IDisposable> objs)
+        {
+            foreach (var obj in objs) DisposeObj(obj);
+        }
+
+        #endregion
+
+        #region Foreach
+
+        public static void Foreach<T>(IEnumerable<T> list, Action<T> act)
+        {
+            foreach (var obj in list) act(obj);
+        }
+
+        #endregion
+
+
+
+
+
 
 
     }
