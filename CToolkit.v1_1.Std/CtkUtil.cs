@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -21,7 +22,16 @@ namespace CToolkit.v1_1
 
 
 
-
+        public static bool MonitorTryEnter(object obj, int millisecond, Action act)
+        {
+            try
+            {
+                if (!Monitor.TryEnter(obj, millisecond)) return false;
+                act();
+                return true;
+            }
+            finally { Monitor.Exit(obj); }
+        }
 
 
         public static string GetMemberName<T, TValue>(Expression<Func<T, TValue>> memberAccess)
@@ -144,19 +154,17 @@ namespace CToolkit.v1_1
             obj.Dispose();
         }
 
+        public static void DisposeObj(IEnumerable<IDisposable> objs)
+        {
+            foreach (var obj in objs) DisposeObj(obj);
+        }
+
         public static void DisposeObjN(ref IDisposable obj)
         {
             if (obj == null) return;
             obj.Dispose();
             obj = null;
         }
-
-
-        public static void DisposeObj(IEnumerable<IDisposable> objs)
-        {
-            foreach (var obj in objs) DisposeObj(obj);
-        }
-
         #endregion
 
         #region Foreach
