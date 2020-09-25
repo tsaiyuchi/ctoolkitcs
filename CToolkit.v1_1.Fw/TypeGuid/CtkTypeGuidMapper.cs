@@ -33,6 +33,9 @@ namespace CToolkit.v1_1.TypeGuid
         }
         public static Type Get(string guid) { return Get(Guid.Parse(guid)); }
 
+
+
+
         public static SortedDictionary<Guid, Type> LoadTypeMap(Func<string, bool> filter = null)
         {
             var collector = new SortedDictionary<Guid, Type>();
