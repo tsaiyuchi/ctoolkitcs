@@ -1,6 +1,7 @@
 using CToolkit.v1_1.Logging;
 using CToolkit.v1_1.Net;
 using CToolkit.v1_1.Protocol;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,27 +16,32 @@ namespace CToolkit.v1_1.Net
     public class CtkNonStopTcpClient : ICtkProtocolNonStopConnect, IDisposable
     {
 
-        public IPEndPoint localEP;
-        public IPEndPoint remoteEP;
+        public Uri LocalUri;
+        public Uri RemoteUri;
         protected int m_IntervalTimeOfConnectCheck = 5000;
         TcpClient activeWorkClient;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         Thread threadNonStopConnect;// = new BackgroundWorker();
         public CtkNonStopTcpClient() : base() { }
-        public CtkNonStopTcpClient(IPEndPoint remoteEP)
+        public CtkNonStopTcpClient(Uri remote)
         {
-            this.remoteEP = remoteEP;
+            this.RemoteUri = remote;
         }
         public CtkNonStopTcpClient(string remoteIp, int remotePort, string localIp = null, int localPort = 0)
         {
-            IPAddress remoteIpAddr;
-            if (IPAddress.TryParse(remoteIp, out remoteIpAddr))
-                this.remoteEP = new IPEndPoint(remoteIpAddr, remotePort);
+            if (!string.IsNullOrEmpty(remoteIp))
+            {
+                IPAddress.Parse(remoteIp);//Check format
+                this.RemoteUri = new Uri("net.tcp://" + remoteIp + ":" + remotePort);
+            }
 
-            IPAddress localIpAddr;
-            if (IPAddress.TryParse(localIp, out localIpAddr))
-                this.localEP = new IPEndPoint(localIpAddr, localPort);
+            if (!string.IsNullOrEmpty(localIp))
+            {
+                IPAddress.Parse(localIp);//Check format
+                this.LocalUri = new Uri("net.tcp://" + localIp + ":" + localPort);
+            }
         }
+
 
         ~CtkNonStopTcpClient() { this.Dispose(false); }
 
@@ -113,7 +119,7 @@ namespace CToolkit.v1_1.Net
                 //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
                 var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
                 var client = myea.workClient;
-                if(! ar.IsCompleted || client == null || client.Client == null || !client.Connected)
+                if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)
                 {
                     myea.Message = "Read Fail";
                     return;
@@ -144,6 +150,7 @@ namespace CToolkit.v1_1.Net
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
+        [JsonIgnore]
         public object ActiveWorkClient
         {
             get { return this.activeWorkClient; }
@@ -188,9 +195,9 @@ namespace CToolkit.v1_1.Net
 
                     this.activeWorkClient = null;
                 }
-                this.activeWorkClient = localEP == null ? new TcpClient() : new TcpClient(localEP);
+                this.activeWorkClient = this.LocalUri == null ? new TcpClient() : new TcpClient(LocalUri.Host, LocalUri.Port);
                 this.activeWorkClient.NoDelay = true;
-                this.activeWorkClient.BeginConnect(this.remoteEP.Address, this.remoteEP.Port, new AsyncCallback(ClientEndConnectCallback), this);
+                this.activeWorkClient.BeginConnect(this.RemoteUri.Host, this.RemoteUri.Port, new AsyncCallback(ClientEndConnectCallback), this);
 
             }
             finally { Monitor.Exit(this); }

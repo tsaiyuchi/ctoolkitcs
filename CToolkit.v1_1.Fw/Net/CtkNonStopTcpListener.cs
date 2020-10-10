@@ -1,4 +1,5 @@
 using CToolkit.v1_1.Protocol;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace CToolkit.v1_1.Net
     public class CtkNonStopTcpListener : ICtkProtocolNonStopConnect, IDisposable
     {
         protected int m_IntervalTimeOfConnectCheck = 5000;
-        public IPEndPoint localEP;
+        public Uri LocalUri;
         TcpClient activeWorkClient;
         ManualResetEvent connectMre = new ManualResetEvent(true);
         ConcurrentQueue<TcpClient> m_tcpClientList = new ConcurrentQueue<TcpClient>();
@@ -24,20 +25,19 @@ namespace CToolkit.v1_1.Net
         // = new BackgroundWorker();
         public CtkNonStopTcpListener() : base() { }
 
-        public CtkNonStopTcpListener(IPEndPoint localEP)
-        {
-            this.localEP = localEP;
-        }
 
         public CtkNonStopTcpListener(string localIp, int localPort)
         {
-            IPAddress ipAddr;
-            if (IPAddress.TryParse(localIp, out ipAddr))
-                this.localEP = new IPEndPoint(ipAddr, localPort);
+            if (localIp != null)
+            {
+                IPAddress.Parse(localIp);//Check format
+                this.LocalUri = new Uri("net.tcp://" + localIp + ":" + localPort);
+            }
         }
 
         ~CtkNonStopTcpListener() { this.Dispose(false); }
 
+        [JsonIgnore]
         public ConcurrentQueue<TcpClient> TcpClientList { get { return this.m_tcpClientList; } }
 
         public void CleanDisconnect()
@@ -215,6 +215,7 @@ namespace CToolkit.v1_1.Net
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
+        [JsonIgnore]
         public object ActiveWorkClient
         {
             get { return this.activeWorkClient; }
@@ -251,7 +252,7 @@ namespace CToolkit.v1_1.Net
 
                 if (this.m_tcpListener != null) return;
                 //this.m_tcpListener.Stop();
-                this.m_tcpListener = new CtkTcpListenerEx(this.localEP);
+                this.m_tcpListener = new CtkTcpListenerEx(IPAddress.Parse(this.LocalUri.Host), this.LocalUri.Port);
                 this.m_tcpListener.Start();
                 this.m_tcpListener.BeginAcceptTcpClient(new AsyncCallback(EndConnectCallback), this);
             }
@@ -404,7 +405,7 @@ namespace CToolkit.v1_1.Net
 
         }
 
- 
+
 
 
         #endregion

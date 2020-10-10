@@ -9,8 +9,8 @@ namespace CToolkit.v1_1.Net
     public class CtkTcpSocketSync : ICtkProtocolConnect, IDisposable
     {
         public bool IsActively = false;
-        public IPEndPoint Local;
-        public IPEndPoint Remote;
+        public Uri LocalUri;
+        public Uri RemoteUri;
         protected Socket m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         protected bool m_isOpenRequesting = false;
         protected bool m_isWaitReceive = false;
@@ -46,89 +46,42 @@ namespace CToolkit.v1_1.Net
         }
 
         public void ConnectIfNo(bool isAct)
-
         {
-
             this.IsActively = isAct;
-
-
-
             if (this.IsOpenRequesting || this.IsRemoteConnected) return;
 
-
-
-
-
             try
-
             {
-
                 var canLock = false;
-
                 Monitor.TryEnter(this, 3000, ref canLock);
-
                 if (!canLock) throw new CtkException("Cannot enter lock");
-
                 this.m_isOpenRequesting = true;
 
-
-
                 if (isAct)
-
                 {
 
-                    if (this.Local != null && !this.ConnSocket.IsBound)
-
-                        this.ConnSocket.Bind(this.Local);
-
-                    if (this.Remote == null)
-
+                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
+                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    if (this.RemoteUri == null)
                         throw new CtkException("remote field can not be null");
-
-
-
-                    this.ConnSocket.Connect(this.Remote);
-
+                    this.ConnSocket.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
                     this.WorkSocket = this.ConnSocket;
-
                 }
-
                 else
-
                 {
-
-                    if (this.Local == null)
-
+                    if (this.LocalUri == null)
                         throw new Exception("local field can not be null");
-
                     if (!this.ConnSocket.IsBound)
-
-                        this.ConnSocket.Bind(this.Local);
-
-
-
-
-
+                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     this.ConnSocket.Listen(100);
-
                     this.WorkSocket = this.ConnSocket.Accept();
-
                 }
-
             }
-
             finally
-
             {
-
                 this.m_isOpenRequesting = false;
-
                 Monitor.Exit(this);
-
             }
-
-
-
         }
 
         public void ReceiveRepeat()
@@ -242,7 +195,7 @@ namespace CToolkit.v1_1.Net
             this.EhDataReceive(this, ea);
 
         }
-       
+
         #endregion
 
 

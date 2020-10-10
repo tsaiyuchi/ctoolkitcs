@@ -45,7 +45,7 @@ namespace CToolkit.v1_1.Net
 
 
 
-        public static IPAddress GetLikelyIp(string refence_ip)
+        public static IPAddress GetIpAdrLikely(string refence_ip)
         {
             if (string.IsNullOrEmpty(refence_ip)) return null;
 
@@ -71,7 +71,7 @@ namespace CToolkit.v1_1.Net
             }
             return ipaddr;
         }
-        public static IPAddress GetLikelyIp(string request_ip, string refence_ip)
+        public static IPAddress GetIpAdrLikely(string request_ip, string refence_ip)
         {
             if (string.IsNullOrEmpty(refence_ip) && string.IsNullOrEmpty(request_ip)) return null;
 
@@ -82,34 +82,34 @@ namespace CToolkit.v1_1.Net
 
 
             //否則找出最接近參考IP(remote)
-            var targetIpAddr = GetLikelyIp(refence_ip);
+            var targetIpAddr = GetIpAdrLikely(refence_ip);
             if (targetIpAddr != null) return targetIpAddr;
 
 
             return null;
         }
-        public static IPAddress GetFirstIp()
+        public static IPAddress GetIpAdr1st()
         {
             string strHostName = Dns.GetHostName();
             var iphostentry = Dns.GetHostEntry(strHostName);
             return iphostentry.AddressList.FirstOrDefault();
         }
 
-        public static IPAddress GetLikelyFirstLocalIp(string request_ip = null, string reference_ip = null)
+        public static IPAddress GetIpAdr1stLikelyOrLocal(string request_ip = null, string reference_ip = null)
         {
-            var ipaddr = GetLikelyIp(request_ip, reference_ip);
+            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
             if (ipaddr == null)
-                ipaddr = GetFirstIp();
+                ipaddr = GetIpAdr1st();
             if (ipaddr == null)
                 ipaddr = IPAddress.Parse("localhost");
 
             return ipaddr;
         }
-        public static IPAddress GetLikelyFirst127Ip(string request_ip = null, string reference_ip = null)
+        public static IPAddress GetIpAdr1stLikelyOr127(string request_ip = null, string reference_ip = null)
         {
-            var ipaddr = GetLikelyIp(request_ip, reference_ip);
+            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
             if (ipaddr == null)
-                ipaddr = GetFirstIp();
+                ipaddr = GetIpAdr1st();
             if (ipaddr == null)
                 ipaddr = IPAddress.Parse("127.0.0.1");
 
@@ -133,9 +133,9 @@ namespace CToolkit.v1_1.Net
                 return IPAddress.Parse("localhost");
 
 
-            var ipaddr = GetLikelyIp(request_ip, reference_ip);
+            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
             if (ipaddr == null)
-                ipaddr = GetFirstIp();
+                ipaddr = GetIpAdr1st();
             if (ipaddr == null)
                 ipaddr = IPAddress.Parse("127.0.0.1");//localhost可能被改掉, 所以不適用
 
@@ -154,6 +154,12 @@ namespace CToolkit.v1_1.Net
             IPAddress[] addr = ipEntry.AddressList;
             return new List<IPAddress>(addr);
         }
+
+
+        public static IPAddress ToIPAddress(Uri uri) { return IPAddress.Parse(uri.Host); }
+        public static IPEndPoint ToIPEndPoint(Uri uri) { return new IPEndPoint(ToIPAddress(uri), uri.Port); }
+
+        public static Uri ToUri(string ip, int port, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ip, port)); }
 
 
         public static List<string> GetMacAddressEnthernet()
