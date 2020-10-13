@@ -195,7 +195,15 @@ namespace CToolkit.v1_1.Net
 
                     this.activeWorkClient = null;
                 }
-                this.activeWorkClient = this.LocalUri == null ? new TcpClient() : new TcpClient(LocalUri.Host, LocalUri.Port);
+
+
+                IPAddress ip = null;
+                if (IPAddress.TryParse(this.LocalUri.Host, out ip))
+                {
+                    this.activeWorkClient = new TcpClient(new IPEndPoint(ip, this.LocalUri.Port));
+                }
+                else this.activeWorkClient = new TcpClient();
+                //this.activeWorkClient = this.LocalUri == null ? new TcpClient() : new TcpClient(LocalUri.Host, LocalUri.Port);
                 this.activeWorkClient.NoDelay = true;
                 this.activeWorkClient.BeginConnect(this.RemoteUri.Host, this.RemoteUri.Port, new AsyncCallback(ClientEndConnectCallback), this);
 

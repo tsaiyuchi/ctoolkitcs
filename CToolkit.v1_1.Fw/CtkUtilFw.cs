@@ -65,7 +65,14 @@ namespace CToolkit.v1_1
             return assembly.GetName().Version.ToString();
         }
 
-
+        public static long MemorySize(string processName)
+        {
+            var procs = Process.GetProcessesByName(processName);
+            var sum = 0L;
+            foreach (var p in procs)
+                sum += p.WorkingSet64;
+            return sum;
+        }
 
 
 
