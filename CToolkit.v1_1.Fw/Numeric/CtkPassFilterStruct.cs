@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace CToolkit.v1_1.Numeric
 {
@@ -11,9 +12,10 @@ namespace CToolkit.v1_1.Numeric
     /// </summary>
     public struct CtkPassFilterStruct
     {
-        public int SampleRate;
-        public CtkEnumPassFilterMode Mode;
-        public int CutoffHigh;
-        public int CutoffLow;
+
+        [XmlAttribute] public int SampleRate;
+        [XmlAttribute] public CtkEnumPassFilterMode Mode;
+        [XmlAttribute] public int CutoffHigh;
+        [XmlAttribute] public int CutoffLow;
     }
 }

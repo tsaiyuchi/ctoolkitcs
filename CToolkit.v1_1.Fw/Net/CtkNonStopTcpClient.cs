@@ -57,10 +57,13 @@ namespace CToolkit.v1_1.Net
             if (!this.activeWorkClient.Connected) return;
 
             var stm = this.activeWorkClient.GetStream();
-            stm.BeginWrite(buff, offset, length, new AsyncCallback((ar) =>
-            {
-                //CtkLog.WriteNs(this, "" + ar.IsCompleted);
-            }), this);
+            stm.Write(buff, offset, length);
+            stm.Flush();
+
+            //stm.BeginWrite(buff, offset, length, new AsyncCallback((ar) =>
+            //{
+            //    //CtkLog.WriteNs(this, "" + ar.IsCompleted);
+            //}), this);
 
 
         }

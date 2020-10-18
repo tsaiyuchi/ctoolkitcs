@@ -102,6 +102,7 @@
     <Compile Include="Extension\CtkExtProtocol.cs" />
     <Compile Include="IO\CtkStreamSegment.cs" />
     <Compile Include="IO\CtkStreamSegmentBuffer.cs" />
+    <Compile Include="CtkKeyValuePair.cs" />
     <Compile Include="Logging\CtkLogger.cs" />
     <Compile Include="Logging\CtkLoggerEnumDisplay.cs" />
     <Compile Include="Logging\CtkLoggerEnumLevel.cs" />
