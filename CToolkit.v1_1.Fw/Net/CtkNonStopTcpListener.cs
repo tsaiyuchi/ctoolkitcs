@@ -332,6 +332,10 @@ namespace CToolkit.v1_1.Net
             }
         }
 
+
+        #endregion
+
+        #region Event
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhDataReceive == null) return;
@@ -359,6 +363,8 @@ namespace CToolkit.v1_1.Net
         }
 
         #endregion
+
+
 
 
         #region IDisposable

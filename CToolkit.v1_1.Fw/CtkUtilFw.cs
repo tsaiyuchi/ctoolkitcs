@@ -65,6 +65,8 @@ namespace CToolkit.v1_1
             return assembly.GetName().Version.ToString();
         }
 
+
+        #region Process
         public static long MemorySize(string processName)
         {
             var procs = Process.GetProcessesByName(processName);
@@ -74,6 +76,14 @@ namespace CToolkit.v1_1
             return sum;
         }
 
+        public static void TaskkillByName(string name, bool isWaitForExit = true)
+        {
+            var arguments = string.Format("/IM \"{0}\" /F", name);
+            var myproc = Process.Start("taskkill", arguments);
+            if (isWaitForExit) myproc.WaitForExit();
+        }
+
+        #endregion 
 
 
 

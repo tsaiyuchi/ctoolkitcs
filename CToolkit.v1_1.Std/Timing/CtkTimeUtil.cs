@@ -18,14 +18,13 @@ namespace CToolkit.v1_1.Timing
         //--- DateTime and Timestamp converter ---------
 
         //--- ROC ---------
-        const int RocYearToYear = 1911;
+        const int YearDiffBetweenRocAndAd = 1911;
 
 
 
-        public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
         public static int HalfOfYear(DateTime dt) { return (dt.Month - 1) / 6 + 1; }
 
-
+        public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
         #region Week Operation
         //--- Week ---------
 
@@ -192,6 +191,20 @@ namespace CToolkit.v1_1.Timing
             var dt = DateTimeParseExact(s, "yyyy");
             return new DateTime(dt.Year, month, day);
         }
+        public static DateTime FromYyyyHyhy(string yyyyhyhy, int day = 1)
+        {
+            var yyyy = Convert.ToInt32(yyyyhyhy.Substring(0, 4));
+            var hyhy = Convert.ToInt32(yyyyhyhy.Substring(4));
+
+            var date = new DateTime(yyyy, 1, day);
+            date = date.AddMonths((hyhy - 1) * 6);
+
+            var realYyyyHyhy = ToYyyyHyhy(date);
+            if (yyyyhyhy != realYyyyHyhy) throw new InvalidOperationException();
+
+            return date;
+        }
+
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
@@ -221,21 +234,6 @@ namespace CToolkit.v1_1.Timing
 
             return date;
         }
-
-        public static DateTime FromYyyyHyhy(string yyyyhyhy, int day = 1)
-        {
-            var yyyy = Convert.ToInt32(yyyyhyhy.Substring(0, 4));
-            var hyhy = Convert.ToInt32(yyyyhyhy.Substring(4));
-
-            var date = new DateTime(yyyy, 1, day);
-            date = date.AddMonths((hyhy - 1) * 6);
-
-            var realYyyyHyhy = ToYyyyHyhy(date);
-            if (yyyyhyhy != realYyyyHyhy) throw new InvalidOperationException();
-
-            return date;
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -260,6 +258,12 @@ namespace CToolkit.v1_1.Timing
         public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
 
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
+        public static string ToYyyyHyhy(DateTime dt)
+        {
+            var Hyhy = HalfOfYear(dt);
+            return string.Format("{0}{1:00}", dt.ToString("yyyy"), Hyhy);
+        }
+
         public static string ToYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
         public static string ToYyyyMm(DateTime? dt) { return dt.HasValue ? ToYyyyMm(dt.Value) : null; }
         public static string ToYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
@@ -270,11 +274,6 @@ namespace CToolkit.v1_1.Timing
         {
             var qq = QuarterOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), qq);
-        }
-        public static string ToYyyyHyhy(DateTime dt)
-        {
-            var Hyhy = HalfOfYear(dt);
-            return string.Format("{0}{1:00}", dt.ToString("yyyy"), Hyhy);
         }
         public static string ToYyyyWw(DateTime dt)
         {
@@ -406,32 +405,44 @@ namespace CToolkit.v1_1.Timing
 
         #region ROC DateTime
 
-        public static DateTime FromRoc(string s, string format = "yyy.MM.dd")
+        public static DateTime FromRocDateToAd(DateTime dt) { return dt.AddYears(YearDiffBetweenRocAndAd); }
+
+        public static DateTime FromRocDateToAdSpliter(string s, char spliter)
         {
-            var roc = DateTime.ParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None);
-            return CtkTimeUtil.FromRoc(roc);
+            var dt = new DateTime();
+            if (!FromRocDateToAdSpliterTry(s, spliter, ref dt)) throw new CtkException("Cannot convert to DateTime");
+            return dt;
         }
-        public static DateTime FromRoc(DateTime dt) { return dt.AddYears(RocYearToYear); }
-        public static DateTime FromRocSpliter(string dt, char spliter)
+
+        public static bool FromRocDateToAdSpliterTry(string s, char spliter, ref DateTime dt)
         {
-            var nums = dt.Split(spliter);
-            var yyy = ToYearFromRoc(Convert.ToInt32(nums[0]));//會遇到潤2月, 因此先轉
+            var nums = s.Split(spliter);
+            if (nums.Length != 3) return false;
+            var yyy = ToAdYearFromRoc(Convert.ToInt32(nums[0]));//會遇到潤2月, 因此先轉
             var mm = Convert.ToInt32(nums[1]);
             var dd = Convert.ToInt32(nums[2]);
-            return new DateTime(yyy, mm, dd);
+            dt = new DateTime(yyy, mm, dd);
+            return true;
         }
-        public static bool FromRocTry(string s, out DateTime result, string format = "yyy.MM.dd")
+        /// <summary>
+        /// 不建議使用, 小於民國100年的, 會被視為19xx年, e.q. 88/01/15 會變成 1988/01/15
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="result"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        [Obsolete("A incorrect convertion when year<100")]
+        public static bool FromRocDateToAdTry(string s, out DateTime result, string format = "yyy.MM.dd")
         {
             if (!DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
                 return false;
-            result = CtkTimeUtil.FromRoc(result);
+            result = CtkTimeUtil.FromRocDateToAd(result);
             return true;
         }
-        public static DateTime ToRoc(DateTime dt) { return dt.AddYears(-RocYearToYear); }
-        public static int ToRocYear(int year) { return year - RocYearToYear; }
-        public static int ToYearFromRoc(int year) { return year + RocYearToYear; }
 
-
+        public static int ToAdYearFromRoc(int year) { return year + YearDiffBetweenRocAndAd; }
+        public static DateTime ToRocDateFromAd(DateTime dt) { return dt.AddYears(-YearDiffBetweenRocAndAd); }
+        public static int ToRocYearFromAd(int year) { return year - YearDiffBetweenRocAndAd; }
         #endregion
 
 

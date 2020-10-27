@@ -14,7 +14,7 @@ namespace CToolkit.v1_1.Protocol
         /// </summary>
         bool IsRemoteConnected { get; }
         /// <summary>
-        /// 用途是避免重複要求連線
+        /// 在準備開啟連時中設為true, 用途是避免重複要求連線
         /// </summary>
         bool IsOpenRequesting { get; }
 
@@ -22,6 +22,9 @@ namespace CToolkit.v1_1.Protocol
         void Disconnect();
 
 
+        /// <summary>
+        /// 連線的對象, 
+        /// </summary>
         object ActiveWorkClient { get; set; }//可要求變更Active Work
         void WriteMsg(CtkProtocolTrxMessage msg);
 

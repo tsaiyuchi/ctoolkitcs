@@ -56,10 +56,20 @@ namespace CToolkit.v1_1.Net
             if (this.activeWorkClient == null) return;
             if (!this.activeWorkClient.Connected) return;
 
-            var stm = this.activeWorkClient.GetStream();
-            stm.Write(buff, offset, length);
-            stm.Flush();
 
+            try
+            {
+                var stm = this.activeWorkClient.GetStream();
+                stm.Write(buff, offset, length);
+                stm.Flush();
+
+            }
+            catch (Exception ex)
+            {
+                //資料寫入錯誤, 普遍是斷線造成, 先中斷連線清除資料
+                this.Disconnect();
+                CtkLog.WarnNs(this, ex);
+            }
             //stm.BeginWrite(buff, offset, length, new AsyncCallback((ar) =>
             //{
             //    //CtkLog.WriteNs(this, "" + ar.IsCompleted);
@@ -83,29 +93,25 @@ namespace CToolkit.v1_1.Net
                 myea.workClient = client;
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
                 {
-                    myea.Message = "Connection Fail";
-                    this.OnFailConnect(myea);
-                    return;
+                    throw new CtkException("Connection Fail");
                 }
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
-                catch (Exception ex) { CtkLog.Write(ex); }
+                catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
                 var stream = client.GetStream();
                 stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
-
-
             }
-            catch (SocketException ex)
+            //catch (SocketException ex) { }
+            catch (Exception ex)
             {
+                //失敗就中斷連線, 清除
+                this.Disconnect();
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnFailConnect(myea);
-            }
-            catch (Exception ex)
-            {
-                CtkLog.Write(ex, CtkLoggerEnumLevel.Warn);
+                CtkLog.WarnNs(this, ex);
             }
             finally
             {
@@ -117,15 +123,14 @@ namespace CToolkit.v1_1.Net
 
         void EndReadCallback(IAsyncResult ar)
         {
+            //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
             try
             {
-                //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-                var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
                 var client = myea.workClient;
                 if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)
                 {
-                    myea.Message = "Read Fail";
-                    return;
+                    throw new CtkException("Read Fail");
                 }
 
                 var ctkBuffer = myea.TrxMessageBuffer;
@@ -138,8 +143,16 @@ namespace CToolkit.v1_1.Net
                 stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
 
             }
-            catch (IOException ex) { CtkLog.Write(ex); }
-            catch (Exception ex) { CtkLog.Write(ex); }
+            //catch (IOException ex) { CtkLog.Write(ex); }
+            catch (Exception ex)
+            {
+                //讀取失敗, 中斷連線(會呼叫 OnDisconnect), 不需要呼叫 OnFailConnect
+                this.Disconnect();
+                myea.Message = ex.Message;
+                myea.Exception = ex;
+                this.OnErrorReceive(myea);//但要呼叫 OnErrorReceive
+                CtkLog.WarnNs(this, ex);
+            }
         }
 
 
@@ -178,11 +191,11 @@ namespace CToolkit.v1_1.Net
             {
                 if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
 
-                //在Lock後才判斷, 避免判斷無連線後, 另一邊卻連線好了
-                if (this.activeWorkClient != null && this.activeWorkClient.Connected) return;//連線中直接離開
                 if (!mreIsConnecting.WaitOne(10)) return;//連線中就離開
                 this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
+                //在Lock後才判斷, 避免判斷無連線後, 另一邊卻連線好了
+                if (this.activeWorkClient != null && this.activeWorkClient.Connected) return;//連線中直接離開
                 if (this.activeWorkClient != null)
                 {
                     var workClient = this.activeWorkClient;
@@ -211,6 +224,14 @@ namespace CToolkit.v1_1.Net
                 this.activeWorkClient.BeginConnect(this.RemoteUri.Host, this.RemoteUri.Port, new AsyncCallback(ClientEndConnectCallback), this);
 
             }
+            catch (Exception ex)
+            {
+                //若中間有失效, 解除Event鎖
+                this.mreIsConnecting.Set();
+                //停止連線
+                this.Disconnect();
+                throw ex;
+            }
             finally { Monitor.Exit(this); }
 
         }
@@ -224,9 +245,9 @@ namespace CToolkit.v1_1.Net
             }
             CtkNetUtil.DisposeTcpClient(this.activeWorkClient);
 
-            //一旦結束就死了, 需要重new, 所以清掉event沒問題
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
-
+            var myea = new CtkNonStopTcpStateEventArgs();
+            myea.Message = "Disconnect";
+            this.OnDisconnect(myea);
         }
 
         public void NonStopConnectAsyn()
@@ -283,6 +304,7 @@ namespace CToolkit.v1_1.Net
 
 
         }
+
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhDataReceive == null) return;
@@ -351,6 +373,7 @@ namespace CToolkit.v1_1.Net
         {
             try { this.Disconnect(); }
             catch (Exception ex) { CtkLog.Write(ex); }
+            //斷線不用清除Event, 但Dispsoe需要
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
 

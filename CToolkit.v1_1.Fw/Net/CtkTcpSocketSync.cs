@@ -219,7 +219,8 @@ namespace CToolkit.v1_1.Net
 
         public void DisposeSelf()
         {
-            this.IsWaitTcpReceive = false;
+            //this.IsWaitTcpReceive = false;
+            this.m_isWaitReceive = false;
             try { CtkNetUtil.DisposeSocket(this.WorkSocket); }
             catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
