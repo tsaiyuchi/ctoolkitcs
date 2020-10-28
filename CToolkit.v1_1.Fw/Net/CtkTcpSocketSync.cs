@@ -19,24 +19,8 @@ namespace CToolkit.v1_1.Net
         ~CtkTcpSocketSync() { this.Dispose(false); }
         public Socket ConnSocket { get { return m_connSocket; } }
 
-        public bool IsWaitTcpReceive
-
-        {
-
-            get { return m_isWaitReceive; }
-
-            set { lock (this) { m_isWaitReceive = value; } }
-
-        }
-        public Socket WorkSocket
-
-        {
-
-            get { return m_workSocket; }
-
-            set { lock (this) { m_workSocket = value; } }
-
-        }
+        public bool IsWaitReceive { get { return m_isWaitReceive; } set { lock (this) { m_isWaitReceive = value; } } }
+        public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
         public bool CheckConnectStatus()
         {
             var socket = this.m_connSocket;
@@ -49,12 +33,11 @@ namespace CToolkit.v1_1.Net
         {
             this.IsActively = isAct;
             if (this.IsOpenRequesting || this.IsRemoteConnected) return;
+            //if (this.IsLocalReadyConnect) return; //同步連線是等到連線才離開method, 不需判斷 IsLocalReadyConnect
 
             try
             {
-                var canLock = false;
-                Monitor.TryEnter(this, 3000, ref canLock);
-                if (!canLock) throw new CtkException("Cannot enter lock");
+                if (!Monitor.TryEnter(this, 3000)) return; // throw new CtkException("Cannot enter lock");
                 this.m_isOpenRequesting = true;
 
                 if (isAct)
@@ -65,6 +48,7 @@ namespace CToolkit.v1_1.Net
                     if (this.RemoteUri == null)
                         throw new CtkException("remote field can not be null");
                     this.ConnSocket.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
+                    this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                     this.WorkSocket = this.ConnSocket;
                 }
                 else
@@ -75,7 +59,14 @@ namespace CToolkit.v1_1.Net
                         this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     this.ConnSocket.Listen(100);
                     this.WorkSocket = this.ConnSocket.Accept();
+                    this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                 }
+            }
+            catch (Exception ex)
+            {
+                this.Disconnect();
+                this.OnFailConnect(new CtkProtocolEventArgs() { Message = "Connect Fail" });
+                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
             }
             finally
             {
@@ -85,49 +76,35 @@ namespace CToolkit.v1_1.Net
         }
 
         public void ReceiveRepeat()
-
         {
-
             try
-
             {
-
-                this.IsWaitTcpReceive = true;
-
-                while (this.IsWaitTcpReceive && !this.disposed)
-
+                this.IsWaitReceive = true;
+                while (this.IsWaitReceive && !this.disposed)
                 {
-
                     var ea = new CtkProtocolEventArgs()
-
                     {
-
                         Sender = this,
-
                     };
 
                     ea.TrxMessage = new CtkProtocolBufferMessage(1518);
-
                     var trxBuffer = ea.TrxMessage.ToBuffer();
 
 
-
                     trxBuffer.Length = this.WorkSocket.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
-
                     if (trxBuffer.Length == 0) break;
-
                     this.OnDataReceive(ea);
-
                 }
-
             }
-
-            finally
-
+            catch (Exception ex)
             {
-
-                if (this.ConnSocket != this.WorkSocket) CtkNetUtil.DisposeSocket(this.WorkSocket);
-
+                this.Disconnect();
+                this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
+                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
+            }
+            finally
+            {
+                if (this.ConnSocket != this.WorkSocket) CtkNetUtil.DisposeSocket(this.WorkSocket);//TODO: why need dispose socket
             }
 
 
@@ -140,66 +117,80 @@ namespace CToolkit.v1_1.Net
 
         #region ICtkProtocolConnect
 
-
-
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         public object ActiveWorkClient { get { return this.WorkSocket; } set { this.WorkSocket = value as Socket; } }
-
         public bool IsLocalReadyConnect { get { return this.m_connSocket != null && this.m_connSocket.Connected; } }
-
         public bool IsOpenRequesting { get { return this.m_isOpenRequesting; } }
-
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
 
         public void ConnectIfNo() { this.ConnectIfNo(this.IsActively); }
-
-        public void Disconnect() { CtkNetUtil.DisposeSocket(this.m_connSocket); }
-
-        public void WriteMsg(CtkProtocolTrxMessage msg)
-
+        public void Disconnect()
         {
+            this.m_isWaitReceive = false;
 
-            try
+            try { CtkNetUtil.DisposeSocket(this.m_workSocket); }
+            catch (Exception ex) { CtkLog.WarnNs(this, ex); }
+            try { CtkNetUtil.DisposeSocket(this.m_connSocket); }
+            catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
-            {
-
-                Monitor.Enter(this);
-
-                var buffer = msg.ToBuffer();
-
-                this.WorkSocket.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
-
-            }
-
-            finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
-
-
+            this.OnDisconnect(new CtkProtocolEventArgs() { Message = "Disconnect method is executed" });
 
         }
-
-        protected void OnDataReceive(CtkProtocolEventArgs ea)
-
+        public void WriteMsg(CtkProtocolTrxMessage msg)
         {
-
-            if (this.EhDataReceive == null) return;
-
-            this.EhDataReceive(this, ea);
-
+            try
+            {
+                Monitor.Enter(this);
+                var buffer = msg.ToBuffer();
+                this.WorkSocket.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
+            }
+            catch (Exception ex)
+            {
+                this.Disconnect();
+                CtkLog.WarnNs(this, ex);
+            }
+            finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
         }
 
         #endregion
 
 
+        #region Event
 
+        protected void OnDataReceive(CtkProtocolEventArgs ea)
+        {
+            if (this.EhDataReceive == null) return;
+            this.EhDataReceive(this, ea);
+        }
+
+        protected void OnDisconnect(CtkProtocolEventArgs ea)
+        {
+            if (this.EhDisconnect == null) return;
+            this.EhDisconnect(this, ea);
+        }
+
+        protected void OnErrorReceive(CtkProtocolEventArgs ea)
+        {
+            if (this.EhErrorReceive == null) return;
+            this.EhErrorReceive(this, ea);
+        }
+        protected void OnFailConnect(CtkProtocolEventArgs ea)
+        {
+            if (this.EhFailConnect == null) return;
+            this.EhFailConnect(this, ea);
+        }
+        protected void OnFirstConnect(CtkProtocolEventArgs ea)
+        {
+            if (this.EhFirstConnect == null) return;
+            this.EhFirstConnect(this, ea);
+        }
+
+        #endregion
 
 
 
@@ -219,14 +210,7 @@ namespace CToolkit.v1_1.Net
 
         public void DisposeSelf()
         {
-            //this.IsWaitTcpReceive = false;
-            this.m_isWaitReceive = false;
-            try { CtkNetUtil.DisposeSocket(this.WorkSocket); }
-            catch (Exception ex) { CtkLog.WarnNs(this, ex); }
-
-            try { CtkNetUtil.DisposeSocket(this.m_connSocket); }
-            catch (Exception ex) { CtkLog.WarnNs(this, ex); }
-
+            this.Disconnect();
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
 
