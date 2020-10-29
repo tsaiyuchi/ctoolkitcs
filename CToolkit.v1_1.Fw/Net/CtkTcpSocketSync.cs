@@ -11,7 +11,7 @@ namespace CToolkit.v1_1.Net
         public bool IsActively = false;
         public Uri LocalUri;
         public Uri RemoteUri;
-        protected Socket m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        protected Socket m_connSocket;
         protected bool m_isOpenRequesting = false;
         protected bool m_isWaitReceive = false;
         protected Socket m_workSocket;
@@ -40,9 +40,17 @@ namespace CToolkit.v1_1.Net
                 if (!Monitor.TryEnter(this, 3000)) return; // throw new CtkException("Cannot enter lock");
                 this.m_isOpenRequesting = true;
 
+
+                //若連線不曾建立, 或聆聽/連線被關閉
+                if (this.m_connSocket == null || !this.m_connSocket.Connected)
+                {
+                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
+                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
+                }
+
+
                 if (isAct)
                 {
-
                     if (this.LocalUri != null && !this.ConnSocket.IsBound)
                         this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     if (this.RemoteUri == null)
@@ -64,6 +72,7 @@ namespace CToolkit.v1_1.Net
             }
             catch (Exception ex)
             {
+                //一旦聆聽/連線失敗, 直接關閉所有Socket, 重新來過
                 this.Disconnect();
                 this.OnFailConnect(new CtkProtocolEventArgs() { Message = "Connect Fail" });
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
@@ -71,7 +80,7 @@ namespace CToolkit.v1_1.Net
             finally
             {
                 this.m_isOpenRequesting = false;
-                Monitor.Exit(this);
+                if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
         }
 
@@ -98,13 +107,15 @@ namespace CToolkit.v1_1.Net
             }
             catch (Exception ex)
             {
-                this.Disconnect();
                 this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
             }
             finally
             {
-                if (this.ConnSocket != this.WorkSocket) CtkNetUtil.DisposeSocket(this.WorkSocket);//TODO: why need dispose socket
+                this.IsWaitReceive = false;
+                //Method內容是Repeat執行讀取, 一旦離開或出了意外, 應當關閉連線Socket, 但不需關閉聆聽
+                //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
+                if (this.ConnSocket != this.WorkSocket) CtkNetUtil.DisposeSocket(this.WorkSocket);
             }
 
 
