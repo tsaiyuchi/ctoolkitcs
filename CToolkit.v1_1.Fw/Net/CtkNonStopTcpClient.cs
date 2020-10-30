@@ -19,14 +19,17 @@ namespace CToolkit.v1_1.Net
         public Uri LocalUri;
         public Uri RemoteUri;
         protected int m_IntervalTimeOfConnectCheck = 5000;
-        TcpClient activeWorkClient;
+        TcpClient m_activeClient;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
-        Thread threadNonStopConnect;// = new BackgroundWorker();
+        Thread threadNonStopConnect;
+
         public CtkNonStopTcpClient() : base() { }
+
         public CtkNonStopTcpClient(Uri remote)
         {
             this.RemoteUri = remote;
         }
+
         public CtkNonStopTcpClient(string remoteIp, int remotePort, string localIp = null, int localPort = 0)
         {
             if (!string.IsNullOrEmpty(remoteIp))
@@ -42,8 +45,12 @@ namespace CToolkit.v1_1.Net
             }
         }
 
-
         ~CtkNonStopTcpClient() { this.Dispose(false); }
+
+        [JsonIgnore]
+        protected TcpClient ActiveClient { get { lock (this) return m_activeClient; } set { lock (this) m_activeClient = value; } }
+
+
 
         /// <summary>
         /// Remember use stream.Flush() to force data send, Tcp Client always write data into buffer.
@@ -53,13 +60,13 @@ namespace CToolkit.v1_1.Net
         /// <param name="length"></param>
         public void WriteBytes(byte[] buff, int offset, int length)
         {
-            if (this.activeWorkClient == null) return;
-            if (!this.activeWorkClient.Connected) return;
+            if (this.ActiveClient == null) return;
+            if (!this.ActiveClient.Connected) return;
 
 
             try
             {
-                var stm = this.activeWorkClient.GetStream();
+                var stm = this.ActiveClient.GetStream();
                 stm.Write(buff, offset, length);
                 stm.Flush();
 
@@ -84,9 +91,12 @@ namespace CToolkit.v1_1.Net
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
+                //Lock使用在短碼保護, 例如: 保護一個變數的get/set
+                //Monitor使用在保護一段代碼
+
                 Monitor.Enter(this);//一定要等到進去
                 var state = (CtkNonStopTcpClient)ar.AsyncState;
-                var client = state.activeWorkClient;
+                var client = state.ActiveClient;
                 client.EndConnect(ar);
 
                 myea.Sender = state;
@@ -119,8 +129,6 @@ namespace CToolkit.v1_1.Net
                 Monitor.Exit(this);
             }
         }
-
-
         void EndReadCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
@@ -167,17 +175,14 @@ namespace CToolkit.v1_1.Net
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         [JsonIgnore]
-        public object ActiveWorkClient
-        {
-            get { return this.activeWorkClient; }
-            set { if (this.activeWorkClient != value) throw new ArgumentException("不可傳入Active Client"); }
-        }
-
+        public object ActiveWorkClient { get { return this.ActiveClient; } set { if (this.ActiveClient != value) throw new ArgumentException("不可傳入Active Client"); } }
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsLocalReadyConnect { get { return this.IsRemoteConnected; } }//Local連線成功=遠端連線成功
         public bool IsNonStopRunning { get { return this.threadNonStopConnect != null && this.threadNonStopConnect.IsAlive; } }
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
-        public bool IsRemoteConnected { get { return this.activeWorkClient == null ? false : this.activeWorkClient.Connected; } }
+        public bool IsRemoteConnected { get { var obj = this.ActiveClient; return obj == null ? false : obj.Connected; } }
+
+
         public void AbortNonStopConnect()
         {
             if (this.threadNonStopConnect != null)
@@ -195,10 +200,10 @@ namespace CToolkit.v1_1.Net
                 this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
                 //在Lock後才判斷, 避免判斷無連線後, 另一邊卻連線好了
-                if (this.activeWorkClient != null && this.activeWorkClient.Connected) return;//連線中直接離開
-                if (this.activeWorkClient != null)
+                if (this.ActiveClient != null && this.ActiveClient.Connected) return;//連線中直接離開
+                if (this.ActiveClient != null)
                 {
-                    var workClient = this.activeWorkClient;
+                    var workClient = this.ActiveClient;
                     try
                     {
                         if (workClient.GetStream() != null)
@@ -209,19 +214,19 @@ namespace CToolkit.v1_1.Net
                     try { workClient.Close(); }
                     catch (Exception ex) { CtkLog.Write(ex); }
 
-                    this.activeWorkClient = null;
+                    this.ActiveClient = null;
                 }
 
 
                 IPAddress ip = null;
                 if (IPAddress.TryParse(this.LocalUri.Host, out ip))
                 {
-                    this.activeWorkClient = new TcpClient(new IPEndPoint(ip, this.LocalUri.Port));
+                    this.ActiveClient = new TcpClient(new IPEndPoint(ip, this.LocalUri.Port));
                 }
-                else this.activeWorkClient = new TcpClient();
+                else this.ActiveClient = new TcpClient();
                 //this.activeWorkClient = this.LocalUri == null ? new TcpClient() : new TcpClient(LocalUri.Host, LocalUri.Port);
-                this.activeWorkClient.NoDelay = true;
-                this.activeWorkClient.BeginConnect(this.RemoteUri.Host, this.RemoteUri.Port, new AsyncCallback(ClientEndConnectCallback), this);
+                this.ActiveClient.NoDelay = true;
+                this.ActiveClient.BeginConnect(this.RemoteUri.Host, this.RemoteUri.Port, new AsyncCallback(ClientEndConnectCallback), this);
 
             }
             catch (Exception ex)
@@ -243,7 +248,7 @@ namespace CToolkit.v1_1.Net
                 this.threadNonStopConnect.Abort();
                 this.threadNonStopConnect = null;
             }
-            CtkNetUtil.DisposeTcpClient(this.activeWorkClient);
+            CtkNetUtil.DisposeTcpClient(this.ActiveClient);
 
             var myea = new CtkNonStopTcpStateEventArgs();
             myea.Message = "Disconnect";
@@ -305,6 +310,13 @@ namespace CToolkit.v1_1.Net
 
         }
 
+        #endregion
+
+
+
+
+        #region Event
+
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhDataReceive == null) return;
@@ -334,7 +346,9 @@ namespace CToolkit.v1_1.Net
             if (this.EhFirstConnect == null) return;
             this.EhFirstConnect(this, tcpstate);
         }
+
         #endregion
+
 
 
         #region IDisposable
