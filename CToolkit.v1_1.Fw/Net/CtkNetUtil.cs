@@ -155,6 +155,13 @@ namespace CToolkit.v1_1.Net
             return new List<IPAddress>(addr);
         }
 
+        public static bool IsConnected(TcpClient obj)
+        {
+            if (obj == null) return false;
+            if (obj.Client == null) return false;
+            return obj.Connected;
+        }
+
 
         public static IPAddress ToIPAddress(Uri uri) { return IPAddress.Parse(uri.Host); }
         public static IPEndPoint ToIPEndPoint(Uri uri) { return new IPEndPoint(ToIPAddress(uri), uri.Port); }

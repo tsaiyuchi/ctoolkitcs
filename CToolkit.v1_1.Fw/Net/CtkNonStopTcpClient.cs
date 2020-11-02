@@ -180,7 +180,7 @@ namespace CToolkit.v1_1.Net
         public bool IsLocalReadyConnect { get { return this.IsRemoteConnected; } }//Local連線成功=遠端連線成功
         public bool IsNonStopRunning { get { return this.threadNonStopConnect != null && this.threadNonStopConnect.IsAlive; } }
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
-        public bool IsRemoteConnected { get { var obj = this.ActiveClient; return obj == null ? false : obj.Connected; } }
+        public bool IsRemoteConnected { get { return CtkNetUtil.IsConnected(this.ActiveClient); } }
 
 
         public void AbortNonStopConnect()
