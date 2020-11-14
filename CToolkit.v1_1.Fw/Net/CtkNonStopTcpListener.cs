@@ -240,21 +240,23 @@ namespace CToolkit.v1_1.Net
         }
 
         //用途是避免重複要求連線
-        public void ConnectIfNo()
+        public int ConnectIfNo()
         {
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
+                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
                 this.CleanDisconnect();
-                if (!connectMre.WaitOne(10)) return;//連線中就離開
+                if (!connectMre.WaitOne(10)) return 0;//連線中就離開
                 this.connectMre.Reset();//先卡住, 不讓後面的再次進行連線
 
 
-                if (this.m_tcpListener != null) return;
+                if (this.m_tcpListener != null) return 0;//若要重新再聆聽, 請先清除Listener
                 //this.m_tcpListener.Stop();
                 this.m_tcpListener = new CtkTcpListenerEx(IPAddress.Parse(this.LocalUri.Host), this.LocalUri.Port);
                 this.m_tcpListener.Start();
                 this.m_tcpListener.BeginAcceptTcpClient(new AsyncCallback(EndConnectCallback), this);
+
+                return 0;
             }
             finally
             {

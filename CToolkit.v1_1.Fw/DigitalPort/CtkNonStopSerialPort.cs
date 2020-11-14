@@ -74,13 +74,13 @@ namespace CToolkit.v1_1.DigitalPort
                 this.threadNonStopConnect.Abort();
         }
 
-        public void ConnectIfNo()
+        public int ConnectIfNo()
         {
-            if (this.serialPort != null && this.serialPort.IsOpen) return;//連線中直接離開
+            if (this.serialPort != null && this.serialPort.IsOpen) return 0;//連線中直接離開
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
-                if (!connectMre.WaitOne(10)) return;//連線中就離開
+                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
+                if (!connectMre.WaitOne(10)) return 0;//連線中就離開
                 this.connectMre.Reset();//先卡住, 不讓後面的再次進行連線
 
                 if (this.serialPort != null)
@@ -139,6 +139,8 @@ namespace CToolkit.v1_1.DigitalPort
                 }
 
                 this.connectMre.Set();
+
+                return 0;
             }
             finally { Monitor.Exit(this); }
 

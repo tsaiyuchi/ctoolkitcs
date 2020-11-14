@@ -47,6 +47,10 @@ namespace CToolkit.v1_1.Numeric
             return Interpolation(input, dataSize);
         }
 
+
+
+
+
         /// <summary>
         /// 若只有0筆或1筆, 就回傳0或1筆, 不會有錯誤
         /// </summary>
@@ -75,5 +79,22 @@ namespace CToolkit.v1_1.Numeric
         /// <param name="dataSize"></param>
         /// <returns></returns>
         public static double[] InterpolationForce(IEnumerable<double> input, int dataSize) { return InterpolationCanOneOrZero(input.ToArray(), dataSize); }
+
+
+        /// <summary>
+        /// Get level of c between a and b
+        /// </summary>
+        /// <param name="a">Left</param>
+        /// <param name="b">Righ</param>
+        /// <param name="c">you value</param>
+        /// <returns>level of c</returns>
+        public static double Interpolate1d(double a, double b, double c)
+        {
+            var A = (b - a);
+            var B = (c - a);
+            return A * B / Math.Abs(A);
+        }
+        public static double Interpolate1d(double? a, double? b, double? c) { return Interpolate1d(a.Value, b.Value, c.Value); }
+
     }
 }

@@ -69,9 +69,9 @@ namespace CToolkit.v1_1.Wcf.NonStop
             }
         }
 
-        public void ConnectIfNo()
+        public int ConnectIfNo()
         {
-            if (this.IsLocalReadyConnect) return;
+            if (this.IsLocalReadyConnect) return 0;
             this.WcfConnect(cf =>
             {
                 cf.Opened += (ss, ee) =>
@@ -87,6 +87,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
                     this.OnDisconnect(ea);
                 };
             });
+            return 0;
 
         }
 

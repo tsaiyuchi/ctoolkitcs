@@ -190,17 +190,17 @@ namespace CToolkit.v1_1.Net
         }
 
         //用途是避免重複要求連線
-        public void ConnectIfNo()
+        public int ConnectIfNo()
         {
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
+                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
 
-                if (!mreIsConnecting.WaitOne(10)) return;//連線中就離開
+                if (!mreIsConnecting.WaitOne(10)) return 0;//連線中就離開
                 this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
                 //在Lock後才判斷, 避免判斷無連線後, 另一邊卻連線好了
-                if (this.ActiveClient != null && this.ActiveClient.Connected) return;//連線中直接離開
+                if (this.ActiveClient != null && this.ActiveClient.Connected) return 0;//連線中直接離開
                 if (this.ActiveClient != null)
                 {
                     var workClient = this.ActiveClient;
@@ -228,6 +228,7 @@ namespace CToolkit.v1_1.Net
                 this.ActiveClient.NoDelay = true;
                 this.ActiveClient.BeginConnect(this.RemoteUri.Host, this.RemoteUri.Port, new AsyncCallback(ClientEndConnectCallback), this);
 
+                return 0;
             }
             catch (Exception ex)
             {

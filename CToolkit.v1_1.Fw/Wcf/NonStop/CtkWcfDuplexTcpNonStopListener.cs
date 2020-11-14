@@ -59,13 +59,13 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
             }
         }
 
-        public void ConnectIfNo()
+        public int ConnectIfNo()
         {
-            if (this.IsLocalReadyConnect) return;
+            if (this.IsLocalReadyConnect) return 0;
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return;//進不去先離開
-                if (this.IsLocalReadyConnect) return;
+                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
+                if (this.IsLocalReadyConnect) return 0;
                 this.CleanDisconnected();
                 this.CleanHost();
                 this.NewHost();
@@ -92,6 +92,8 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
                     this.OnDisconnect(ea);
                 };
                 this.Open();
+
+                return 0;
             }
             finally
             {

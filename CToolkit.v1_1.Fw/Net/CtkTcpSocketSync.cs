@@ -29,15 +29,15 @@ namespace CToolkit.v1_1.Net
             return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
         }
 
-        public void ConnectIfNo(bool isAct)
+        public int ConnectIfNo(bool isAct)
         {
             this.IsActively = isAct;
-            if (this.IsOpenRequesting || this.IsRemoteConnected) return;
+            if (this.IsOpenRequesting || this.IsRemoteConnected) return 0;
             //if (this.IsLocalReadyConnect) return; //同步連線是等到連線才離開method, 不需判斷 IsLocalReadyConnect
 
             try
             {
-                if (!Monitor.TryEnter(this, 3000)) return; // throw new CtkException("Cannot enter lock");
+                if (!Monitor.TryEnter(this, 3000)) return -1; // throw new CtkException("Cannot enter lock");
                 this.m_isOpenRequesting = true;
 
 
@@ -69,6 +69,8 @@ namespace CToolkit.v1_1.Net
                     this.WorkSocket = this.ConnSocket.Accept();
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                 }
+
+                return 0;
             }
             catch (Exception ex)
             {
@@ -139,7 +141,7 @@ namespace CToolkit.v1_1.Net
         public bool IsOpenRequesting { get { return this.m_isOpenRequesting; } }
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
 
-        public void ConnectIfNo() { this.ConnectIfNo(this.IsActively); }
+        public int ConnectIfNo() { return this.ConnectIfNo(this.IsActively); }
         public void Disconnect()
         {
             this.m_isWaitReceive = false;
