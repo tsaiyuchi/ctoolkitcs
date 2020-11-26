@@ -335,18 +335,25 @@ namespace CToolkit.v1_1.Timing
         }
 
         public static string ToSYyyy(DateTime dt) { return "y" + dt.ToString("yyyy"); }
+        public static string ToSYyyy(DateTime? dt) { return dt.HasValue ? ToSYyyy(dt.Value) : null; }
         public static string ToSYyyyMm(DateTime dt) { return "m" + dt.ToString("yyyyMM"); }
+        public static string ToSYyyyMm(DateTime? dt) { return dt.HasValue ? ToSYyyyMm(dt.Value) : null; }
         public static string ToSYyyyMmDd(DateTime dt) { return "d" + dt.ToString("yyyyMMdd"); }
+        public static string ToSYyyyMmDd(DateTime? dt) { return dt.HasValue ? ToSYyyyMmDd(dt.Value) : null; }
+
         public static string ToSYyyyQq(DateTime dt)
         {
             var qq = QuarterOfYear(dt);
             return string.Format("q{0}{1:00}", dt.ToString("yyyy"), qq);
         }
+        public static string ToSYyyyQq(DateTime? dt) { return dt.HasValue ? ToSYyyyQq(dt.Value) : null; }
+
         public static string ToSYyyyWw(DateTime dt)
         {
             var weekOfYear = CtkTimeUtil.GetWeekOfYear(dt);
             return string.Format("w{0}{1:00}", dt.ToString("yyyy"), weekOfYear);
         }
+        public static string ToSYyyyWw(DateTime? dt) { return dt.HasValue ? ToSYyyyWw(dt.Value) : null; }
         #endregion
 
 
