@@ -44,6 +44,7 @@ namespace CToolkit.v1_1
             if (unary != null)
             {
                 if (unary.Method != null) return unary.Method.Name;
+                
             }
             throw new ArgumentException();
 

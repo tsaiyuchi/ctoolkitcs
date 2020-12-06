@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v1.2": {},
     ".NETStandard,Version=v1.2/": {
-      "CToolkit.v1_1.Std/1.1.0.6": {
+      "CToolkit.v1_1.Std/1.1.0.8": {
         "dependencies": {
           "NETStandard.Library": "1.6.1",
           "Newtonsoft.Json": "12.0.3",
@@ -368,7 +368,7 @@
     }
   },
   "libraries": {
-    "CToolkit.v1_1.Std/1.1.0.6": {
+    "CToolkit.v1_1.Std/1.1.0.8": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

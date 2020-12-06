@@ -167,6 +167,7 @@ namespace CToolkit.v1_1.Net
         public static IPEndPoint ToIPEndPoint(Uri uri) { return new IPEndPoint(ToIPAddress(uri), uri.Port); }
 
         public static Uri ToUri(string ip, int port, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ip, port)); }
+        public static Uri ToUri(IPEndPoint ipep, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ipep.Address, ipep.Port)); }
 
 
         public static List<string> GetMacAddressEnthernet()
