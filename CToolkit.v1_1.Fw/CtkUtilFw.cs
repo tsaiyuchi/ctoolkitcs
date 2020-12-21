@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CToolkit.v1_1.Threading;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,12 +9,15 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CToolkit.v1_1
 {
     public class CtkUtilFw
     {
+
+        public static T ChangeType<T>(object data) { return (T)Convert.ChangeType(data, typeof(T)); }
 
         public static bool EnableUnsafeHeaderParsing()
         {
@@ -54,18 +58,17 @@ namespace CToolkit.v1_1
             return sf.GetMethod().Name;
         }
 
-        public static string GetExecutingVersion()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            return assembly.GetName().Version.ToString();
-        }
         public static string GetEntryVersion()
         {
             var assembly = Assembly.GetEntryAssembly();
             return assembly.GetName().Version.ToString();
         }
 
-
+        public static string GetExecutingVersion()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetName().Version.ToString();
+        }
         #region Process
         public static long MemorySize(string processName)
         {
@@ -88,6 +91,16 @@ namespace CToolkit.v1_1
 
 
         #region Serialization
+
+        public static T DeserializeBinary<T>(byte[] dataArray)
+        {
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream(dataArray))
+            {
+                var obj = bf.Deserialize(ms);
+                return (T)obj;
+            }
+        }
 
         public static T LoadXml<T>(String fn)
         {
@@ -158,6 +171,17 @@ namespace CToolkit.v1_1
             }
         }
 
+        public static byte[] SerializeBinary(object obj)
+        {
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                ms.Flush();
+                return ms.ToArray();
+            }
+        }
+
         public static object TryCatch(Action theMethod, params object[] parameters)
         {
             try
@@ -170,50 +194,97 @@ namespace CToolkit.v1_1
                 return ex;
             }
         }
-
-
-        public static byte[] SerializeBinary(object obj)
-        {
-            var bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                ms.Flush();
-                return ms.ToArray();
-            }
-        }
-
-        public static T DeserializeBinary<T>(byte[] dataArray)
-        {
-            var bf = new BinaryFormatter();
-            using (var ms = new MemoryStream(dataArray))
-            {
-                var obj = bf.Deserialize(ms);
-                return (T)obj;
-            }
-        }
-
         #endregion
 
         #region Dispose
 
-        public static void DisposeObjTry(IDisposable obj, Action<Exception> exceptionHandler = null)
+        public static void DisposeObj(IDisposable obj)
+        {
+            if (obj == null) return;
+            obj.Dispose();
+        }
+        public static void DisposeObj(IEnumerable<IDisposable> objs)
+        {
+            foreach (var obj in objs) DisposeObj(obj);
+        }
+        public static bool DisposeObjTry(IDisposable obj, Action<Exception> exceptionHandler = null)
         {
             try
             {
-                if (obj == null) return;
-                obj.Dispose();
+                DisposeObj(obj);
+                return true;
             }
             catch (Exception ex)
             {
                 if (exceptionHandler == null) exceptionHandler(ex);
                 else CtkLog.Write(ex);
+                return false;
             }
 
         }
         public static void DisposeObjTry(IEnumerable<IDisposable> objs, Action<Exception> exceptionHandler = null)
         {
             foreach (var obj in objs) DisposeObjTry(obj, exceptionHandler);
+        }
+
+        public static void DisposeTask(Task task)
+        {
+            if (task == null) return;
+            task.Dispose();
+        }
+        public static void DisposeTask(CtkTask task)
+        {
+            if (task == null) return;
+            task.Dispose();
+        }
+        public static void DisposeTask(CtkCancelTask task)
+        {
+            if (task == null) return;
+            if (task.Status < TaskStatus.RanToCompletion)
+            {
+                task.Cancel();
+                SpinWait.SpinUntil(() => task.Status >= TaskStatus.RanToCompletion, 500);
+            }
+            task.Dispose();
+        }
+        public static bool DisposeTaskTry(Task task)
+        {
+            try
+            {
+                DisposeTask(task);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                CtkLog.Warn(ex);
+                return false;
+            }
+        }
+        public static bool DisposeTaskTry(CtkTask task)
+        {
+            try
+            {
+                DisposeTask(task);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                CtkLog.Warn(ex);
+                return false;
+            }
+        }
+        public static bool DisposeTaskTry(CtkCancelTask task)
+        {
+            try
+            {
+                DisposeTask(task);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                CtkLog.Warn(ex);
+                return false;
+            }
         }
 
         #endregion

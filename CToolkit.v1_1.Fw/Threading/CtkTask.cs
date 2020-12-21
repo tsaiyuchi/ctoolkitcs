@@ -11,6 +11,7 @@ namespace CToolkit.v1_1.Threading
         public string Name;
         public Task Task;
 
+        public TaskStatus Status { get { return this.Task.Status; } }
 
         public static CtkTask Run(Action act)
         {
@@ -67,6 +68,7 @@ namespace CToolkit.v1_1.Threading
         {
             if (this.Task != null)
             {
+
                 try { using (var obj = this.Task) { } }
                 catch (InvalidOperationException) { }
             }

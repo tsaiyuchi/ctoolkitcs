@@ -25,6 +25,22 @@ namespace CToolkit.v1_1.Timing
         public static int HalfOfYear(DateTime dt) { return (dt.Month - 1) / 6 + 1; }
 
         public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
+
+        public static DateTime? ConvertToDateTime(string datetime, string srcFormat)
+        {
+            DateTime rsdate;
+            if (DateTime.TryParse(datetime, out rsdate)
+                ||
+
+                DateTime.TryParseExact(datetime, srcFormat
+                    , CultureInfo.InvariantCulture
+                    , DateTimeStyles.None
+                    , out rsdate))
+            { return rsdate; }
+            return null;
+        }
+
+
         #region Week Operation
         //--- Week ---------
 
