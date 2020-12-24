@@ -24,12 +24,10 @@ namespace CToolkit.v1_1.Net
         Thread threadNonStopConnect;
 
         public CtkNonStopTcpClient() : base() { }
-
         public CtkNonStopTcpClient(Uri remote)
         {
             this.RemoteUri = remote;
         }
-
         public CtkNonStopTcpClient(string remoteIp, int remotePort, string localIp = null, int localPort = 0)
         {
             if (!string.IsNullOrEmpty(remoteIp))
@@ -167,7 +165,6 @@ namespace CToolkit.v1_1.Net
 
         #region ICtkProtocolNonStopConnect
 
-
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
         public event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
@@ -195,7 +192,6 @@ namespace CToolkit.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-
                 if (!mreIsConnecting.WaitOne(10)) return 0;//連線中就離開
                 this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
@@ -238,7 +234,7 @@ namespace CToolkit.v1_1.Net
                 this.Disconnect();
                 throw ex;
             }
-            finally { Monitor.Exit(this); }
+            finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
 
         }
 

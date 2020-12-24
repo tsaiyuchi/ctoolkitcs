@@ -17,6 +17,8 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.Fw.csp
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.Fw.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.pdb
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.csprojAssemblyReference.cache
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.csproj.CoreCompileInputs.cache
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\CToolkit.v1_1.Fw.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\CToolkit.v1_1.Fw.pdb
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\CToolkit.v1_1.Std.dll
@@ -33,8 +35,6 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\MathNet.Filtering
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\MathNet.Numerics.xml
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\Newtonsoft.Json.xml
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\bin\Debug\System.ValueTuple.xml
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.csprojAssemblyReference.cache
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.csproj.CoreCompileInputs.cache
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1.Fw\obj\Debug\CToolkit.v1_1.Fw.pdb

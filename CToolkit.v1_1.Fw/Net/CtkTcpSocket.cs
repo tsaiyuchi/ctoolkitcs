@@ -6,21 +6,23 @@ using System.Threading;
 
 namespace CToolkit.v1_1.Net
 {
-    public class CtkTcpSocketSync : ICtkProtocolConnect, IDisposable
+    public class CtkTcpSocket : ICtkProtocolConnect, IDisposable
     {
         public bool IsActively = false;
         public Uri LocalUri;
         public Uri RemoteUri;
         protected Socket m_connSocket;
         protected bool m_isOpenRequesting = false;
-        protected bool m_isWaitReceive = false;
         protected Socket m_workSocket;
-
-        ~CtkTcpSocketSync() { this.Dispose(false); }
+        ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
+        ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
+        ~CtkTcpSocket() { this.Dispose(false); }
         public Socket ConnSocket { get { return m_connSocket; } }
-
-        public bool IsWaitReceive { get { return m_isWaitReceive; } set { lock (this) { m_isWaitReceive = value; } } }
+        public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
         public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
+
+
+
         public bool CheckConnectStatus()
         {
             var socket = this.m_connSocket;
@@ -28,7 +30,6 @@ namespace CToolkit.v1_1.Net
             if (!socket.Connected) return false;
             return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
         }
-
         public int ConnectIfNo(bool isAct)
         {
             this.IsActively = isAct;
@@ -85,12 +86,14 @@ namespace CToolkit.v1_1.Net
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
         }
-
-        public void ReceiveRepeat()
+        public int ReceiveLoop()
         {
             try
             {
-                this.IsWaitReceive = true;
+                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
+                if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
+                this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
+
                 while (this.IsWaitReceive && !this.disposed)
                 {
                     var ea = new CtkProtocolEventArgs()
@@ -103,30 +106,69 @@ namespace CToolkit.v1_1.Net
 
 
                     trxBuffer.Length = this.WorkSocket.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
-                    if (trxBuffer.Length == 0) break;
+                    if (trxBuffer.Length == 0) break;//未收到資料卻停止接收, 只有封包Header? 先停止, 確認後再決定怎麼處理
                     this.OnDataReceive(ea);
                 }
             }
             catch (Exception ex)
             {
                 this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
+                //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
+                if (this.ConnSocket != this.WorkSocket)
+                    CtkNetUtil.DisposeSocket(this.WorkSocket);//Repeat/Loop執行, 一旦結束就釋放Socket
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
             }
             finally
             {
-                this.IsWaitReceive = false;
-                //Method內容是Repeat執行讀取, 一旦離開或出了意外, 應當關閉連線Socket, 但不需關閉聆聽
-                //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
-                if (this.ConnSocket != this.WorkSocket) CtkNetUtil.DisposeSocket(this.WorkSocket);
+                this.mreIsReceiving.Set();//同步型的, 結束就可以Set
+                if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
-
-
-
-
-
-
-
+            return 0;
         }
+        public int ReceiveOnce()
+        {
+            try
+            {
+                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
+                if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
+                this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
+
+                var ea = new CtkProtocolEventArgs()
+                {
+                    Sender = this,
+                };
+
+                ea.TrxMessage = new CtkProtocolBufferMessage(1518);
+                var trxBuffer = ea.TrxMessage.ToBuffer();
+
+
+                trxBuffer.Length = this.WorkSocket.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
+                if (trxBuffer.Length == 0) return -1;
+                this.OnDataReceive(ea);
+            }
+            catch (Exception ex)
+            {
+                this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
+                //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
+                if (this.ConnSocket != this.WorkSocket)
+                    CtkNetUtil.DisposeSocket(this.WorkSocket);//執行出現例外, 先釋放Socket
+                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
+            }
+            finally
+            {
+                this.mreIsReceiving.Set();//同步型的, 結束就可以Set
+                if (Monitor.IsEntered(this)) Monitor.Exit(this);
+            }
+            return 0;
+        }
+
+
+
+
+
+
+
+
 
         #region ICtkProtocolConnect
 
@@ -137,14 +179,14 @@ namespace CToolkit.v1_1.Net
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         public object ActiveWorkClient { get { return this.WorkSocket; } set { this.WorkSocket = value as Socket; } }
-        public bool IsLocalReadyConnect { get { return this.m_connSocket != null && this.m_connSocket.Connected; } }
+        public bool IsLocalReadyConnect { get { return this.m_connSocket != null && this.m_connSocket.IsBound; } }
         public bool IsOpenRequesting { get { return this.m_isOpenRequesting; } }
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
 
         public int ConnectIfNo() { return this.ConnectIfNo(this.IsActively); }
         public void Disconnect()
         {
-            this.m_isWaitReceive = false;
+            this.mreIsReceiving.Set();
 
             try { CtkNetUtil.DisposeSocket(this.m_workSocket); }
             catch (Exception ex) { CtkLog.WarnNs(this, ex); }
@@ -180,13 +222,11 @@ namespace CToolkit.v1_1.Net
             if (this.EhDataReceive == null) return;
             this.EhDataReceive(this, ea);
         }
-
         protected void OnDisconnect(CtkProtocolEventArgs ea)
         {
             if (this.EhDisconnect == null) return;
             this.EhDisconnect(this, ea);
         }
-
         protected void OnErrorReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhErrorReceive == null) return;
@@ -211,22 +251,20 @@ namespace CToolkit.v1_1.Net
 
         #region Dispose
 
-
-
         bool disposed = false;
-
         public void Dispose()
         {
             Dispose(false);
             GC.SuppressFinalize(this);
         }
-
         public void DisposeSelf()
         {
             this.Disconnect();
+            CtkUtilFw.DisposeObjTry(this.mreIsConnecting);
+            CtkUtilFw.DisposeObjTry(this.mreIsReceiving);
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
-        }
 
+        }
         protected virtual void Dispose(bool disposing)
         {
             if (disposed) return;
@@ -239,9 +277,6 @@ namespace CToolkit.v1_1.Net
             this.DisposeSelf();
             disposed = true;
         }
-
-
-
         #endregion
 
 

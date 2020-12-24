@@ -132,8 +132,7 @@
     <Compile Include="Net\CtkNonStopTcpListener.cs" />
     <Compile Include="Net\CtkNonStopTcpStateEventArgs.cs" />
     <Compile Include="Net\CtkTcpListenerEx.cs" />
-    <Compile Include="Net\CtkTcpSocketStateEventArgs.cs" />
-    <Compile Include="Net\CtkTcpSocketSync.cs" />
+    <Compile Include="Net\CtkTcpSocket.cs" />
     <Compile Include="Net\CtkWebTransaction.cs" />
     <Compile Include="Numeric\CtkCudafyCannotUseException.cs" />
     <Compile Include="Numeric\CtkCudafyContext.cs" />
