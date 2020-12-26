@@ -33,16 +33,15 @@ namespace CToolkit.v1_1.Threading
 
 
         #region IDisposable
+
         // Flag: Has Dispose already been called?
         protected bool disposed = false;
-
         // Public implementation of Dispose pattern callable by consumers.
         public virtual void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
@@ -61,18 +60,16 @@ namespace CToolkit.v1_1.Threading
             disposed = true;
         }
 
-
-
-
         protected virtual void DisposeSelf()
         {
             if (this.Task != null)
             {
-
-                try { using (var obj = this.Task) { } }
-                catch (InvalidOperationException) { }
+                //統一Dispose的方法
+                CtkUtilFw.DisposeTaskTry(this.Task);
+                this.Task = null;
             }
         }
+
         #endregion
 
     }

@@ -209,6 +209,7 @@ namespace CToolkit.v1_1
         }
         public static bool DisposeObjTry(IDisposable obj, Action<Exception> exceptionHandler = null)
         {
+            if (obj == null) return true;
             try
             {
                 DisposeObj(obj);
@@ -216,7 +217,7 @@ namespace CToolkit.v1_1
             }
             catch (Exception ex)
             {
-                if (exceptionHandler == null) exceptionHandler(ex);
+                if (exceptionHandler != null) exceptionHandler(ex);
                 else CtkLog.Write(ex);
                 return false;
             }
@@ -227,9 +228,11 @@ namespace CToolkit.v1_1
             foreach (var obj in objs) DisposeObjTry(obj, exceptionHandler);
         }
 
-        public static void DisposeTask(Task task)
+        public static void DisposeTask(Task task, int millisecond = 100)
         {
             if (task == null) return;
+            if (task.Status < TaskStatus.RanToCompletion)
+                task.Wait(millisecond);
             task.Dispose();
         }
         public static void DisposeTask(CtkTask task)
@@ -240,18 +243,13 @@ namespace CToolkit.v1_1
         public static void DisposeTask(CtkCancelTask task)
         {
             if (task == null) return;
-            if (task.Status < TaskStatus.RanToCompletion)
-            {
-                task.Cancel();
-                SpinWait.SpinUntil(() => task.Status >= TaskStatus.RanToCompletion, 500);
-            }
             task.Dispose();
         }
-        public static bool DisposeTaskTry(Task task)
+        public static bool DisposeTaskTry(Task task, int millisecond = 100)
         {
             try
             {
-                DisposeTask(task);
+                DisposeTask(task, millisecond);
                 return true;
             }
             catch (Exception ex)
