@@ -231,7 +231,8 @@ namespace CToolkit.v1_1
         public static void DisposeTask(Task task, int millisecond = 100)
         {
             if (task == null) return;
-            if (task.Status < TaskStatus.RanToCompletion)
+            // <0 代表不等待, 直接dispose
+            if (task.Status < TaskStatus.RanToCompletion && millisecond >= 0)
                 task.Wait(millisecond);
             task.Dispose();
         }

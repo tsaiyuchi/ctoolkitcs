@@ -64,8 +64,8 @@ namespace CToolkit.v1_1.Threading
         {
             if (this.Task != null)
             {
-                //統一Dispose的方法
-                CtkUtilFw.DisposeTaskTry(this.Task);
+                //統一Dispose的方法, 有例外仍舊扔出, 確保在預期內
+                CtkUtilFw.DisposeTask(this.Task);
                 this.Task = null;
             }
         }
