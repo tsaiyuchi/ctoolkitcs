@@ -1,4 +1,4 @@
-﻿using CToolkit.v1_1.Protocol;
+using CToolkit.v1_1.Protocol;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -14,10 +14,13 @@ namespace CToolkit.v1_1.Net
         protected Socket m_connSocket;
         protected bool m_isOpenRequesting = false;
         protected Socket m_workSocket;
+        bool m_isReceiveLoop = false;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         ~CtkTcpSocket() { this.Dispose(false); }
+
         public Socket ConnSocket { get { return m_connSocket; } }
+        public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
         public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
 
@@ -94,7 +97,8 @@ namespace CToolkit.v1_1.Net
                 if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
                 this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
 
-                while (this.IsWaitReceive && !this.disposed)
+                this.IsReceiveLoop = true;
+                while (this.IsReceiveLoop && !this.disposed)
                 {
                     var ea = new CtkProtocolEventArgs()
                     {
@@ -112,6 +116,7 @@ namespace CToolkit.v1_1.Net
             }
             catch (Exception ex)
             {
+                this.IsReceiveLoop = false;
                 this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
                 //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
                 if (this.ConnSocket != this.WorkSocket)
@@ -125,6 +130,11 @@ namespace CToolkit.v1_1.Net
             }
             return 0;
         }
+        public void ReceiveLoopCancel()
+        {
+            this.IsReceiveLoop = false;
+        }
+
         public int ReceiveOnce()
         {
             try
@@ -132,6 +142,8 @@ namespace CToolkit.v1_1.Net
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
                 if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
                 this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
+
+
 
                 var ea = new CtkProtocolEventArgs()
                 {
@@ -161,15 +173,6 @@ namespace CToolkit.v1_1.Net
             }
             return 0;
         }
-
-
-
-
-
-
-
-
-
         #region ICtkProtocolConnect
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
@@ -182,6 +185,7 @@ namespace CToolkit.v1_1.Net
         public bool IsLocalReadyConnect { get { return this.m_connSocket != null && this.m_connSocket.IsBound; } }
         public bool IsOpenRequesting { get { return this.m_isOpenRequesting; } }
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
+
 
         public int ConnectIfNo() { return this.ConnectIfNo(this.IsActively); }
         public void Disconnect()
