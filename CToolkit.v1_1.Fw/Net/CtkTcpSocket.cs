@@ -93,40 +93,19 @@ namespace CToolkit.v1_1.Net
         {
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
-                this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
-
                 this.IsReceiveLoop = true;
                 while (this.IsReceiveLoop && !this.disposed)
                 {
-                    var ea = new CtkProtocolEventArgs()
-                    {
-                        Sender = this,
-                    };
-
-                    ea.TrxMessage = new CtkProtocolBufferMessage(1518);
-                    var trxBuffer = ea.TrxMessage.ToBuffer();
-
-
-                    trxBuffer.Length = this.WorkSocket.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
-                    if (trxBuffer.Length == 0) break;//未收到資料卻停止接收, 只有封包Header? 先停止, 確認後再決定怎麼處理
-                    this.OnDataReceive(ea);
+                    this.ReceiveOnce();
                 }
             }
             catch (Exception ex)
             {
                 this.IsReceiveLoop = false;
-                this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
                 //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
                 if (this.ConnSocket != this.WorkSocket)
                     CtkNetUtil.DisposeSocket(this.WorkSocket);//Repeat/Loop執行, 一旦結束就釋放Socket
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
-            }
-            finally
-            {
-                this.mreIsReceiving.Set();//同步型的, 結束就可以Set
-                if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
             return 0;
         }
@@ -134,7 +113,6 @@ namespace CToolkit.v1_1.Net
         {
             this.IsReceiveLoop = false;
         }
-
         public int ReceiveOnce()
         {
             try
@@ -142,8 +120,6 @@ namespace CToolkit.v1_1.Net
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
                 if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
                 this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
-
-
 
                 var ea = new CtkProtocolEventArgs()
                 {
@@ -173,6 +149,13 @@ namespace CToolkit.v1_1.Net
             }
             return 0;
         }
+
+
+
+   
+
+
+
         #region ICtkProtocolConnect
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
@@ -204,16 +187,22 @@ namespace CToolkit.v1_1.Net
         {
             try
             {
-                Monitor.Enter(this);
+                //寫入不卡Monitor, 並不會造成impact
+                //但如果卡了Monitor, 你無法同時 等待Receive 和 要求Send
+
+                //其它作業可以卡 Monitor.TryEnter
+                //此物件會同時進行的只有 Receive 和 Send
+                //所以其它作業卡同一個沒問題: Monitor.TryEnter(this, 1000)
+
                 var buffer = msg.ToBuffer();
                 this.WorkSocket.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
             }
             catch (Exception ex)
             {
-                this.Disconnect();
+                this.Disconnect();//寫入失敗就斷線
                 CtkLog.WarnNs(this, ex);
+                throw ex;//就例外就拋出, 不吃掉
             }
-            finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
         }
 
         #endregion
@@ -281,6 +270,7 @@ namespace CToolkit.v1_1.Net
             this.DisposeSelf();
             disposed = true;
         }
+
         #endregion
 
 

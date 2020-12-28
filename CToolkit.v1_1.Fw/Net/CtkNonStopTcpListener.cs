@@ -18,6 +18,7 @@ namespace CToolkit.v1_1.Net
         protected int m_IntervalTimeOfConnectCheck = 5000;
         public Uri LocalUri;
         TcpClient activeWorkClient;
+        public bool IsAutoRead { get; set; }
         ManualResetEvent connectMre = new ManualResetEvent(true);
         ConcurrentQueue<TcpClient> m_tcpClientList = new ConcurrentQueue<TcpClient>();
         CtkTcpListenerEx m_tcpListener = null;
@@ -162,8 +163,11 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(stateea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                NetworkStream stream = tcpClient.GetStream();
-                stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
+                if (this.IsAutoRead)
+                {
+                    NetworkStream stream = tcpClient.GetStream();
+                    stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
+                }
 
             }
             catch (Exception ex)
@@ -191,11 +195,31 @@ namespace CToolkit.v1_1.Net
                 try { this.OnDataReceive(tcpstate); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), tcpstate);
+                if (this.IsAutoRead)
+                    stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), tcpstate);
 
             }
             catch (Exception ex) { CtkLog.Write(ex); }
         }
+
+        /// <summary>
+        /// 開始讀取Socket資料,
+        /// 用於 1. IsAutoRead被關閉, 每次讀取需自行執行;
+        ///     2. 若連線還在, 但讀取異常中姒, 可以再度開始;
+        /// </summary>
+        public void BeginRead()
+        {
+            var myea = new CtkNonStopTcpStateEventArgs();
+            myea.Sender = this;
+            var client = this.ActiveWorkClient as TcpClient;
+            myea.workClient = client;
+            var trxBuffer = myea.TrxMessageBuffer;
+            var stream = client.GetStream();
+            stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
+        }
+
+
+
 
         public void WriteBytes(byte[] buff, int offset, int length)
         {

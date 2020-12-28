@@ -45,10 +45,14 @@ namespace CToolkit.v1_1.Net
 
         ~CtkNonStopTcpClient() { this.Dispose(false); }
 
+
+        /// <summary>
+        /// 若開敋自動讀取,
+        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取
+        /// </summary>
+        public bool IsAutoRead { get; set; }
         [JsonIgnore]
         protected TcpClient ActiveClient { get { lock (this) return m_activeClient; } set { lock (this) m_activeClient = value; } }
-
-
 
         /// <summary>
         /// Remember use stream.Flush() to force data send, Tcp Client always write data into buffer.
@@ -82,7 +86,6 @@ namespace CToolkit.v1_1.Net
 
 
         }
-
         void ClientEndConnectCallback(IAsyncResult ar)
         {
             var myea = new CtkNonStopTcpStateEventArgs();
@@ -108,8 +111,11 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(myea); }
                 catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
-                var stream = client.GetStream();
-                stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
+                if (this.IsAutoRead)
+                {
+                    var stream = client.GetStream();
+                    stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
+                }
             }
             //catch (SocketException ex) { }
             catch (Exception ex)
@@ -146,7 +152,9 @@ namespace CToolkit.v1_1.Net
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnDataReceive(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
-                stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
+
+                if (this.IsAutoRead)
+                    stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
 
             }
             //catch (IOException ex) { CtkLog.Write(ex); }
@@ -160,6 +168,23 @@ namespace CToolkit.v1_1.Net
                 CtkLog.WarnNs(this, ex);
             }
         }
+
+        /// <summary>
+        /// 開始讀取Socket資料,
+        /// 用於 1. IsAutoRead被關閉, 每次讀取需自行執行;
+        ///     2. 若連線還在, 但讀取異常中姒, 可以再度開始;
+        /// </summary>
+        public void BeginRead()
+        {
+            var myea = new CtkNonStopTcpStateEventArgs();
+            var client = this.ActiveWorkClient as TcpClient;
+            myea.Sender = this;
+            myea.workClient = client;
+            var trxBuffer = myea.TrxMessageBuffer;
+            var stream = client.GetStream();
+            stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
+        }
+
 
 
 
@@ -237,7 +262,6 @@ namespace CToolkit.v1_1.Net
             finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
 
         }
-
         public void Disconnect()
         {
             if (this.threadNonStopConnect != null)
@@ -251,7 +275,6 @@ namespace CToolkit.v1_1.Net
             myea.Message = "Disconnect";
             this.OnDisconnect(myea);
         }
-
         public void NonStopConnectAsyn()
         {
             AbortNonStopConnect();
