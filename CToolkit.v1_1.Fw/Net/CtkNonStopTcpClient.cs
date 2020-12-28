@@ -55,6 +55,22 @@ namespace CToolkit.v1_1.Net
         protected TcpClient ActiveClient { get { lock (this) return m_activeClient; } set { lock (this) m_activeClient = value; } }
 
         /// <summary>
+        /// 開始讀取Socket資料, Begin 代表非同步.
+        /// 用於 1. IsAutoRead被關閉, 每次讀取需自行執行;
+        ///     2. 若連線還在, 但讀取異常中姒, 可以再度開始;
+        /// </summary>
+        public void BeginRead()
+        {
+            var myea = new CtkNonStopTcpStateEventArgs();
+            var client = this.ActiveWorkClient as TcpClient;
+            myea.Sender = this;
+            myea.WorkTcpClient = client;
+            var trxBuffer = myea.TrxMessageBuffer;
+            var stream = client.GetStream();
+            stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
+        }
+
+        /// <summary>
         /// Remember use stream.Flush() to force data send, Tcp Client always write data into buffer.
         /// </summary>
         /// <param name="buff"></param>
@@ -101,7 +117,7 @@ namespace CToolkit.v1_1.Net
                 client.EndConnect(ar);
 
                 myea.Sender = state;
-                myea.workClient = client;
+                myea.WorkTcpClient = client;
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
                 {
                     throw new CtkException("Connection Fail");
@@ -139,7 +155,7 @@ namespace CToolkit.v1_1.Net
             var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
             try
             {
-                var client = myea.workClient;
+                var client = myea.WorkTcpClient;
                 if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)
                 {
                     throw new CtkException("Read Fail");
@@ -169,26 +185,8 @@ namespace CToolkit.v1_1.Net
             }
         }
 
-        /// <summary>
-        /// 開始讀取Socket資料,
-        /// 用於 1. IsAutoRead被關閉, 每次讀取需自行執行;
-        ///     2. 若連線還在, 但讀取異常中姒, 可以再度開始;
-        /// </summary>
-        public void BeginRead()
-        {
-            var myea = new CtkNonStopTcpStateEventArgs();
-            var client = this.ActiveWorkClient as TcpClient;
-            myea.Sender = this;
-            myea.workClient = client;
-            var trxBuffer = myea.TrxMessageBuffer;
-            var stream = client.GetStream();
-            stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
-        }
 
-
-
-
-        #region ICtkProtocolNonStopConnect
+        #region ICtkProtocolConnect
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
@@ -198,18 +196,9 @@ namespace CToolkit.v1_1.Net
 
         [JsonIgnore]
         public object ActiveWorkClient { get { return this.ActiveClient; } set { if (this.ActiveClient != value) throw new ArgumentException("不可傳入Active Client"); } }
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsLocalReadyConnect { get { return this.IsRemoteConnected; } }//Local連線成功=遠端連線成功
-        public bool IsNonStopRunning { get { return this.threadNonStopConnect != null && this.threadNonStopConnect.IsAlive; } }
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return CtkNetUtil.IsConnected(this.ActiveClient); } }
-
-
-        public void AbortNonStopConnect()
-        {
-            if (this.threadNonStopConnect != null)
-                this.threadNonStopConnect.Abort();
-        }
 
         //用途是避免重複要求連線
         public int ConnectIfNo()
@@ -275,29 +264,6 @@ namespace CToolkit.v1_1.Net
             myea.Message = "Disconnect";
             this.OnDisconnect(myea);
         }
-        public void NonStopConnectAsyn()
-        {
-            AbortNonStopConnect();
-
-            this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
-            {
-                //TODO: 重啟時, 會有執行緒被中止的狀況
-                while (!disposed)
-                {
-                    try
-                    {
-                        this.ConnectIfNo();
-                    }
-                    catch (Exception ex) { CtkLog.Write(ex); }
-
-                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
-
-                }
-            }));
-            this.threadNonStopConnect.Start();
-
-        }
-
         public void WriteMsg(CtkProtocolTrxMessage msg)
         {
             if (msg == null) throw new ArgumentException("Paramter cannot be null");
@@ -333,6 +299,39 @@ namespace CToolkit.v1_1.Net
         #endregion
 
 
+        #region ICtkProtocolNonStopConnect
+
+        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+        public bool IsNonStopRunning { get { return this.threadNonStopConnect != null && this.threadNonStopConnect.IsAlive; } }
+        public void AbortNonStopConnect()
+        {
+            if (this.threadNonStopConnect != null)
+                this.threadNonStopConnect.Abort();
+        }
+        public void NonStopConnectAsyn()
+        {
+            AbortNonStopConnect();
+
+            this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
+            {
+                //TODO: 重啟時, 會有執行緒被中止的狀況
+                while (!disposed)
+                {
+                    try
+                    {
+                        this.ConnectIfNo();
+                    }
+                    catch (Exception ex) { CtkLog.Write(ex); }
+
+                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
+
+                }
+            }));
+            this.threadNonStopConnect.Start();
+
+        }
+
+        #endregion
 
 
         #region Event
@@ -342,25 +341,21 @@ namespace CToolkit.v1_1.Net
             if (this.EhDataReceive == null) return;
             this.EhDataReceive(this, ea);
         }
-
         void OnDisconnect(CtkProtocolEventArgs tcpstate)
         {
             if (this.EhDisconnect == null) return;
             this.EhDisconnect(this, tcpstate);
         }
-
         void OnErrorReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhErrorReceive == null) return;
             this.EhErrorReceive(this, ea);
         }
-
         void OnFailConnect(CtkProtocolEventArgs tcpstate)
         {
             if (this.EhFailConnect == null) return;
             this.EhFailConnect(this, tcpstate);
         }
-
         void OnFirstConnect(CtkProtocolEventArgs tcpstate)
         {
             if (this.EhFirstConnect == null) return;

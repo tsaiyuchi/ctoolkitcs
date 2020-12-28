@@ -9,9 +9,7 @@ namespace CToolkit.v1_1.Net
 {
     public class CtkNonStopTcpStateEventArgs : CtkProtocolEventArgs
     {
-        public TcpClient workClient;
-
-
+        public Object WorkClient;
         public CtkProtocolBufferMessage TrxMessageBuffer
         {
             get
@@ -23,14 +21,16 @@ namespace CToolkit.v1_1.Net
             set { this.TrxMessage = value; }
         }
 
+        public TcpClient WorkTcpClient { get { return this.WorkClient as TcpClient; }  set { this.WorkClient = value; } }
+        public Socket WorkSocket { get { return this.WorkClient as Socket; } set { this.WorkClient = value; } }
 
 
         public void WriteMsg(byte[] buff, int offset, int length)
         {
-            if (this.workClient == null) return;
-            if (!this.workClient.Connected) return;
+            if (this.WorkTcpClient == null) return;
+            if (!this.WorkTcpClient.Connected) return;
 
-            var stm = this.workClient.GetStream();
+            var stm = this.WorkTcpClient.GetStream();
             stm.Write(buff, offset, length);
 
         }

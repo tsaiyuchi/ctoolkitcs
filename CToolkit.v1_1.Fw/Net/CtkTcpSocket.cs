@@ -6,13 +6,13 @@ using System.Threading;
 
 namespace CToolkit.v1_1.Net
 {
-    public class CtkTcpSocket : ICtkProtocolConnect, IDisposable
+    public class CtkTcpSocket : ICtkProtocolNonStopConnect, IDisposable
     {
         public bool IsActively = false;
+        public bool IsAutoReceive = true;
         public Uri LocalUri;
         public Uri RemoteUri;
         protected Socket m_connSocket;
-        protected bool m_isOpenRequesting = false;
         protected Socket m_workSocket;
         bool m_isReceiveLoop = false;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
@@ -25,6 +25,21 @@ namespace CToolkit.v1_1.Net
         public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
 
 
+
+        /// <summary>
+        /// 開始讀取Socket資料, Begin 代表非同步.
+        /// 用於 1. IsAutoRead被關閉, 每次讀取需自行執行;
+        ///     2. 若連線還在, 但讀取異常中姒, 可以再度開始;
+        /// </summary>
+        public void BeginReceive()
+        {
+            var myea = new CtkNonStopTcpStateEventArgs();
+            var client = this.ActiveWorkClient as Socket;
+            myea.Sender = this;
+            myea.WorkSocket = client;
+            var trxBuffer = myea.TrxMessageBuffer;
+            client.BeginReceive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveCallback), myea);
+        }
 
         public bool CheckConnectStatus()
         {
@@ -42,7 +57,8 @@ namespace CToolkit.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 3000)) return -1; // throw new CtkException("Cannot enter lock");
-                this.m_isOpenRequesting = true;
+                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
 
 
                 //若連線不曾建立, 或聆聽/連線被關閉
@@ -85,7 +101,7 @@ namespace CToolkit.v1_1.Net
             }
             finally
             {
-                this.m_isOpenRequesting = false;
+                this.mreIsConnecting.Set();
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
         }
@@ -149,10 +165,42 @@ namespace CToolkit.v1_1.Net
             }
             return 0;
         }
+        void EndReceiveCallback(IAsyncResult ar)
+        {
+            //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+            try
+            {
+                var client = myea.WorkSocket;
+                if (!ar.IsCompleted || client == null || !client.Connected)
+                {
+                    throw new CtkException("Read Fail");
+                }
+
+                var ctkBuffer = myea.TrxMessageBuffer;
+                var bytesRead = client.EndReceive(ar);
+                ctkBuffer.Length = bytesRead;
+                //呼叫他人不應影響自己運作, catch起來
+                try { this.OnDataReceive(myea); }
+                catch (Exception ex) { CtkLog.Write(ex); }
+
+                if (this.IsAutoReceive)
+                    client.BeginReceive(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveCallback), myea);
+
+            }
+            //catch (IOException ex) { CtkLog.Write(ex); }
+            catch (Exception ex)
+            {
+                //讀取失敗, 中斷連線(會呼叫 OnDisconnect), 不需要呼叫 OnFailConnect
+                this.Disconnect();
+                myea.Message = ex.Message;
+                myea.Exception = ex;
+                this.OnErrorReceive(myea);//但要呼叫 OnErrorReceive
+                CtkLog.WarnNs(this, ex);
+            }
+        }
 
 
-
-   
 
 
 
@@ -166,9 +214,8 @@ namespace CToolkit.v1_1.Net
 
         public object ActiveWorkClient { get { return this.WorkSocket; } set { this.WorkSocket = value as Socket; } }
         public bool IsLocalReadyConnect { get { return this.m_connSocket != null && this.m_connSocket.IsBound; } }
-        public bool IsOpenRequesting { get { return this.m_isOpenRequesting; } }
+        public bool IsOpenRequesting { get { return this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
-
 
         public int ConnectIfNo() { return this.ConnectIfNo(this.IsActively); }
         public void Disconnect()
@@ -206,6 +253,23 @@ namespace CToolkit.v1_1.Net
         }
 
         #endregion
+
+
+        #region ICtkProtocolNonStopConnect
+
+        public int IntervalTimeOfConnectCheck { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsNonStopRunning => throw new NotImplementedException();
+        public void AbortNonStopConnect()
+        {
+            throw new NotImplementedException();
+        }
+        public void NonStopConnectAsyn()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
 
 
         #region Event
@@ -270,6 +334,7 @@ namespace CToolkit.v1_1.Net
             this.DisposeSelf();
             disposed = true;
         }
+
 
         #endregion
 
