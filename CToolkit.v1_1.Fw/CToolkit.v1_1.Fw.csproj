@@ -134,6 +134,7 @@
     <Compile Include="Net\CtkTcpListenerEx.cs" />
     <Compile Include="Net\CtkTcpSocket.cs" />
     <Compile Include="Net\CtkWebTransaction.cs" />
+    <Compile Include="Net\EnumCtkConnectMode.cs" />
     <Compile Include="Numeric\CtkCudafyCannotUseException.cs" />
     <Compile Include="Numeric\CtkCudafyContext.cs" />
     <Compile Include="Numeric\CtkEnumPassFilterMode.cs" />
