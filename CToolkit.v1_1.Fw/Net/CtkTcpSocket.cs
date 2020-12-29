@@ -150,6 +150,9 @@ namespace CToolkit.v1_1.Net
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                 }
 
+                if (this.IsAutoReceive) this.BeginReceive();
+
+
                 return 0;
             }
             catch (Exception ex)
