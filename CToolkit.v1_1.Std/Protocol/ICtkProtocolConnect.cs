@@ -23,7 +23,9 @@ namespace CToolkit.v1_1.Protocol
 
 
         /// <summary>
-        /// 連線的對象, 可以是任何物件
+        /// 目前啟用中的連線, 可以是任何物件.
+        /// 有可能作為Server有多個 Clients, 正在操作中的是哪個.
+        /// 作為 Client 就只有一個 Server, 正在操作中的也是同一個.
         /// </summary>
         object ActiveWorkClient { get; set; }//可要求變更Active Work
         void WriteMsg(CtkProtocolTrxMessage msg);
