@@ -150,6 +150,7 @@ namespace CToolkit.v1_1.Net
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                 }
 
+
                 if (this.IsAutoReceive) this.BeginReceive();
 
 
@@ -376,7 +377,7 @@ namespace CToolkit.v1_1.Net
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
 
-        public int ConnectIfNo() { return this.ConnectIfNoSync(this.IsActively); }
+        public int ConnectIfNo() { return this.ConnectIfNoAsyn(this.IsActively);/*預設採用非同步連線*/ }
         public void Disconnect()
         {
             this.mreIsReceiving.Set();//僅Set不釋放, 可能還會使用
@@ -495,18 +496,6 @@ namespace CToolkit.v1_1.Net
 
 
 
-
-
-
-
-
-
-
     }
 
 }
-
-
-
-
-
