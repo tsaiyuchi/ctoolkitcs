@@ -46,7 +46,6 @@ namespace CToolkit.v1_1.Net
             //也就是收到後, 通知結束工作的函式
             //你無法在其它地方呼叫, 因為你沒有 IAsyncResult 的物件
         }
-
         public bool CheckConnectStatus()
         {
             var socket = this.m_connSocket;
@@ -67,9 +66,6 @@ namespace CToolkit.v1_1.Net
             catch (Exception ex)
             {
                 this.IsReceiveLoop = false;
-                //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
-                if (this.ConnSocket != this.WorkSocket)
-                    CtkNetUtil.DisposeSocket(this.WorkSocket);//Repeat/Loop執行, 一旦結束就釋放Socket
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
             }
             return 0;
@@ -103,6 +99,7 @@ namespace CToolkit.v1_1.Net
             {
                 this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
                 //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
+                this.Disconnect();
                 if (this.ConnSocket != this.WorkSocket)
                     CtkNetUtil.DisposeSocket(this.WorkSocket);//執行出現例外, 先釋放Socket
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
@@ -383,8 +380,8 @@ namespace CToolkit.v1_1.Net
         {
             this.mreIsReceiving.Set();//僅Set不釋放, 可能還會使用
             this.mreIsConnecting.Set();//僅Set不釋放, 可能還會使用
-            CtkUtilFw.DisposeObjTry(this.m_workSocket);
-            CtkUtilFw.DisposeObjTry(this.m_connSocket);
+            CtkNetUtil.DisposeSocket(this.m_workSocket);
+            CtkNetUtil.DisposeSocket(this.m_connSocket);
             this.OnDisconnect(new CtkProtocolEventArgs() { Message = "Disconnect method is executed" });
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
@@ -416,11 +413,11 @@ namespace CToolkit.v1_1.Net
 
         public int IntervalTimeOfConnectCheck { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool IsNonStopRunning => throw new NotImplementedException();
-        public void AbortNonStopConnect()
+        public void AbortNonStopRun()
         {
             throw new NotImplementedException();
         }
-        public void NonStopConnectAsyn()
+        public void NonStopRunAsyn()
         {
             throw new NotImplementedException();
         }
@@ -497,18 +494,6 @@ namespace CToolkit.v1_1.Net
 
 
 
-
-
-
-
-
-
-
     }
 
 }
-
-
-
-
-

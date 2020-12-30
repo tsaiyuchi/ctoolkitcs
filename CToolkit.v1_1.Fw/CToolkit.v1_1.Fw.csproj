@@ -128,8 +128,8 @@
     <Compile Include="Net\CtkFtp.cs" />
     <Compile Include="Net\CtkMail.cs" />
     <Compile Include="Net\CtkNetUtil.cs" />
-    <Compile Include="Net\CtkNonStopTcpClient.cs" />
-    <Compile Include="Net\CtkNonStopTcpListener.cs" />
+    <Compile Include="Net\CtkTcpClient.cs" />
+    <Compile Include="Net\CtkTcpListener.cs" />
     <Compile Include="Net\CtkNonStopTcpStateEventArgs.cs" />
     <Compile Include="Net\CtkTcpListenerEx.cs" />
     <Compile Include="Net\CtkTcpSocket.cs" />

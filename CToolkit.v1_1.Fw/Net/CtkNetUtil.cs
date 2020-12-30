@@ -11,10 +11,20 @@ namespace CToolkit.v1_1.Net
     public class CtkNetUtil
     {
 
-        public static void DisposeTcpClient(TcpClient client)
+        public static void DisposeTcpClientTry(TcpClient client)
         {
             if (client == null) return;
             DisposeSocket(client.Client);
+
+            try
+            {
+                var stm = client.GetStream();
+                if (stm != null)
+                    using (stm) stm.Close();
+            }
+            catch (SocketException) { }
+            catch (ObjectDisposedException) { }
+
             try
             {
                 using (client)

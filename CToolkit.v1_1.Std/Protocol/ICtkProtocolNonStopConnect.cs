@@ -18,10 +18,10 @@ namespace CToolkit.v1_1.Protocol
         /// <summary>
         /// 中斷非停執行
         /// </summary>
-        void AbortNonStopConnect();
+        void AbortNonStopRun();
         /// <summary>
         /// 非同步的非停連線
         /// </summary>
-        void NonStopConnectAsyn();
+        void NonStopRunAsyn();
     }
 }

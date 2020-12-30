@@ -15,7 +15,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
     {
         protected int m_IntervalTimeOfConnectCheck = 5000;
         ICTkWcfDuplexTcpCallback activeWorkClient;
-        CtkCancelTask NonStopTask;
+        CtkCancelTask runningTask;
 
 
 
@@ -26,40 +26,22 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         ~CtkWcfDuplexTcpNonStopListener() { this.Dispose(false); }
 
 
-        #region ICtkProtocolNonStopConnect
+        #region ICtkProtocolConnect
 
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         public object ActiveWorkClient { get { return this.activeWorkClient; } set { this.activeWorkClient = value as ICTkWcfDuplexTcpCallback; } }
-
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-
         public bool IsLocalReadyConnect { get { return this.host != null && this.host.State <= CommunicationState.Opened; } }
-
-        public bool IsNonStopRunning { get { return this.NonStopTask != null && this.NonStopTask.Task.Status < TaskStatus.RanToCompletion; } }
-
         public bool IsOpenRequesting { get { try { return Monitor.TryEnter(this, 10); } finally { Monitor.Exit(this); } } }
-
         public bool IsRemoteConnected { get { return this.GetAllChannels().Count > 0; } }
-        public void AbortNonStopConnect()
-        {
-            if (this.NonStopTask != null)
-            {
-                using (var obj = this.NonStopTask)
-                    obj.Cancel();
-            }
-        }
 
-        public int ConnectIfNo()
+        public int ConnectIfNo() { return this.ConnectIfNoAsyn(); }
+        public int ConnectIfNoAsyn()
         {
             if (this.IsLocalReadyConnect) return 0;
             try
@@ -100,34 +82,11 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
                 Monitor.Exit(this);
             }
         }
-
         public void Disconnect()
         {
-            this.AbortNonStopConnect();
+            this.AbortNonStopRun();
             this.Close();
         }
-
-        public void NonStopConnectAsyn()
-        {
-            AbortNonStopConnect();
-
-            this.NonStopTask = CtkCancelTask.RunOnce((ct) =>
-            {
-                while (!this.disposed && !ct.IsCancellationRequested)
-                {
-                    ct.ThrowIfCancellationRequested();
-                    try
-                    {
-                        this.ConnectIfNo();
-                    }
-                    catch (Exception ex) { CtkLog.Write(ex); }
-                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
-                }
-
-            });
-        }
-
-
 
         /// <summary>
         /// 只支援 CtkWcfMessage
@@ -143,6 +102,45 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
             }
             throw new ArgumentException("No support type");
         }
+
+        #endregion
+
+
+        #region ICtkProtocolNonStopConnect
+
+        public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Task.Status < TaskStatus.RanToCompletion; } }
+        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+        public void NonStopRunAsyn()
+        {
+            AbortNonStopRun();
+
+            this.runningTask = CtkCancelTask.RunOnce((ct) =>
+            {
+                while (!this.disposed && !ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    try
+                    {
+                        this.ConnectIfNo();
+                    }
+                    catch (Exception ex) { CtkLog.Write(ex); }
+                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
+                }
+
+            });
+        }
+        public void AbortNonStopRun()
+        {
+            if (this.runningTask != null)
+            {
+                using (var obj = this.runningTask)
+                    obj.Cancel();
+            }
+        }
+
+        #endregion
+
+        #region Event
 
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
@@ -169,7 +167,6 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
             if (this.EhFirstConnect == null) return;
             this.EhFirstConnect(this, tcpstate);
         }
-
 
         #endregion
 

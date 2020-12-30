@@ -52,28 +52,17 @@ namespace CToolkit.v1_1.DigitalPort
 
 
 
-        #region ICtkProtocolNonStopConnect
+        #region ICtkProtocolConnect
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         public object ActiveWorkClient { get { return this.serialPort; } set { if (this.serialPort != value) throw new ArgumentException("不可傳入其它ActiveWorkClient"); } }
 
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-
-        public void AbortNonStopConnect()
-        {
-            if (this.threadNonStopConnect != null)
-                this.threadNonStopConnect.Abort();
-        }
-
+        
         public int ConnectIfNo()
         {
             if (this.serialPort != null && this.serialPort.IsOpen) return 0;//連線中直接離開
@@ -145,6 +134,7 @@ namespace CToolkit.v1_1.DigitalPort
             finally { Monitor.Exit(this); }
 
         }
+        public int ConnectIfNoAsyn() { return this.ConnectIfNo(); /*此通訊的連線方式, 同步=非同步*/ }
         public void Disconnect()
         {
             if (this.threadNonStopConnect != null)
@@ -157,28 +147,6 @@ namespace CToolkit.v1_1.DigitalPort
 
             //一旦結束就死了, 需要重new, 所以清掉event沒問題
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
-
-        }
-
-        public void NonStopConnectAsyn()
-        {
-            AbortNonStopConnect();
-
-            this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
-            {
-                while (!disposed)
-                {
-                    try
-                    {
-                        this.ConnectIfNo();
-                    }
-                    catch (Exception ex) { CtkLog.Write(ex); }
-
-                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
-
-                }
-            }));
-            this.threadNonStopConnect.Start();
 
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
@@ -199,36 +167,72 @@ namespace CToolkit.v1_1.DigitalPort
             }
 
         }
+
+        #endregion
+
+
+        #region ICtkProtocolNonStopConnect
+        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+        public void AbortNonStopRun()
+        {
+            if (this.threadNonStopConnect != null)
+                this.threadNonStopConnect.Abort();
+        }
+        public void NonStopRunAsyn()
+        {
+            AbortNonStopRun();
+
+            this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
+            {
+                while (!disposed)
+                {
+                    try
+                    {
+                        this.ConnectIfNo();
+                    }
+                    catch (Exception ex) { CtkLog.Write(ex); }
+
+                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
+
+                }
+            }));
+            this.threadNonStopConnect.Start();
+
+        }
+
+        #endregion
+
+        #region Event
+
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhDataReceive == null) return;
             this.EhDataReceive(this, ea);
         }
-
-        void OnDisconnect(CtkProtocolEventArgs tcpstate)
+        void OnDisconnect(CtkProtocolEventArgs ea)
         {
             if (this.EhDisconnect == null) return;
-            this.EhDisconnect(this, tcpstate);
+            this.EhDisconnect(this, ea);
         }
-
         void OnErrorReceive(CtkProtocolEventArgs ea)
         {
             if (this.EhErrorReceive == null) return;
             this.EhErrorReceive(this, ea);
         }
-
-        void OnFailConnect(CtkProtocolEventArgs tcpstate)
+        void OnFailConnect(CtkProtocolEventArgs ea)
         {
             if (this.EhFailConnect == null) return;
-            this.EhFailConnect(this, tcpstate);
+            this.EhFailConnect(this, ea);
         }
-
-        void OnFirstConnect(CtkProtocolEventArgs tcpstate)
+        void OnFirstConnect(CtkProtocolEventArgs ea)
         {
             if (this.EhFirstConnect == null) return;
-            this.EhFirstConnect(this, tcpstate);
+            this.EhFirstConnect(this, ea);
         }
+
         #endregion
+
+
 
 
         #region IDisposable
@@ -264,7 +268,7 @@ namespace CToolkit.v1_1.DigitalPort
 
 
 
- 
+
 
 
         void DisposeSelf()
@@ -273,7 +277,7 @@ namespace CToolkit.v1_1.DigitalPort
             catch (Exception ex) { CtkLog.Write(ex); }
         }
 
- 
+
 
         #endregion
 

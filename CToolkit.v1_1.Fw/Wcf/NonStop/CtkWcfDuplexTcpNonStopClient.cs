@@ -33,43 +33,23 @@ namespace CToolkit.v1_1.Wcf.NonStop
         }
 
 
+        #region ICtkProtocolConnect
 
-
-        #region ICtkProtocolNonStopConnect
 
 
         public event EventHandler<CtkProtocolEventArgs> EhDataReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhDisconnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhErrorReceive;
-
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
-
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         public object ActiveWorkClient { get { return this.Channel; } set { this.Channel = (TService)value; } }
-
         public bool IsLocalReadyConnect { get { return this.IsWcfConnected; } }
-
-        public bool IsNonStopRunning { get { return this.NonStopTask != null && this.NonStopTask.Task.Status < TaskStatus.RanToCompletion; } }
-
         public bool IsOpenRequesting { get { try { return Monitor.TryEnter(this, 10); } finally { Monitor.Exit(this); } } }
-
         public bool IsRemoteConnected { get { return this.ChannelFactory.State == CommunicationState.Opened; } }
 
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-
-        public void AbortNonStopConnect()
-        {
-            if (this.NonStopTask != null)
-            {
-                using (var obj = this.NonStopTask)
-                    obj.Cancel();
-            }
-        }
-
-        public int ConnectIfNo()
+        public int ConnectIfNo() { return this.ConnectIfNoAsyn(); }
+        public int ConnectIfNoAsyn()
         {
             if (this.IsLocalReadyConnect) return 0;
             this.WcfConnect(cf =>
@@ -93,7 +73,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         public void Disconnect()
         {
-            this.AbortNonStopConnect();
+            this.AbortNonStopRun();
             if (this.ChannelFactory != null)
             {
                 using (var obj = this.ChannelFactory)
@@ -107,9 +87,38 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         }
 
-        public void NonStopConnectAsyn()
+        /// <summary>
+        /// 只支援 CtkWcfMessage
+        /// </summary>
+        /// <param name="msg"></param>
+        public void WriteMsg(CtkProtocolTrxMessage msg)
         {
-            AbortNonStopConnect();
+            var wcfmsg = msg.As<CtkWcfMessage>();
+            if (wcfmsg != null)
+            {
+                this.Channel.CtkSend(msg.As<CtkWcfMessage>());
+                return;
+            }
+            throw new ArgumentException("No support type");
+        }
+
+
+
+        #region ICtkProtocolNonStopConnect
+
+        public bool IsNonStopRunning { get { return this.NonStopTask != null && this.NonStopTask.Task.Status < TaskStatus.RanToCompletion; } }
+        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+        public void AbortNonStopRun()
+        {
+            if (this.NonStopTask != null)
+            {
+                using (var obj = this.NonStopTask)
+                    obj.Cancel();
+            }
+        }
+        public void NonStopRunAsyn()
+        {
+            AbortNonStopRun();
 
             this.NonStopTask = CtkCancelTask.RunOnce((ct) =>
             {
@@ -129,22 +138,10 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         }
 
+        #endregion
 
 
-        /// <summary>
-        /// 只支援 CtkWcfMessage
-        /// </summary>
-        /// <param name="msg"></param>
-        public void WriteMsg(CtkProtocolTrxMessage msg)
-        {
-            var wcfmsg = msg.As<CtkWcfMessage>();
-            if (wcfmsg != null)
-            {
-                this.Channel.CtkSend(msg.As<CtkWcfMessage>());
-                return;
-            }
-            throw new ArgumentException("No support type");
-        }
+        #region Event
 
         void OnDataReceive(CtkProtocolEventArgs ea)
         {
@@ -171,7 +168,12 @@ namespace CToolkit.v1_1.Wcf.NonStop
             if (this.EhFirstConnect == null) return;
             this.EhFirstConnect(this, tcpstate);
         }
+
         #endregion
+
+        #endregion
+
+
 
 
         #region IDispose
