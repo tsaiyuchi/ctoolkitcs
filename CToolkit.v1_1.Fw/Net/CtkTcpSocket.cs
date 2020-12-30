@@ -54,121 +54,6 @@ namespace CToolkit.v1_1.Net
             if (!socket.Connected) return false;
             return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
         }
-        public int ConnectIfNoAsyn(bool? isAct = null)
-        {
-            if (isAct.HasValue) this.IsActively = isAct.Value;
-            if (this.IsOpenRequesting || this.IsRemoteConnected) return 0;
-            //if (this.IsLocalReadyConnect) return; //同步連線是等到連線才離開method, 不需判斷 IsLocalReadyConnect
-
-            try
-            {
-                if (!Monitor.TryEnter(this, 3000)) return -1; // throw new CtkException("Cannot enter lock");
-                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
-                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
-
-
-                //若連線不曾建立, 或聆聽/連線被關閉
-                if (this.m_connSocket == null || !this.m_connSocket.Connected)
-                {
-                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
-                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
-                }
-
-
-                if (this.IsActively)
-                {
-                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
-                    if (this.RemoteUri == null)
-                        throw new CtkException("remote field can not be null");
-
-                    this.ConnSocket.BeginConnect(CtkNetUtil.ToIPEndPoint(this.RemoteUri), new AsyncCallback(EndConnectCallback), this);
-                }
-                else
-                {
-                    if (this.LocalUri == null)
-                        throw new Exception("local field can not be null");
-                    if (!this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
-                    this.ConnSocket.Listen(100);
-                    this.ConnSocket.BeginAccept(new AsyncCallback(EndAcceptCallback), this);
-                }
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                //一旦聆聽/連線失敗, 直接關閉所有Socket, 重新來過
-                this.Disconnect();
-                this.OnFailConnect(new CtkProtocolEventArgs() { Message = "Connect Fail" });
-                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
-            }
-            finally
-            {
-                if (Monitor.IsEntered(this)) Monitor.Exit(this);
-            }
-        }
-        public int ConnectIfNoSync(bool? isAct = null)
-        {
-            if (isAct.HasValue) this.IsActively = isAct.Value;
-            if (this.IsOpenRequesting || this.IsRemoteConnected) return 0;
-            //if (this.IsLocalReadyConnect) return; //同步連線是等到連線才離開method, 不需判斷 IsLocalReadyConnect
-
-            try
-            {
-                if (!Monitor.TryEnter(this, 3000)) return -1; // throw new CtkException("Cannot enter lock");
-                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
-                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
-
-
-                //若連線不曾建立, 或聆聽/連線被關閉
-                if (this.m_connSocket == null || !this.m_connSocket.Connected)
-                {
-                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
-                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
-                }
-
-
-                if (this.IsActively)
-                {
-                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
-                    if (this.RemoteUri == null)
-                        throw new CtkException("remote field can not be null");
-                    this.ConnSocket.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
-                    this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
-                    this.WorkSocket = this.ConnSocket;
-                }
-                else
-                {
-                    if (this.LocalUri == null)
-                        throw new Exception("local field can not be null");
-                    if (!this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
-                    this.ConnSocket.Listen(100);
-                    this.WorkSocket = this.ConnSocket.Accept();
-                    this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
-                }
-
-                if (this.IsAutoReceive) this.BeginReceive();
-
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                //一旦聆聽/連線失敗, 直接關閉所有Socket, 重新來過
-                this.Disconnect();
-                this.OnFailConnect(new CtkProtocolEventArgs() { Message = "Connect Fail" });
-                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
-            }
-            finally
-            {
-                this.mreIsConnecting.Set();
-                if (Monitor.IsEntered(this)) Monitor.Exit(this);
-            }
-        }
-
         public int ReceiveLoop()
         {
             try
@@ -326,6 +211,10 @@ namespace CToolkit.v1_1.Net
                 Monitor.Exit(this);
             }
         }
+        /// <summary>
+        /// Client/Server Receive End
+        /// </summary>
+        /// <param name="ar"></param>
         void EndReceiveCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
@@ -376,7 +265,120 @@ namespace CToolkit.v1_1.Net
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
 
-        public int ConnectIfNo() { return this.ConnectIfNoSync(this.IsActively); }
+        public int ConnectIfNo()
+        {
+
+            if (this.IsOpenRequesting || this.IsRemoteConnected) return 0;
+            //if (this.IsLocalReadyConnect) return; //同步連線是等到連線才離開method, 不需判斷 IsLocalReadyConnect
+
+            try
+            {
+                if (!Monitor.TryEnter(this, 3000)) return -1; // throw new CtkException("Cannot enter lock");
+                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
+
+
+                //若連線不曾建立, 或聆聽/連線被關閉
+                if (this.m_connSocket == null || !this.m_connSocket.Connected)
+                {
+                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
+                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
+                }
+
+
+                if (this.IsActively)
+                {
+                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
+                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    if (this.RemoteUri == null)
+                        throw new CtkException("remote field can not be null");
+                    this.ConnSocket.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
+                    this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
+                    this.WorkSocket = this.ConnSocket;
+                }
+                else
+                {
+                    if (this.LocalUri == null)
+                        throw new Exception("local field can not be null");
+                    if (!this.ConnSocket.IsBound)
+                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    this.ConnSocket.Listen(100);
+                    this.WorkSocket = this.ConnSocket.Accept();
+                    this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
+                }
+
+                if (this.IsAutoReceive) this.BeginReceive();
+
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //一旦聆聽/連線失敗, 直接關閉所有Socket, 重新來過
+                this.Disconnect();
+                this.OnFailConnect(new CtkProtocolEventArgs() { Message = "Connect Fail" });
+                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
+            }
+            finally
+            {
+                this.mreIsConnecting.Set();
+                if (Monitor.IsEntered(this)) Monitor.Exit(this);
+            }
+        }
+        public int ConnectIfNoAsyn()
+        {
+            if (this.IsOpenRequesting || this.IsRemoteConnected) return 0;
+            //if (this.IsLocalReadyConnect) return; //同步連線是等到連線才離開method, 不需判斷 IsLocalReadyConnect
+
+            try
+            {
+                if (!Monitor.TryEnter(this, 3000)) return -1; // throw new CtkException("Cannot enter lock");
+                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
+
+
+                //若連線不曾建立, 或聆聽/連線被關閉
+                if (this.m_connSocket == null || !this.m_connSocket.Connected)
+                {
+                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
+                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
+                }
+
+
+                if (this.IsActively)
+                {
+                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
+                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    if (this.RemoteUri == null)
+                        throw new CtkException("remote field can not be null");
+
+                    this.ConnSocket.BeginConnect(CtkNetUtil.ToIPEndPoint(this.RemoteUri), new AsyncCallback(EndConnectCallback), this);
+                }
+                else
+                {
+                    if (this.LocalUri == null)
+                        throw new Exception("local field can not be null");
+                    if (!this.ConnSocket.IsBound)
+                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    this.ConnSocket.Listen(100);
+                    this.ConnSocket.BeginAccept(new AsyncCallback(EndAcceptCallback), this);
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //一旦聆聽/連線失敗, 直接關閉所有Socket, 重新來過
+                this.Disconnect();
+                this.OnFailConnect(new CtkProtocolEventArgs() { Message = "Connect Fail" });
+                throw ex;//同步型作業, 直接拋出例外, 不用寫Log
+            }
+            finally
+            {
+                if (Monitor.IsEntered(this)) Monitor.Exit(this);
+            }
+        }
+
         public void Disconnect()
         {
             this.mreIsReceiving.Set();//僅Set不釋放, 可能還會使用
