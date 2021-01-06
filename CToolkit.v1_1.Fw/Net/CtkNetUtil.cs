@@ -14,7 +14,7 @@ namespace CToolkit.v1_1.Net
         public static void DisposeTcpClientTry(TcpClient client)
         {
             if (client == null) return;
-            DisposeSocket(client.Client);
+            DisposeSocketTry(client.Client);
 
             try
             {
@@ -36,24 +36,34 @@ namespace CToolkit.v1_1.Net
             catch (ObjectDisposedException) { }
 
         }
+        public static bool DisposeSocketTry(Socket socket)
+        {
+            try
+            {
+                DisposeSocket(socket);
+                return true;
+            }
+            catch (SocketException) { return false; }
+            catch (ObjectDisposedException) { return false; }
+            catch (Exception ex)
+            {
+                //非預期的Exception, 記錄起來
+                CtkLog.Warn(ex);
+                return false;
+            }
+        }
+
         public static void DisposeSocket(Socket socket)
         {
             if (socket == null) return;
-            try
+            using (socket)
             {
-                using (socket)
-                {
-                    socket.Shutdown(SocketShutdown.Both);
-                    if (socket.Connected)
-                        socket.Disconnect(false);
-                    socket.Close();
-                }
+                socket.Shutdown(SocketShutdown.Both);
+                if (socket.Connected)
+                    socket.Disconnect(false);
+                socket.Close();
             }
-            catch (SocketException) { }
-            catch (ObjectDisposedException) { }
         }
-
-
 
         public static IPAddress GetIpAdrLikely(string refence_ip)
         {

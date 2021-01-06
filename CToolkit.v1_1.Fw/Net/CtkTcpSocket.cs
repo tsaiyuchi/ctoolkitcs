@@ -101,7 +101,7 @@ namespace CToolkit.v1_1.Net
                 //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
                 this.Disconnect();
                 if (this.ConnSocket != this.WorkSocket)
-                    CtkNetUtil.DisposeSocket(this.WorkSocket);//執行出現例外, 先釋放Socket
+                    CtkNetUtil.DisposeSocketTry(this.WorkSocket);//執行出現例外, 先釋放Socket
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
             }
             finally
@@ -278,7 +278,7 @@ namespace CToolkit.v1_1.Net
                 //若連線不曾建立, 或聆聽/連線被關閉
                 if (this.m_connSocket == null || !this.m_connSocket.Connected)
                 {
-                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
+                    CtkNetUtil.DisposeSocketTry(this.m_connSocket);//Dispose舊的
                     this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
                 }
 
@@ -337,7 +337,7 @@ namespace CToolkit.v1_1.Net
                 //若連線不曾建立, 或聆聽/連線被關閉
                 if (this.m_connSocket == null || !this.m_connSocket.Connected)
                 {
-                    CtkNetUtil.DisposeSocket(this.m_connSocket);//Dispose舊的
+                    CtkNetUtil.DisposeSocketTry(this.m_connSocket);//Dispose舊的
                     this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
                 }
 
@@ -380,8 +380,8 @@ namespace CToolkit.v1_1.Net
         {
             this.mreIsReceiving.Set();//僅Set不釋放, 可能還會使用
             this.mreIsConnecting.Set();//僅Set不釋放, 可能還會使用
-            CtkNetUtil.DisposeSocket(this.m_workSocket);
-            CtkNetUtil.DisposeSocket(this.m_connSocket);
+            CtkNetUtil.DisposeSocketTry(this.m_workSocket);
+            CtkNetUtil.DisposeSocketTry(this.m_connSocket);
             this.OnDisconnect(new CtkProtocolEventArgs() { Message = "Disconnect method is executed" });
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)

@@ -780,6 +780,8 @@ namespace CToolkit.v1_1.Timing
         public static int CompareYyyyQq(DateTime dt1, string dt2) { return string.Compare(ToYyyyQq(dt1), dt2); }
         public static int CompareYyyyQq(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyQq(dt2)); }
 
+
+        public static int CompareYyyyWw(string dt1, string dt2) { return string.Compare(dt1, dt2); }
         public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         public static int CompareYyyyWw(DateTime? dt1, DateTime? dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         public static int CompareYyyyWw(DateTime dt1, string dt2) { return string.Compare(ToYyyyWw(dt1), dt2); }
