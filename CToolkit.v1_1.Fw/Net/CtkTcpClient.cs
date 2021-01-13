@@ -405,7 +405,7 @@ namespace CToolkit.v1_1.Net
             this.runningTask = CtkCancelTask.RunOnce((ct) =>
             {
                 //TODO: 重啟時, 會有執行緒被中止的狀況
-                while (!disposed)
+                while (!this.disposed)
                 {
                     try
                     {

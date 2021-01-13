@@ -1,4 +1,5 @@
 using CToolkit.v1_1.Protocol;
+using CToolkit.v1_1.Threading;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -23,7 +24,7 @@ namespace CToolkit.v1_1.Net
         ManualResetEvent mreReading = new ManualResetEvent(true);
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
-        Thread threadNonStopConnect;
+        CtkCancelTask runningTask;
         // = new BackgroundWorker();
         public CtkTcpListener() : base() { }
 
@@ -361,8 +362,7 @@ namespace CToolkit.v1_1.Net
         public void Disconnect()
         {
 
-            if (this.threadNonStopConnect != null)
-                this.threadNonStopConnect.Abort();
+            CtkUtilFw.DisposeTaskTry(this.runningTask);
 
             foreach (var tc in this.TcpClientList)
             {
@@ -406,17 +406,17 @@ namespace CToolkit.v1_1.Net
         #region ICtkProtocolNonStopConnect
 
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-        public bool IsNonStopRunning { get { return this.threadNonStopConnect != null && this.threadNonStopConnect.IsAlive; } }
+        public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Status < TaskStatus.RanToCompletion; } }
         public void AbortNonStopRun()
         {
-            if (this.threadNonStopConnect != null)
-                this.threadNonStopConnect.Abort();
+            CtkUtilFw.DisposeTaskTry(this.runningTask);
+            this.runningTask = null;
         }
         public void NonStopRunAsyn()
         {
             AbortNonStopRun();
 
-            this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
+            this.runningTask = CtkCancelTask.RunOnce(ct =>
             {
 
                 while (!disposed)
@@ -430,8 +430,7 @@ namespace CToolkit.v1_1.Net
                     Thread.Sleep(this.IntervalTimeOfConnectCheck);
 
                 }
-            }));
-            this.threadNonStopConnect.Start();
+            });
 
         }
 

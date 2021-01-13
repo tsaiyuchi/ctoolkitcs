@@ -79,6 +79,7 @@
     <Compile Include="Cryptography\CtkCryptographyUtil.cs" />
     <Compile Include="Cryptography\CtkCryptographyRsa.cs" />
     <Compile Include="CtkCommandLine.cs" />
+    <Compile Include="CtkSerializableDictionary.cs" />
     <Compile Include="CtkEventUtil.cs" />
     <Compile Include="CtkFileFormat.cs" />
     <Compile Include="CtkUtilFw.cs" />
