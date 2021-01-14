@@ -34,42 +34,6 @@ namespace CToolkit.v1_1
         }
 
 
-        public static string GetMemberName<T, TValue>(Expression<Func<T, TValue>> memberAccess)
-        {
-            var body = memberAccess.Body;
-            var member = body as MemberExpression;
-            if (member != null) return member.Member.Name;
-
-            var unary = body as UnaryExpression;
-            if (unary != null)
-            {
-                if (unary.Method != null) return unary.Method.Name;
-                
-            }
-            throw new ArgumentException();
-
-        }
-
-        public static string GetMethodName<T>(Expression<Func<T, Delegate>> expression)
-        {
-            var unaryExpression = (UnaryExpression)expression.Body;
-            var methodCallExpression = (MethodCallExpression)unaryExpression.Operand;
-
-            var IsNET45 = Type.GetType("System.Reflection.ReflectionContext", false) != null;
-            if (IsNET45)
-            {
-                var methodCallObject = (ConstantExpression)methodCallExpression.Object;
-                var methodInfo = (MethodInfo)methodCallObject.Value;
-                return methodInfo.Name;
-            }
-            else
-            {
-                var methodInfoExpression = (ConstantExpression)methodCallExpression.Arguments.Last();
-                var methodInfo = (MemberInfo)methodInfoExpression.Value;
-                return methodInfo.Name;
-            }
-        }
-
 
         public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
 
@@ -98,6 +62,68 @@ namespace CToolkit.v1_1
 
             return rnd.Next(min, max);
         }
+
+
+
+
+        #region Member Name
+
+        public static string GetMemberName<TType, TValue>(Expression<Func<TType, TValue>> memberAccess)
+        {
+            var body = memberAccess.Body;
+            var member = body as MemberExpression;
+            if (member != null) return member.Member.Name;
+
+            var unary = body as UnaryExpression;
+            if (unary != null)
+            {
+                if (unary.Method != null) return unary.Method.Name;
+            }
+
+            throw new ArgumentException();
+        }
+
+
+
+        public static string GetMethodName<TType, TDelegate>(Expression<Func<TType, TDelegate>> expression)
+        {
+            LambdaExpression lambda = expression;
+            return GetMethodName(lambda);
+        }
+        public static string GetMethodName<T>(Expression<Func<T, Delegate>> expression)
+        {
+            LambdaExpression lambda = expression;
+            return GetMethodName(lambda);
+        }
+        public static string GetMethodName(LambdaExpression expression)
+        {
+            var unaryExpression = (UnaryExpression)expression.Body;
+            var methodCallExpression = (MethodCallExpression)unaryExpression.Operand;
+
+            var IsNET45 = Type.GetType("System.Reflection.ReflectionContext", false) != null;
+            if (IsNET45)
+            {
+                var methodCallObject = (ConstantExpression)methodCallExpression.Object;
+                var methodInfo = (MethodInfo)methodCallObject.Value;
+                return methodInfo.Name;
+            }
+            else
+            {
+                var methodInfoExpression = (ConstantExpression)methodCallExpression.Arguments.Last();
+                var methodInfo = (MemberInfo)methodInfoExpression.Value;
+                return methodInfo.Name;
+            }
+        }
+
+        public static string GetMethodNameAct<T>(Expression<Func<T, Action>> expression)
+        {
+            LambdaExpression lambda = expression;
+            return GetMethodName(lambda);
+        }
+        #endregion
+
+
+
 
         #region Type Guid
 
@@ -133,7 +159,6 @@ namespace CToolkit.v1_1
             using (var xr = XmlReader.Create(new StringReader(xml)))
                 return seri.Deserialize(xr) as T;
         }
-
         public static string XmlSerialize(object obj)
         {
             var seri = new XmlSerializer(obj.GetType());
@@ -154,13 +179,11 @@ namespace CToolkit.v1_1
             if (obj == null) return;
             obj.Dispose();
         }
-
         public static void DisposeObj(IEnumerable<IDisposable> objs)
         {
             foreach (var obj in objs) DisposeObj(obj);
         }
-
-        public static void DisposeObjN(ref IDisposable obj)
+        public static void DisposeObj(ref IDisposable obj)
         {
             if (obj == null) return;
             obj.Dispose();
