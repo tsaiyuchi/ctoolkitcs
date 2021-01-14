@@ -183,7 +183,7 @@ namespace CToolkit.v1_1
         {
             foreach (var obj in objs) DisposeObj(obj);
         }
-        public static void DisposeObj(ref IDisposable obj)
+        public static void DisposeObjN(ref IDisposable obj)
         {
             if (obj == null) return;
             obj.Dispose();
