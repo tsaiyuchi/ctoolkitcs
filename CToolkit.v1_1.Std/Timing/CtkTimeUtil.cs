@@ -290,30 +290,24 @@ namespace CToolkit.v1_1.Timing
 
         #region Sign DateTime / String : 一代目, prefix 1 字元
 
-        public static DateTime FromSYyyy(string yyyy)
-        {
-            if (!yyyy.StartsWith("y")) throw new ArgumentException("錯誤的Sign");
-            yyyy = yyyy.Substring(1);
-            return FromYyyy(yyyy);
-        }
-        public static DateTime FromSYyyyMm(string yyyymm)
-        {
-            if (!yyyymm.StartsWith("m")) throw new ArgumentException("錯誤的Sign");
-            yyyymm = yyyymm.Substring(1);
-            return FromYyyyMm(yyyymm);
-        }
-        public static DateTime FromSYyyyMmDd(string yyyymmdd)
+        public static DateTime FromSign1Day(string yyyymmdd)
         {
             if (!yyyymmdd.StartsWith("d")) throw new ArgumentException("錯誤的Sign");
             yyyymmdd = yyyymmdd.Substring(1);
             return FromYyyyMmDd(yyyymmdd);
+        }
+        public static DateTime FromSign1Month(string yyyymm)
+        {
+            if (!yyyymm.StartsWith("m")) throw new ArgumentException("錯誤的Sign");
+            yyyymm = yyyymm.Substring(1);
+            return FromYyyyMm(yyyymm);
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="yyyyqq"></param>
         /// <returns>該季第一天</returns>
-        public static DateTime FromSYyyyQq(string yyyyqq)
+        public static DateTime FromSign1QuarterYear(string yyyyqq)
         {
             if (!yyyyqq.StartsWith("q")) throw new ArgumentException("錯誤的Sign");
             yyyyqq = yyyyqq.Substring(1);
@@ -324,251 +318,395 @@ namespace CToolkit.v1_1.Timing
         /// </summary>
         /// <param name="yyyyww"></param>
         /// <returns>該周的某天</returns>
-        public static DateTime FromSYyyyWw(string yyyyww)
+        public static DateTime FromSign1Week(string yyyyww)
         {
             if (!yyyyww.StartsWith("w")) throw new ArgumentException("錯誤的Sign");
             yyyyww = yyyyww.Substring(1);
             return FromYyyyWw(yyyyww);
         }
 
-
-        /// <summary>
-        /// Sign DTime = YyyyMmDdHhIiSs, e.q. w20201223204812
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSDTime(DateTime dt) { return ToSYyyyMmDdHhIiss(dt); }
-        /// <summary>
-        /// Sign DTime = YyyyMmDdHhIiSs, e.q. w20201223204812
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSDTime(DateTime? dt) { return ToSYyyyMmDdHhIiss(dt); }
-        /// <summary>
-        /// Sign Year, e.q. y2020
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSYyyy(DateTime dt) { return "y" + dt.ToString("yyyy"); }
-        /// <summary>
-        /// Sign Year, e.q. y2020
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSYyyy(DateTime? dt) { return dt.HasValue ? ToSYyyy(dt.Value) : null; }
-        /// <summary>
-        /// Sign Month, e.q. m202012
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSYyyyMm(DateTime dt) { return "m" + dt.ToString("yyyyMM"); }
-        /// <summary>
-        /// Sign Month, e.q. m202012
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSYyyyMm(DateTime? dt) { return dt.HasValue ? ToSYyyyMm(dt.Value) : null; }
+        public static DateTime FromSign1Year(string yyyy)
+        {
+            if (!yyyy.StartsWith("y")) throw new ArgumentException("錯誤的Sign");
+            yyyy = yyyy.Substring(1);
+            return FromYyyy(yyyy);
+        }
         /// <summary>
         /// Sign Day, e.q. d20201223
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDd(DateTime dt) { return "d" + dt.ToString("yyyyMMdd"); }
+        public static string ToSign1Day(DateTime dt) { return "d" + dt.ToString("yyyyMMdd"); }
         /// <summary>
         /// Sign Day, e.q. d20201223
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDd(DateTime? dt) { return dt.HasValue ? ToSYyyyMmDd(dt.Value) : null; }
+        public static string ToSign1Day(DateTime? dt) { return dt.HasValue ? ToSign1Day(dt.Value) : null; }
         /// <summary>
-        /// Sign Hour, e.q. w2020122320
+        /// Sign DTime = YyyyMmDdHhIiSs, e.q. s20201223204812
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDdHh(DateTime dt) { return "h" + dt.ToString("yyyyMMddHH"); }
+        public static string ToSign1DTime(DateTime dt) { return ToSign1Second(dt); }
         /// <summary>
-        /// Sign Week, e.q. w202053
+        /// Sign DTime = YyyyMmDdHhIiSs, e.q. s20201223204812
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDdHh(DateTime? dt) { return dt.HasValue ? ToSYyyyMmDdHh(dt.Value) : null; }
+        public static string ToSign1DTime(DateTime? dt) { return ToSign1Second(dt); }
         /// <summary>
-        /// Sign Minute, e.q. w202012232048
+        /// Sign Quarter, e.q. f202002
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDdHhIi(DateTime dt) { return "i" + dt.ToString("yyyyMMddHHmm"); }
+        public static string ToSign1HalfYear(DateTime dt) { var hf = HalfOfYear(dt); return string.Format("f{0}{1:00}", dt.ToString("yyyy"), hf); }
         /// <summary>
-        /// Sign Minute, e.q. w202012232048
+        /// Sign Quarter, e.q. f202002
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDdHhIi(DateTime? dt) { return dt.HasValue ? ToSYyyyMmDdHh(dt.Value) : null; }
+        public static string ToSign1HalfYear(DateTime? dt) { return dt.HasValue ? ToSign1QuarterYear(dt.Value) : null; }
         /// <summary>
-        /// Sign Second, e.q. w20201223204812
+        /// Sign Hour, e.q. h2020122320
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDdHhIiss(DateTime dt) { return "s" + dt.ToString("yyyyMMddHHmmss"); }
+        public static string ToSign1Hour(DateTime dt) { return "h" + dt.ToString("yyyyMMddHH"); }
         /// <summary>
-        /// Sign Second, e.q. w20201223204812
+        /// Sign Week, e.q. h2020122320
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyMmDdHhIiss(DateTime? dt) { return dt.HasValue ? ToSYyyyMmDdHh(dt.Value) : null; }
+        public static string ToSign1Hour(DateTime? dt) { return dt.HasValue ? ToSign1Hour(dt.Value) : null; }
+        /// <summary>
+        /// Sign Minute, e.q. i202012232048
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Minute(DateTime dt) { return "i" + dt.ToString("yyyyMMddHHmm");/*i 為linux使用的format sign = mInute*/ }
+        /// <summary>
+        /// Sign Minute, e.q. i202012232048
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Minute(DateTime? dt) { return dt.HasValue ? ToSign1Hour(dt.Value) : null; }
+        /// <summary>
+        /// Sign Month, e.q. m202012
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Month(DateTime dt) { return "m" + dt.ToString("yyyyMM"); }
+        /// <summary>
+        /// Sign Month, e.q. m202012
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Month(DateTime? dt) { return dt.HasValue ? ToSign1Month(dt.Value) : null; }
         /// <summary>
         /// Sign Quarter, e.q. q202004
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyQq(DateTime dt) { var qq = QuarterOfYear(dt); return string.Format("q{0}{1:00}", dt.ToString("yyyy"), qq); }
+        public static string ToSign1QuarterYear(DateTime dt) { var qq = QuarterOfYear(dt); return string.Format("q{0}{1:00}", dt.ToString("yyyy"), qq); }
         /// <summary>
         /// Sign Quarter, e.q. q202004
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyQq(DateTime? dt) { return dt.HasValue ? ToSYyyyQq(dt.Value) : null; }
+        public static string ToSign1QuarterYear(DateTime? dt) { return dt.HasValue ? ToSign1QuarterYear(dt.Value) : null; }
+        /// <summary>
+        /// Sign Second, e.q. s20201223204812
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Second(DateTime dt) { return "s" + dt.ToString("yyyyMMddHHmmss"); }
+        /// <summary>
+        /// Sign Second, e.q. s20201223204812
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Second(DateTime? dt) { return dt.HasValue ? ToSign1Hour(dt.Value) : null; }
         /// <summary>
         /// Sign Week, e.q. w202053
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyWw(DateTime dt) { var weekOfYear = CtkTimeUtil.WeekOfYear(dt); return string.Format("w{0}{1:00}", dt.ToString("yyyy"), weekOfYear); }
+        public static string ToSign1Week(DateTime dt) { var weekOfYear = CtkTimeUtil.WeekOfYear(dt); return string.Format("w{0}{1:00}", dt.ToString("yyyy"), weekOfYear); }
         /// <summary>
         /// Sign Week, e.q. w202053
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSYyyyWw(DateTime? dt) { return dt.HasValue ? ToSYyyyWw(dt.Value) : null; }
+        public static string ToSign1Week(DateTime? dt) { return dt.HasValue ? ToSign1Week(dt.Value) : null; }
+        /// <summary>
+        /// Sign Year, e.q. y2020
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Year(DateTime dt) { return "y" + dt.ToString("yyyy"); }
+        /// <summary>
+        /// Sign Year, e.q. y2020
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign1Year(DateTime? dt) { return dt.HasValue ? ToSign1Year(dt.Value) : null; }
 
         #endregion
 
 
-        #region Sign DateTime / String : 二代目, prefix 2 字元
+
+
+        #region Sign DateTime / String : prefix 3 字元
 
         /// <summary>
-        /// dy20201223
+        /// day20201223
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Day(DateTime dt) { return "dy" + dt.ToString("yyyyMMdd"); }
+        public static string ToSign3Day(DateTime dt) { return "day" + dt.ToString("yyyyMMdd"); }
         /// <summary>
-        /// dy20201223
+        /// day20201223
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Day(DateTime? dt) { return dt.HasValue ? ToSign2Day(dt.Value) : null; }
+        public static string ToSign3Day(DateTime? dt) { return dt.HasValue ? ToSign3Day(dt.Value) : null; }
         /// <summary>
-        /// mn20201223210251
+        /// sec20201223210251
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2DTime(DateTime dt) { return ToSign2Second(dt); }
+        public static string ToSign3DTime(DateTime dt) { return ToSign3Second(dt); }
         /// <summary>
-        /// mn20201223210251
+        /// sec20201223210251
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2DTime(DateTime? dt) { return dt.HasValue ? ToSign2DTime(dt.Value) : null; }
+        public static string ToSign3DTime(DateTime? dt) { return dt.HasValue ? ToSign3DTime(dt.Value) : null; }
         /// <summary>
-        /// hy202002
+        /// hyr202002
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2HalfYear(DateTime dt) { return string.Format("hy{0}{1:00}", dt.ToString("yyyy"), HalfOfYear(dt)); }
+        public static string ToSign3HalfYear(DateTime dt) { return string.Format("hyr{0}{1:00}", dt.ToString("yyyy"), HalfOfYear(dt)); }
         /// <summary>
-        /// hy202002
+        /// hyr202002
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2HalfYear(DateTime? dt) { return dt.HasValue ? ToSign2HalfYear(dt.Value) : null; }
+        public static string ToSign3HalfYear(DateTime? dt) { return dt.HasValue ? ToSign3HalfYear(dt.Value) : null; }
         /// <summary>
-        /// hr2020122321
+        /// hr_2020122321
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Hour(DateTime dt) { return "hr" + dt.ToString("yyyyMMddHH"); }
+        public static string ToSign3Hour(DateTime dt) { return "hr_" + dt.ToString("yyyyMMddHH"); }
         /// <summary>
-        /// hr2020122321
+        /// hr_2020122321
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Hour(DateTime? dt) { return dt.HasValue ? ToSign2Hour(dt.Value) : null; }
+        public static string ToSign3Hour(DateTime? dt) { return dt.HasValue ? ToSign3Hour(dt.Value) : null; }
         /// <summary>
-        /// mn202012232102
+        /// min202012232102
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Minute(DateTime dt) { return "mn" + dt.ToString("yyyyMMddHHmm"); }
+        public static string ToSign3Minute(DateTime dt) { return "min" + dt.ToString("yyyyMMddHHmm"); }
         /// <summary>
-        /// mn202012232102
+        /// min202012232102
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Minute(DateTime? dt) { return dt.HasValue ? ToSign2Minute(dt.Value) : null; }
+        public static string ToSign3Minute(DateTime? dt) { return dt.HasValue ? ToSign3Minute(dt.Value) : null; }
         /// <summary>
-        /// mt202012
+        /// mth202012
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Month(DateTime dt) { return "mt" + dt.ToString("yyyyMM"); }
+        public static string ToSign3Month(DateTime dt) { return "mth" + dt.ToString("yyyyMM");/*mth 是公認的month縮寫, 複數 mths*/ }
         /// <summary>
-        /// mt202012
+        /// mth202012
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Month(DateTime? dt) { return dt.HasValue ? ToSign2Month(dt.Value) : null; }
+        public static string ToSign3Month(DateTime? dt) { return dt.HasValue ? ToSign3Month(dt.Value) : null; }
         /// <summary>
-        /// qy202004
+        /// qyr202004
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Quarter(DateTime dt) { return string.Format("qy{0}{1:00}", dt.ToString("yyyy"), QuarterOfYear(dt)); }
+        public static string ToSign3Quarter(DateTime dt) { return string.Format("qyr{0}{1:00}", dt.ToString("yyyy"), QuarterOfYear(dt)); }
         /// <summary>
-        /// qy202004
+        /// qyr202004
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Quarter(DateTime? dt) { return dt.HasValue ? ToSign2Quarter(dt.Value) : null; }
+        public static string ToSign3Quarter(DateTime? dt) { return dt.HasValue ? ToSign3Quarter(dt.Value) : null; }
         /// <summary>
-        /// mn20201223210251
+        /// sec20201223210251
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Second(DateTime dt) { return "sc" + dt.ToString("yyyyMMddHHmmss"); }
+        public static string ToSign3Second(DateTime dt) { return "sec" + dt.ToString("yyyyMMddHHmmss"); }
         /// <summary>
-        /// mn20201223210251
+        /// sec20201223210251
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Second(DateTime? dt) { return dt.HasValue ? ToSign2Second(dt.Value) : null; }
+        public static string ToSign3Second(DateTime? dt) { return dt.HasValue ? ToSign3Second(dt.Value) : null; }
         /// <summary>
-        /// wk202053
+        /// wek202053
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Week(DateTime dt) { return string.Format("wk{0}{1:00}", dt.ToString("yyyy"), WeekOfYear(dt)); }
+        public static string ToSign3Week(DateTime dt) { return string.Format("wek{0}{1:00}", dt.ToString("yyyy"), WeekOfYear(dt)); }
         /// <summary>
-        /// wk202053
+        /// wek202053
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Week(DateTime? dt) { return dt.HasValue ? ToSign2Week(dt.Value) : null; }
+        public static string ToSign3Week(DateTime? dt) { return dt.HasValue ? ToSign3Week(dt.Value) : null; }
         /// <summary>
-        /// yr2020
+        /// yr_2020
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Yeaer(DateTime dt) { return "yr" + dt.ToString("yyyy"); }
+        public static string ToSign3Yeaer(DateTime dt) { return "yr_" + dt.ToString("yyyy"); }
         /// <summary>
-        /// yr2020
+        /// yr_2020
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSign2Yeaer(DateTime? dt) { return dt.HasValue ? ToSign2Yeaer(dt.Value) : null; }
-
+        public static string ToSign3Year(DateTime? dt) { return dt.HasValue ? ToSign3Yeaer(dt.Value) : null; }
 
         #endregion
+
+        #region Sign DateTime / String : prefix 6 字元
+
+        /// <summary>
+        /// day___20201223
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Day(DateTime dt) { return "day___" + dt.ToString("yyyyMMdd"); }
+        /// <summary>
+        /// day___20201223
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Day(DateTime? dt) { return dt.HasValue ? ToSign6Day(dt.Value) : null; }
+        /// <summary>
+        /// second20201223210251
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6DTime(DateTime dt) { return ToSign6Second(dt); }
+        /// <summary>
+        /// second20201223210251
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6DTime(DateTime? dt) { return dt.HasValue ? ToSign6DTime(dt.Value) : null; }
+        /// <summary>
+        /// hfyear202002
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6HalfYear(DateTime dt) { return string.Format("hfyear{0}{1:00}", dt.ToString("yyyy"), HalfOfYear(dt)); }
+        /// <summary>
+        /// hfyear202002
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6HalfYear(DateTime? dt) { return dt.HasValue ? ToSign6HalfYear(dt.Value) : null; }
+        /// <summary>
+        /// hour__2020122321
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Hour(DateTime dt) { return "hour__" + dt.ToString("yyyyMMddHH"); }
+        /// <summary>
+        /// hour2020122321
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Hour(DateTime? dt) { return dt.HasValue ? ToSign6Hour(dt.Value) : null; }
+        /// <summary>
+        /// minute202012232102
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Minute(DateTime dt) { return "minute" + dt.ToString("yyyyMMddHHmm"); }
+        /// <summary>
+        /// minute202012232102
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Minute(DateTime? dt) { return dt.HasValue ? ToSign6Minute(dt.Value) : null; }
+        /// <summary>
+        /// month_202012
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Month(DateTime dt) { return "month_" + dt.ToString("yyyyMM"); }
+        /// <summary>
+        /// month_202012
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Month(DateTime? dt) { return dt.HasValue ? ToSign6Month(dt.Value) : null; }
+        /// <summary>
+        /// qtyear202004
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Quarter(DateTime dt) { return string.Format("qtyear{0}{1:00}", dt.ToString("yyyy"), QuarterOfYear(dt)); }
+        /// <summary>
+        /// qtyear202004
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Quarter(DateTime? dt) { return dt.HasValue ? ToSign6Quarter(dt.Value) : null; }
+        /// <summary>
+        /// second2020201223210251
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Second(DateTime dt) { return "second" + dt.ToString("yyyyMMddHHmmss"); }
+        /// <summary>
+        /// second20201223210251
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Second(DateTime? dt) { return dt.HasValue ? ToSign6Second(dt.Value) : null; }
+        /// <summary>
+        /// week__202053
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Week(DateTime dt) { return string.Format("week__{0}{1:00}", dt.ToString("yyyy"), WeekOfYear(dt)); }
+        /// <summary>
+        /// week__202053
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Week(DateTime? dt) { return dt.HasValue ? ToSign6Week(dt.Value) : null; }
+        /// <summary>
+        /// year__2020
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Yeaer(DateTime dt) { return "year__" + dt.ToString("yyyy"); }
+        /// <summary>
+        /// year2020
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string ToSign6Year(DateTime? dt) { return dt.HasValue ? ToSign6Yeaer(dt.Value) : null; }
+
+        #endregion
+
 
         #region Sign DateTime / String : Full Prefix
 
@@ -631,7 +769,7 @@ namespace CToolkit.v1_1.Timing
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string ToSignFullYeaer(DateTime dt) { return "year" + dt.ToString("yyyy"); }
+        public static string ToSignFullYear(DateTime dt) { return "year" + dt.ToString("yyyy"); }
 
         #endregion
 
