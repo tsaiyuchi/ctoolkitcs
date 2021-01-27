@@ -11,48 +11,6 @@ namespace CToolkit.v1_1.Net
     public class CtkNetUtil
     {
 
-        public static void DisposeTcpClientTry(TcpClient client)
-        {
-            if (client == null) return;
-            DisposeSocketTry(client.Client);
-
-            try
-            {
-                var stm = client.GetStream();
-                if (stm != null)
-                    using (stm) stm.Close();
-            }
-            catch (SocketException) { }
-            catch (ObjectDisposedException) { }
-
-            try
-            {
-                using (client)
-                {
-                    client.Close();
-                }
-            }
-            catch (SocketException) { }
-            catch (ObjectDisposedException) { }
-
-        }
-        public static bool DisposeSocketTry(Socket socket)
-        {
-            try
-            {
-                DisposeSocket(socket);
-                return true;
-            }
-            catch (SocketException) { return false; }
-            catch (ObjectDisposedException) { return false; }
-            catch (Exception ex)
-            {
-                //非預期的Exception, 記錄起來
-                CtkLog.Warn(ex);
-                return false;
-            }
-        }
-
         public static void DisposeSocket(Socket socket)
         {
             if (socket == null) return;
@@ -63,6 +21,109 @@ namespace CToolkit.v1_1.Net
                     socket.Disconnect(false);
                 socket.Close();
             }
+        }
+        public static bool DisposeSocketTry(Socket socket)
+        {
+            if (socket == null) return true;
+            try
+            {
+                DisposeSocket(socket);
+                return true;
+            }
+            catch (SocketException) { return false; }
+            catch (ObjectDisposedException) { return false; }
+            catch (InvalidOperationException) { return false; }
+            catch (Exception ex)
+            {
+                //非預期的Exception, 記錄起來
+                CtkLog.Warn(ex);
+                return false;
+            }
+        }
+        public static void DisposeTcpClient(TcpClient client)
+        {
+            if (client == null) return;
+
+            //有exception先接起來, 但工作繼續
+            Exception myex = null;
+
+            try { DisposeSocket(client.Client); }
+            catch (Exception ex) { myex = ex; }
+
+            try
+            {
+                var stm = client.GetStream();
+                if (stm != null) using (stm) stm.Close();
+            }
+            catch (Exception ex) { myex = ex; }
+
+            try { using (client) client.Close(); }
+            catch (Exception ex) { myex = ex; }
+
+            //最後若有存在Exception就拋出
+            if (myex != null) throw myex;
+
+        }
+        public static bool DisposeTcpClientTry(TcpClient client)
+        {
+            try
+            {
+                DisposeTcpClient(client);
+                return true;
+            }
+            catch (SocketException) { return false; }
+            catch (ObjectDisposedException) { return false; }
+            catch (InvalidOperationException) { return false; }
+            catch (Exception ex)
+            {
+                //非預期的Exception, 記錄起來
+                CtkLog.Warn(ex);
+                return false;
+            }
+        }
+
+
+
+        public static List<IPAddress> GetIP()
+        {
+            String strHostName = string.Empty;
+            // Getting Ip address of local machine...
+            // First get the host name of local machine.
+            strHostName = Dns.GetHostName();
+            Console.WriteLine("Local Machine's Host Name: " + strHostName);
+            // Then using host name, get the IP address list..
+            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
+            IPAddress[] addr = ipEntry.AddressList;
+            return new List<IPAddress>(addr);
+        }
+
+        public static IPAddress GetIpAdr1st()
+        {
+            string strHostName = Dns.GetHostName();
+            var iphostentry = Dns.GetHostEntry(strHostName);
+            return iphostentry.AddressList.FirstOrDefault();
+        }
+
+        public static IPAddress GetIpAdr1stLikelyOr127(string request_ip = null, string reference_ip = null)
+        {
+            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
+            if (ipaddr == null)
+                ipaddr = GetIpAdr1st();
+            if (ipaddr == null)
+                ipaddr = IPAddress.Parse("127.0.0.1");
+
+            return ipaddr;
+        }
+
+        public static IPAddress GetIpAdr1stLikelyOrLocal(string request_ip = null, string reference_ip = null)
+        {
+            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
+            if (ipaddr == null)
+                ipaddr = GetIpAdr1st();
+            if (ipaddr == null)
+                ipaddr = IPAddress.Parse("localhost");
+
+            return ipaddr;
         }
 
         public static IPAddress GetIpAdrLikely(string refence_ip)
@@ -108,32 +169,21 @@ namespace CToolkit.v1_1.Net
 
             return null;
         }
-        public static IPAddress GetIpAdr1st()
+        public static List<string> GetMacAddressEnthernet()
         {
-            string strHostName = Dns.GetHostName();
-            var iphostentry = Dns.GetHostEntry(strHostName);
-            return iphostentry.AddressList.FirstOrDefault();
-        }
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
 
-        public static IPAddress GetIpAdr1stLikelyOrLocal(string request_ip = null, string reference_ip = null)
-        {
-            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
-            if (ipaddr == null)
-                ipaddr = GetIpAdr1st();
-            if (ipaddr == null)
-                ipaddr = IPAddress.Parse("localhost");
-
-            return ipaddr;
-        }
-        public static IPAddress GetIpAdr1stLikelyOr127(string request_ip = null, string reference_ip = null)
-        {
-            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
-            if (ipaddr == null)
-                ipaddr = GetIpAdr1st();
-            if (ipaddr == null)
-                ipaddr = IPAddress.Parse("127.0.0.1");
-
-            return ipaddr;
+            List<string> macList = new List<string>();
+            foreach (var nic in nics)
+            {
+                // 因為電腦中可能有很多的網卡(包含虛擬的網卡)，
+                // 我只需要 Ethernet 網卡的 MAC
+                if (nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                {
+                    macList.Add(nic.GetPhysicalAddress().ToString());
+                }
+            }
+            return macList;
         }
 
         /// <summary>
@@ -161,20 +211,6 @@ namespace CToolkit.v1_1.Net
 
             return ipaddr;
         }
-
-        public static List<IPAddress> GetIP()
-        {
-            String strHostName = string.Empty;
-            // Getting Ip address of local machine...
-            // First get the host name of local machine.
-            strHostName = Dns.GetHostName();
-            Console.WriteLine("Local Machine's Host Name: " + strHostName);
-            // Then using host name, get the IP address list..
-            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
-            IPAddress[] addr = ipEntry.AddressList;
-            return new List<IPAddress>(addr);
-        }
-
         public static bool IsConnected(TcpClient obj)
         {
             if (obj == null) return false;
@@ -188,23 +224,5 @@ namespace CToolkit.v1_1.Net
 
         public static Uri ToUri(string ip, int port, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ip, port)); }
         public static Uri ToUri(IPEndPoint ipep, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ipep.Address, ipep.Port)); }
-
-
-        public static List<string> GetMacAddressEnthernet()
-        {
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-
-            List<string> macList = new List<string>();
-            foreach (var nic in nics)
-            {
-                // 因為電腦中可能有很多的網卡(包含虛擬的網卡)，
-                // 我只需要 Ethernet 網卡的 MAC
-                if (nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
-                {
-                    macList.Add(nic.GetPhysicalAddress().ToString());
-                }
-            }
-            return macList;
-        }
     }
 }

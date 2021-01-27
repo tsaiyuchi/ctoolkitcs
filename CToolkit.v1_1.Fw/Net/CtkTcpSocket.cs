@@ -9,7 +9,6 @@ namespace CToolkit.v1_1.Net
     public class CtkTcpSocket : ICtkProtocolNonStopConnect, IDisposable
     {
         public bool IsActively = false;
-        public bool IsAutoReceive = true;
         public Uri LocalUri;
         public Uri RemoteUri;
         protected Socket m_connSocket;
@@ -18,8 +17,14 @@ namespace CToolkit.v1_1.Net
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         ~CtkTcpSocket() { this.Dispose(false); }
-
         public Socket ConnSocket { get { return m_connSocket; } }
+        /// <summary>
+        /// 若開敋自動讀取,
+        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
+        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
+        /// 因此只有非同步類的允許自動讀取
+        /// </summary>
+        public bool IsAutoReceive { get; set; }
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
         public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }

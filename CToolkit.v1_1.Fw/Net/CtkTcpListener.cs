@@ -38,8 +38,13 @@ namespace CToolkit.v1_1.Net
         }
 
         ~CtkTcpListener() { this.Dispose(false); }
-
-        public bool IsAutoRead { get; set; }
+        /// <summary>
+        /// 若開敋自動讀取,
+        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
+        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
+        /// 因此只有非同步類的允許自動讀取
+        /// </summary>
+        public bool IsAsyncAutoRead { get; set; }
         public ConcurrentQueue<TcpClient> TcpClientList { get => m_tcpClientList; set => m_tcpClientList = value; }
         /// <summary>
         /// 開始讀取Socket資料, Begin 代表非同步.
@@ -242,7 +247,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(stateea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                if (this.IsAutoRead)
+                if (this.IsAsyncAutoRead)
                 {
                     NetworkStream stream = tcpClient.GetStream();
                     stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
@@ -274,7 +279,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnDataReceive(tcpstate); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                if (this.IsAutoRead)
+                if (this.IsAsyncAutoRead)
                     stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), tcpstate);
 
             }
