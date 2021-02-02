@@ -289,7 +289,7 @@ namespace CToolkit.v1_1.Net
 
 
                 IPAddress ip = null;
-                if (IPAddress.TryParse(this.LocalUri.Host, out ip))
+                if (this.LocalUri != null && IPAddress.TryParse(this.LocalUri.Host, out ip))
                     this.MyTcpClient = new TcpClient(new IPEndPoint(ip, this.LocalUri.Port));
                 else this.MyTcpClient = new TcpClient();
 
@@ -329,7 +329,7 @@ namespace CToolkit.v1_1.Net
 
 
                 IPAddress ip = null;
-                if (IPAddress.TryParse(this.LocalUri.Host, out ip))
+                if (this.LocalUri != null && IPAddress.TryParse(this.LocalUri.Host, out ip))
                 {
                     this.MyTcpClient = new TcpClient(new IPEndPoint(ip, this.LocalUri.Port));
                 }
