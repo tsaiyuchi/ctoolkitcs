@@ -491,7 +491,7 @@ namespace CToolkit.v1_1.Net
         {
             try { this.Disconnect(); }
             catch (Exception ex) { CtkLog.Write(ex); }
-            //斷線不用清除Event, 但Dispsoe需要
+            //斷線不用清除Event, 但Dispsoe需要, 因為即使斷線此物件仍存活著
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
 

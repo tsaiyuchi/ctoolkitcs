@@ -62,7 +62,7 @@ namespace CToolkit.v1_1.DigitalPort
 
         public object ActiveWorkClient { get { return this.serialPort; } set { if (this.serialPort != value) throw new ArgumentException("不可傳入其它ActiveWorkClient"); } }
 
-        
+
         public int ConnectIfNo()
         {
             if (this.serialPort != null && this.serialPort.IsOpen) return 0;//連線中直接離開
@@ -144,10 +144,6 @@ namespace CToolkit.v1_1.DigitalPort
                 this.serialPort.Close();
                 this.serialPort.Dispose();
             }
-
-            //一旦結束就死了, 需要重new, 所以清掉event沒問題
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
-
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
         {
@@ -236,16 +232,15 @@ namespace CToolkit.v1_1.DigitalPort
 
 
         #region IDisposable
+
         // Flag: Has Dispose already been called?
         bool disposed = false;
-
         // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         // Protected implementation of Dispose pattern.
         protected void Dispose(bool disposing)
         {
@@ -265,15 +260,14 @@ namespace CToolkit.v1_1.DigitalPort
 
             disposed = true;
         }
-
-
-
-
-
-
         void DisposeSelf()
         {
-            try { this.Disconnect(); }
+            try
+            {
+                this.Disconnect();
+                //一旦結束就死了, 需要重new, 所以清掉event沒問題
+                CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+            }
             catch (Exception ex) { CtkLog.Write(ex); }
         }
 
