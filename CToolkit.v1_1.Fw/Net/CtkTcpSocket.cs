@@ -53,7 +53,7 @@ namespace CToolkit.v1_1.Net
         }
         public bool CheckConnectStatus()
         {
-            var socket = this.m_connSocket;
+            var socket = this.WorkSocket;
             if (socket == null) return false;
             if (!socket.Connected) return false;
             return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
