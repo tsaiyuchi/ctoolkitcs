@@ -24,7 +24,7 @@ namespace CToolkit.v1_1.Net
         /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
         /// 因此只有非同步類的允許自動讀取
         /// </summary>
-        public bool IsAutoReceive { get; set; }
+        public bool IsAsynAutoReceive { get; set; }
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
         public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
@@ -50,13 +50,6 @@ namespace CToolkit.v1_1.Net
             //EndReceive 是由 BeginReceive 回呼的函式中去執行
             //也就是收到後, 通知結束工作的函式
             //你無法在其它地方呼叫, 因為你沒有 IAsyncResult 的物件
-        }
-        public bool CheckConnectStatus()
-        {
-            var socket = this.m_connSocket;
-            if (socket == null) return false;
-            if (!socket.Connected) return false;
-            return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
         }
         public int ReceiveLoop()
         {
@@ -145,7 +138,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(myea); }
                 catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
-                if (this.IsAutoReceive)
+                if (this.IsAsynAutoReceive)
                     client.BeginReceive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveCallback), myea);
             }
             //catch (SocketException ex) { }
@@ -194,7 +187,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(myea); }
                 catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
-                if (this.IsAutoReceive)
+                if (this.IsAsynAutoReceive)
                     client.BeginReceive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveCallback), myea);
             }
             //catch (SocketException ex) { }
@@ -236,7 +229,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnDataReceive(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                if (this.IsAutoReceive)
+                if (this.IsAsynAutoReceive)
                     client.BeginReceive(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveCallback), myea);
 
             }
@@ -251,6 +244,28 @@ namespace CToolkit.v1_1.Net
                 CtkLog.WarnNs(this, ex);
             }
         }
+
+
+
+        #region Connect Status Function
+
+        public bool CheckConnectReadable()
+        {
+            var socket = this.WorkSocket;
+            if (socket == null) return false;
+            if (!socket.Connected) return false;
+            return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
+        }
+        public void DisconnectIfUnReadable()
+        {
+            if (this.IsOpenRequesting) return;//開啟中不執行
+            if (this.ConnSocket == null) return;//沒連線不執行
+            if (this.WorkSocket == null) return;//沒連線不執行
+            if (!this.CheckConnectReadable())//確認無法連線
+                this.Disconnect();//先斷線再
+        }
+
+        #endregion
 
 
 
@@ -309,7 +324,7 @@ namespace CToolkit.v1_1.Net
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                 }
 
-                if (this.IsAutoReceive) this.BeginReceive();
+                if (this.IsAsynAutoReceive) this.BeginReceive();
 
 
                 return 0;

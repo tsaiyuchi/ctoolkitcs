@@ -10,7 +10,9 @@ namespace CToolkit.v1_1.Protocol
         /// </summary>
         bool IsLocalReadyConnect { get; }
         /// <summary>
-        /// 遠端真的連線成功
+        /// 遠端真的連線成功.
+        /// 部份連線機制無法確保斷線時, 此Flag可以反應.
+        /// 若有需要確切的判斷, 請自行撰寫Method
         /// </summary>
         bool IsRemoteConnected { get; }
         /// <summary>

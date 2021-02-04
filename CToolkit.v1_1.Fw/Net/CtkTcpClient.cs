@@ -55,7 +55,7 @@ namespace CToolkit.v1_1.Net
         /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
         /// 因此只有非同步類的允許自動讀取
         /// </summary>
-        public bool IsAsyncAutoRead { get; set; }
+        public bool IsAsynAutoRead { get; set; }
         [JsonIgnore]
         protected TcpClient MyTcpClient { get { return m_myTcpClient; } set { lock (this) m_myTcpClient = value; } }
 
@@ -198,7 +198,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(myea); }
                 catch (Exception ex) { CtkLog.WarnNs(this, ex); }
 
-                if (this.IsAsyncAutoRead)
+                if (this.IsAsynAutoRead)
                 {
                     var stream = client.GetStream();
                     stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
@@ -240,7 +240,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnDataReceive(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                if (this.IsAsyncAutoRead)
+                if (this.IsAsynAutoRead)
                     stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
 
             }
