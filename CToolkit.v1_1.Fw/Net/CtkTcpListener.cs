@@ -16,6 +16,15 @@ namespace CToolkit.v1_1.Net
 {
     public class CtkTcpListener : ICtkProtocolNonStopConnect, IDisposable
     {
+        /// <summary>
+        /// 若開敋自動讀取,
+        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
+        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
+        /// 因此只有非同步類的允許自動讀取
+        /// 邏輯上來說, 預設為true, 因為使用者不希望太複雜的控制.
+        /// 但Flag仍需存在, 當使用者想要時, 就可以直接控制.
+        /// </summary>
+        public bool IsAsynAutoRead = true;
         public Uri LocalUri;
         protected int m_IntervalTimeOfConnectCheck = 5000;
         bool IsReceiveLoop = false;
@@ -38,13 +47,6 @@ namespace CToolkit.v1_1.Net
         }
 
         ~CtkTcpListener() { this.Dispose(false); }
-        /// <summary>
-        /// 若開敋自動讀取,
-        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
-        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
-        /// 因此只有非同步類的允許自動讀取
-        /// </summary>
-        public bool IsAsyncAutoRead { get; set; }
         public ConcurrentQueue<TcpClient> TcpClientList { get => m_tcpClientList; set => m_tcpClientList = value; }
         /// <summary>
         /// 開始讀取Socket資料, Begin 代表非同步.
@@ -247,7 +249,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnFirstConnect(stateea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                if (this.IsAsyncAutoRead)
+                if (this.IsAsynAutoRead)
                 {
                     NetworkStream stream = tcpClient.GetStream();
                     stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
@@ -279,7 +281,7 @@ namespace CToolkit.v1_1.Net
                 try { this.OnDataReceive(tcpstate); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
-                if (this.IsAsyncAutoRead)
+                if (this.IsAsynAutoRead)
                     stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), tcpstate);
 
             }

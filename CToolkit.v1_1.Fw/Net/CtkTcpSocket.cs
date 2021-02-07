@@ -9,6 +9,15 @@ namespace CToolkit.v1_1.Net
     public class CtkTcpSocket : ICtkProtocolNonStopConnect, IDisposable
     {
         public bool IsActively = false;
+        /// <summary>
+        /// 若開敋自動讀取,
+        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
+        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
+        /// 因此只有非同步類的允許自動讀取
+        /// 邏輯上來說, 預設為true, 因為使用者不希望太複雜的控制.
+        /// 但Flag仍需存在, 當使用者想要時, 就可以直接控制.
+        /// </summary>
+        public bool IsAsynAutoReceive = true;
         public Uri LocalUri;
         public Uri RemoteUri;
         protected Socket m_connSocket;
@@ -18,13 +27,6 @@ namespace CToolkit.v1_1.Net
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         ~CtkTcpSocket() { this.Dispose(false); }
         public Socket ConnSocket { get { return m_connSocket; } }
-        /// <summary>
-        /// 若開敋自動讀取,
-        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
-        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
-        /// 因此只有非同步類的允許自動讀取
-        /// </summary>
-        public bool IsAsynAutoReceive { get; set; }
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
         public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
@@ -33,8 +35,8 @@ namespace CToolkit.v1_1.Net
 
         /// <summary>
         /// 開始讀取Socket資料, Begin 代表非同步.
-        /// 用於 1. IsAutoRead被關閉, 每次讀取需自行執行;
-        ///     2. 若連線還在, 但讀取異常中姒, 可以再度開始;
+        /// 用於 1. IsAsynAutoReceive, 每次讀取需自行執行;
+        ///     2. 若連線還在, 但讀取異常中止, 可以再度開始;
         /// </summary>
         public void BeginReceive()
         {

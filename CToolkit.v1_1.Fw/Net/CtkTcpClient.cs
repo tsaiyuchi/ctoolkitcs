@@ -18,6 +18,15 @@ namespace CToolkit.v1_1.Net
     public class CtkTcpClient : ICtkProtocolNonStopConnect, IDisposable
     {
 
+        /// <summary>
+        /// 若開敋自動讀取,
+        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
+        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
+        /// 因此只有非同步類的允許自動讀取
+        /// 邏輯上來說, 預設為true, 因為使用者不希望太複雜的控制.
+        /// 但Flag仍需存在, 當使用者想要時, 就可以直接控制.
+        /// </summary>
+        public bool IsAsynAutoRead = true;
         public Uri LocalUri;
         public Uri RemoteUri;
         protected int m_IntervalTimeOfConnectCheck = 5000;
@@ -48,14 +57,6 @@ namespace CToolkit.v1_1.Net
         }
 
         ~CtkTcpClient() { this.Dispose(false); }
-
-        /// <summary>
-        /// 若開敋自動讀取,
-        /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
-        /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
-        /// 因此只有非同步類的允許自動讀取
-        /// </summary>
-        public bool IsAsynAutoRead { get; set; }
         [JsonIgnore]
         protected TcpClient MyTcpClient { get { return m_myTcpClient; } set { lock (this) m_myTcpClient = value; } }
 
