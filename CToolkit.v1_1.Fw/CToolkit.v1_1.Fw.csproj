@@ -171,6 +171,9 @@
     <Compile Include="Wcf\NetTcp\CtkWcfNetTcpListener.cs" />
     <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpInst01.cs" />
     <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpInst02.cs" />
+    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpMsg.cs" />
+    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpResp.cs" />
+    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpReq.cs" />
     <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0101.cs" />
     <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0102.cs" />
     <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0201.cs" />

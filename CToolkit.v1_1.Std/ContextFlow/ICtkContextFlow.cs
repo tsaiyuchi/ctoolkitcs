@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkit.v1_1
+namespace CToolkit.v1_1.ContextFlow
 {
 
     /// <summary>
-
+    /// 物件生命週期定義, 基本上是 Init -> Load -> Unload -> Free.
     /// </summary>
     public interface ICtkContextFlow
     {
@@ -66,5 +66,16 @@ namespace CToolkit.v1_1
     /// 
     /// 
     /// </Note>
+
+
+    /* [d20210211]
+     * 物件的生命週期定義,
+     * 基本上使用 IDisposable 要求撰寫釋放時要 Release 的資源, 即可正常的開啟關閉物件.
+     * 但有時需要明確的定義物件生命週期, 以利使用者在明確的時間點進行 載入/卸載 與 初始化/釋放 的行為.
+     * 此時可以利用這個介面類別
+     */
+
+
+
 
 }

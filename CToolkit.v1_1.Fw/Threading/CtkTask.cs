@@ -62,6 +62,23 @@ namespace CToolkit.v1_1.Threading
 
         protected virtual void DisposeSelf()
         {
+            /* [d20210220]
+             * 沒人參考它時,  有機率被釋放
+             * 但其參考的 Task, 其實還沒完工
+             * 1. 若此 Task 只是沒人參考, 不應強制Dispose
+             * 2. 若此 Task 是應用程式結束時, 應被強制關閉
+             * 原生Task選擇不關閉, 應自主結束
+             * 但這邊考量的是應正確釋放資源
+             * 
+             * 或許原生才是對的, 你不應強制關閉Task, 
+             * (1) 該Task要有自主判斷停止的功能,
+             * (2) 應用程式強制關閉時, 其實Task也會被關閉
+             * 所以, 若你要用一個不受控的Task, 那不如用原生的
+             * 
+             * 結論: 其實原生Task 你也沒辦法強制關閉它, 你也只能直接Try/Catch起來
+             */
+
+
             if (this.Task != null)
             {
                 //統一Dispose的方法, 有例外仍舊扔出, 確保在預期內

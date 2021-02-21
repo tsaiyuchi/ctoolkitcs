@@ -90,10 +90,11 @@ namespace CToolkit.v1_1.Wcf.NetTcp
             }
         }
 
-        public virtual void WcfListener()
+        public virtual void WcfListen()
         {
             if (this.host == null) this.NewHost();
             this.host.Open();
+
         }
 
         void CleanHost()
@@ -157,10 +158,34 @@ namespace CToolkit.v1_1.Wcf.NetTcp
 
 
 
-        /// <summary>
-        /// 多個實體服務, 不同路徑提供不同介面服務
-        /// </summary>
-        public static void UnitTest01()
+
+        /// <summary> 單實體服務 </summary>
+        public static void UnitTest_SingleModel()
+        {
+            var are = new AutoResetEvent(false);
+
+            CtkTask.Run(() =>
+            {
+                var sample1 = new SampleCtkWcfNetTcpInst01();
+                using (var listener1 = new CtkWcfNetTcpListener<SampleICtkWcfNetTcp0101>(sample1, "net.tcp://127.0.0.1:5050/"))
+                {
+                    listener1.WcfListen();
+                    are.WaitOne();
+                }
+            });
+
+
+            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0101>("net.tcp://127.0.0.1:5050/"))
+            {
+                client.WcfConnect();
+                var c = client.Channel.Add(12, 3);
+            }
+
+
+            are.Set();
+        }
+        /// <summary> 多個實體服務, 不同路徑提供不同介面服務 </summary>
+        public static void UnitTest_MultModel()
         {
             var are = new AutoResetEvent(false);
 
@@ -171,47 +196,45 @@ namespace CToolkit.v1_1.Wcf.NetTcp
                 using (var listener1 = new CtkWcfNetTcpListener(sample1, "net.tcp://127.0.0.1:5050/"))
                 using (var listener2 = new CtkWcfNetTcpListener(sample2, "net.tcp://127.0.0.1:5050/"))
                 {
-                    listener1.AddressMap["Add"] = typeof(SampleICtkWcfNetTcp0101);
-                    listener1.AddressMap["Minus"] = typeof(SampleICtkWcfNetTcp0102);
+                    listener1.AddressMap["Svc0101"] = typeof(SampleICtkWcfNetTcp0101);
+                    listener1.AddressMap["Svc0102"] = typeof(SampleICtkWcfNetTcp0102);
 
-                    listener2.AddressMap["Multiple"] = typeof(SampleICtkWcfNetTcp0201);
-                    listener2.AddressMap["Divide"] = typeof(SampleICtkWcfNetTcp0202);
+                    listener2.AddressMap["Svc0201"] = typeof(SampleICtkWcfNetTcp0201);
+                    listener2.AddressMap["Svc0202"] = typeof(SampleICtkWcfNetTcp0202);
 
-                    listener1.WcfListener();
-                    listener2.WcfListener();
+                    listener1.WcfListen();
+                    listener2.WcfListen();
 
                     are.WaitOne();
                 }
             });
 
 
-            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0101>("net.tcp://127.0.0.1:5050/Add"))
+            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0101>("net.tcp://127.0.0.1:5050/Svc0101"))
             {
                 client.WcfConnect();
                 var c = client.Channel.Add(12, 3);
             }
 
-            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0102>("net.tcp://127.0.0.1:5050/Minus"))
+            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0102>("net.tcp://127.0.0.1:5050/Svc0102"))
             {
                 client.WcfConnect();
                 var c = client.Channel.Minus(12, 3);
             }
 
-            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0201>("net.tcp://127.0.0.1:5050/Multiple"))
+            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0201>("net.tcp://127.0.0.1:5050/Svc0201"))
             {
                 client.WcfConnect();
                 var c = client.Channel.Multiple(12, 3);
             }
 
-            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0202>("net.tcp://127.0.0.1:5050/Divide"))
+            using (var client = new CtkWcfNetTcpClient<SampleICtkWcfNetTcp0202>("net.tcp://127.0.0.1:5050/Svc0202"))
             {
                 client.WcfConnect();
                 var c = client.Channel.Divide(12, 3);
             }
 
             are.Set();
-
-
         }
 
 
