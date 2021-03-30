@@ -290,6 +290,18 @@ namespace CToolkit.v1_1.Timing
 
         #region Sign DateTime / String : 一代目, prefix 1 字元
 
+        /*[d20210327]
+         * Normal DateTime: 一般轉換, Func Name 直接 代表轉換格式
+         * Sign DateTime: 帶符號轉換, 自定義格式, 有分 1/3/6字元符號 及 完整符號轉換
+         *  1字元: 用 1個 字母代表該時間週期, 後面接數字 (沒有underline)
+         *  3字元: 用 3個 字母代表該時間週期, 不足補 underline 在符號和數字之間
+         *  6字元: 用 6個 字母代表該時間週期, 不足補 underline 在符號和數字之間
+         *  完整: 寫出完整週期符號稱呼, 後面接數字 (沒有underline)
+         * Timestammp: 已被定義成通用時間戳記
+         * Mark: 不像是時間相關的用詞
+         */
+
+
         public static DateTime FromSign1Day(string yyyymmdd)
         {
             if (!yyyymmdd.StartsWith("d")) throw new ArgumentException("錯誤的Sign");
