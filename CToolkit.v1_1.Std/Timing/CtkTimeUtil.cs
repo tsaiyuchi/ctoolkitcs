@@ -202,7 +202,7 @@ namespace CToolkit.v1_1.Timing
             var dt = DateTimeParseExact(s, "yyyy");
             return new DateTime(dt.Year, month, day);
         }
-        public static DateTime FromYyyyHyhy(string yyyyhyhy, int day = 1)
+        public static DateTime FromYyyyHy(string yyyyhyhy, int day = 1)
         {
             var yyyy = Convert.ToInt32(yyyyhyhy.Substring(0, 4));
             var hyhy = Convert.ToInt32(yyyyhyhy.Substring(4));
@@ -210,7 +210,7 @@ namespace CToolkit.v1_1.Timing
             var date = new DateTime(yyyy, 1, day);
             date = date.AddMonths((hyhy - 1) * 6);
 
-            var realYyyyHyhy = ToYyyyHf(date);
+            var realYyyyHyhy = ToYyyyHy(date);
             if (yyyyhyhy != realYyyyHyhy) throw new InvalidOperationException();
 
             return date;
@@ -262,7 +262,7 @@ namespace CToolkit.v1_1.Timing
 
         public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
-        public static string ToYyyyHf(DateTime dt)
+        public static string ToYyyyHy(DateTime dt)
         {
             var Hyhy = HalfOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), Hyhy);
@@ -896,6 +896,11 @@ namespace CToolkit.v1_1.Timing
         public static int CompareYyyy(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyy(dt1), ToYyyy(dt2)); }
         public static int CompareYyyy(DateTime dt1, string dt2) { return string.Compare(ToYyyy(dt1), dt2); }
         public static int CompareYyyy(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyy(dt2)); }
+
+        public static int CompareYyyyHy(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyHy(dt1), ToYyyyHy(dt2)); }
+        public static int CompareYyyyHy(DateTime dt1, string dt2) { return string.Compare(ToYyyyHy(dt1), dt2); }
+        public static int CompareYyyyHy(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyHy(dt2)); }
+
 
         public static int CompareYyyyMm(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
         public static int CompareYyyyMm(DateTime? dt1, DateTime? dt2) { return string.Compare(ToYyyyMm(dt1), ToYyyyMm(dt2)); }
