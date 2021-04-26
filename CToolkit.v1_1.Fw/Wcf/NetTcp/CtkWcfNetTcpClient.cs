@@ -70,7 +70,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
         }
 
 
-
+        public virtual TService CreateChannel() { return this.ChannelFactory.CreateChannel(); }
 
 
 
