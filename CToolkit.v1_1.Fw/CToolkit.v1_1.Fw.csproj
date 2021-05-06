@@ -37,8 +37,8 @@
     <Reference Include="Cudafy.NET, Version=1.29.5576.13786, Culture=neutral, PublicKeyToken=63a4c9931616906b, processorArchitecture=MSIL">
       <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\CUDAfy.NET.1.29.5576.13786\lib\net40\Cudafy.NET.dll</HintPath>
     </Reference>
-    <Reference Include="FluentFTP, Version=31.3.1.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\FluentFTP.31.3.1\lib\net40\FluentFTP.dll</HintPath>
+    <Reference Include="FluentFTP, Version=34.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\FluentFTP.34.0.0\lib\net45\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Filtering, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\MathNet.Filtering.0.7.0\lib\net40\MathNet.Filtering.dll</HintPath>
