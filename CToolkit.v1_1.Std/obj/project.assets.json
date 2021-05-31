@@ -3141,7 +3141,7 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
-    "version": "1.1.0.9",
+    "version": "1.1.0.11",
     "restore": {
       "projectUniqueName": "D:\\ycProject\\github\\ctoolkit.csharp\\CToolkit.v1_1.Std\\CToolkit.v1_1.Std.csproj",
       "projectName": "CToolkit.v1_1.Std",

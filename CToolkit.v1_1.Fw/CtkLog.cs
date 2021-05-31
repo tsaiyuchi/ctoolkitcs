@@ -39,6 +39,10 @@ namespace CToolkit.v1_1
             DefaultLogger.Write(ea, _level);
         }
 
+
+        public static void WarnTryCatch(Action act) { try { act(); } catch (Exception ex) { Warn(ex); } }
+
+
         #endregion
 
         #region Namespace Logger
@@ -69,6 +73,9 @@ namespace CToolkit.v1_1
         public static void ErrorNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Error); }
         public static void FatalNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
         public static void FatalNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Fatal); }
+
+        public static void WarnNsTryCatch(object sender, Action act) { try { act(); } catch (Exception ex) { WarnNs(sender, ex); } }
+
 
         #endregion
 

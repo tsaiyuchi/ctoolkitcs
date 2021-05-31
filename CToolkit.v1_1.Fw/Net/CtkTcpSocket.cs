@@ -400,8 +400,8 @@ namespace CToolkit.v1_1.Net
 
         public void Disconnect()
         {
-            this.mreIsReceiving.Set();//僅Set不釋放, 可能還會使用
-            this.mreIsConnecting.Set();//僅Set不釋放, 可能還會使用
+            try { this.mreIsReceiving.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
+            try { this.mreIsConnecting.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
             CtkNetUtil.DisposeSocketTry(this.m_workSocket);
             CtkNetUtil.DisposeSocketTry(this.m_connSocket);
             this.OnDisconnect(new CtkProtocolEventArgs() { Message = "Disconnect method is executed" });

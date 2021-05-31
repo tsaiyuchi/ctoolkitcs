@@ -197,6 +197,12 @@ namespace CToolkit.v1_1.Timing
             catch (Exception) { return null; }
         }
         public static bool FromDTimeTry(string s, out DateTime dt) { return FromYyyyMmDdHhIiSsTry(s, out dt); }
+        public static DateTime? FromDTimeTryOrDefault(string s)
+        {
+            var dt = new DateTime();
+            if (FromYyyyMmDdHhIiSsTry(s, out dt)) return dt;
+            return null;
+        }
         public static DateTime FromYyyy(string s, int month = 1, int day = 1)
         {
             var dt = DateTimeParseExact(s, "yyyy");
@@ -217,6 +223,11 @@ namespace CToolkit.v1_1.Timing
         }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
+        public static DateTime? FromYyyyMmDdNullable(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return null;
+            return new Nullable<DateTime>(FromYyyyMmDd(s));
+        }
         public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
         public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
         public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
@@ -259,6 +270,17 @@ namespace CToolkit.v1_1.Timing
 
             return date;
         }
+        public static DateTime FromYyyyWw(string yyyyww, DayOfWeek dow) { return GetThisDow(DayOfWeek.Saturday, FromYyyyWw(yyyyww)); }
+        public static DateTime? FromYyyyWwNullable(string yyyyww)
+        {
+            if (string.IsNullOrEmpty(yyyyww)) return null;
+            return new Nullable<DateTime>(FromYyyyWw(yyyyww));
+        }
+        public static DateTime? FromYyyyWwNullable(string yyyyww, DayOfWeek dow)
+        {
+            if (string.IsNullOrEmpty(yyyyww)) return null;
+            return new Nullable<DateTime>(FromYyyyWw(yyyyww, dow));
+        }
 
         public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
@@ -270,6 +292,7 @@ namespace CToolkit.v1_1.Timing
         public static string ToYyyyMm(DateTime dt) { return dt.ToString("yyyyMM"); }
         public static string ToYyyyMm(DateTime? dt) { return dt.HasValue ? ToYyyyMm(dt.Value) : null; }
         public static string ToYyyyMmDd(DateTime dt) { return dt.ToString("yyyyMMdd"); }
+        public static string ToYyyyMmDd(DateTime? dt) { return dt.HasValue ? ToYyyyMmDd(dt.Value) : null; }
         public static string ToYyyyMmDdHh(DateTime dt) { return dt.ToString("yyyyMMddHH"); }
         public static string ToYyyyMmDdHhIi(DateTime dt) { return dt.ToString("yyyyMMddHHmm"); }
         public static string ToYyyyMmDdHhIiSs(DateTime dt) { return dt.ToString("yyyyMMddHHmmss"); }

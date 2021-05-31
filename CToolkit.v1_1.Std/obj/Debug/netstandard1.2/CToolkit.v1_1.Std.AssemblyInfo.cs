@@ -13,11 +13,11 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("CToolkit")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.1.0.9")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.1.0.9")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.1.0.11")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.1.0.11")]
 [assembly: System.Reflection.AssemblyProductAttribute("CToolkit")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CToolkit.v1_1.Std")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.1.0.9")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.1.0.11")]
 
 // 由 MSBuild WriteCodeFragment 類別產生。
 

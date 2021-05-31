@@ -53,6 +53,22 @@ namespace CToolkit.v1_1.Threading
             return task;
         }
 
+        public static CtkCancelTask RunLoop(Func<bool> funcIsContinue, string name)
+        {
+            var task = new CtkCancelTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (!funcIsContinue()) break;
+                }
+            }, ct);
+            task.Name = name;
+            return task;
+        }
+
 
 
         public static CtkCancelTask RunOnce(Action<CancellationToken> act)
@@ -69,6 +85,6 @@ namespace CToolkit.v1_1.Threading
 
         #endregion
 
-      
+
     }
 }

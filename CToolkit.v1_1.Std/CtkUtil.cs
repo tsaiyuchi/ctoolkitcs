@@ -35,8 +35,6 @@ namespace CToolkit.v1_1
 
 
 
-        public static T ParseEnum<T>(String val) { return (T)Enum.Parse(typeof(T), val); }
-
 
         public static int RandomInt()
         {
@@ -63,6 +61,24 @@ namespace CToolkit.v1_1
             return rnd.Next(min, max);
         }
 
+
+
+
+
+        #region Enum
+
+
+        public static Enum EnumParse(String val, Type type) { return (Enum)Enum.Parse(type, val, true); }
+        public static T EnumParse<T>(String val) { return (T)Enum.Parse(typeof(T), val, true); }
+        public static List<T> EnumList<T>()
+        {
+            var ary = Enum.GetValues(typeof(T));
+            var list = new List<T>();
+            foreach (var e in ary) list.Add((T)e);
+            return list;
+        }
+
+        #endregion
 
 
 
@@ -129,7 +145,6 @@ namespace CToolkit.v1_1
 
         public static Guid? TypeGuid(System.Type type)
         {
-
             var attrs = type.GetTypeInfo().GetCustomAttributes(typeof(GuidAttribute), false);
             var attr = attrs.FirstOrDefault() as GuidAttribute;
             if (attr == null) return null;

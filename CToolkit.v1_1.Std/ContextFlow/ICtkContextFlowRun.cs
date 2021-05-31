@@ -29,6 +29,6 @@ namespace CToolkit.v1_1.ContextFlow
         /// 需實作非同步作業, e.q. 開啟一個Thread/Task後離開函式
         /// </summary>
         /// <returns></returns>
-        int CfRunLoopAsyn();
+        int CfRunLoopStart();
     }
 }
