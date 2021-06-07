@@ -69,6 +69,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compress\CtkCompressUtil.cs" />
@@ -113,6 +116,7 @@
     <Compile Include="Mathing\CtkComplex.cs" />
     <Compile Include="Mathing\CtkGcd.cs" />
     <Compile Include="Mathing\CtkMathOpUtil.cs" />
+    <Compile Include="Mathing\CtkMathUtil.cs" />
     <Compile Include="Mathing\CtkMatrix.cs" />
     <Compile Include="Mathing\CtkMatrixf.cs" />
     <Compile Include="Mathing\CtkOperator.cs" />
@@ -123,18 +127,21 @@
     <Compile Include="Modbus\CtkModbusMessage.cs" />
     <Compile Include="Modbus\CtkModbusMessageReceiver.cs" />
     <Compile Include="Modbus\CtkModbusOldMessage.cs" />
-    <Compile Include="Net\CtkEgSimple_BeginSocket.cs" />
-    <Compile Include="Net\CtkEgSimple_Socket.cs" />
-    <Compile Include="Net\CtkEgSimple_SocketCloseTest.cs" />
+    <Compile Include="Net\WebTx\CtkNetHttpGetRtn.cs" />
+    <Compile Include="Net\WebTx\CtkNetUserAgent.cs" />
+    <Compile Include="Net\WebTx\CtkNetUserAgents.cs" />
+    <Compile Include="Net\Sample\CtkEgSimple_BeginSocket.cs" />
+    <Compile Include="Net\Sample\CtkEgSimple_Socket.cs" />
+    <Compile Include="Net\Sample\CtkEgSimple_SocketCloseTest.cs" />
     <Compile Include="Net\CtkFtp.cs" />
     <Compile Include="Net\CtkMail.cs" />
     <Compile Include="Net\CtkNetUtil.cs" />
-    <Compile Include="Net\CtkTcpClient.cs" />
-    <Compile Include="Net\CtkTcpListener.cs" />
-    <Compile Include="Net\CtkNonStopTcpStateEventArgs.cs" />
-    <Compile Include="Net\CtkTcpListenerEx.cs" />
-    <Compile Include="Net\CtkTcpSocket.cs" />
-    <Compile Include="Net\CtkWebTransaction.cs" />
+    <Compile Include="Net\Socket\CtkTcpClient.cs" />
+    <Compile Include="Net\Socket\CtkTcpListener.cs" />
+    <Compile Include="Net\Socket\CtkNonStopTcpStateEventArgs.cs" />
+    <Compile Include="Net\Socket\CtkTcpListenerEx.cs" />
+    <Compile Include="Net\Socket\CtkTcpSocket.cs" />
+    <Compile Include="Net\WebTx\CtkNetWebTransaction.cs" />
     <Compile Include="Net\EnumCtkConnectMode.cs" />
     <Compile Include="Numeric\CtkCudafyCannotUseException.cs" />
     <Compile Include="Numeric\CtkCudafyContext.cs" />
@@ -229,6 +236,7 @@
       <Name>CToolkit.v1_1.Std</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

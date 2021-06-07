@@ -9,10 +9,14 @@ using System.Data;
 using System.IO.Compression;
 using System.IO;
 using CToolkit.v1_1.Compress;
+using System.Threading.Tasks;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System.Threading;
 
-namespace CToolkit.v1_1.Net
+namespace CToolkit.v1_1.Net.WebTx
 {
-    public class CtkWebTransaction
+    public class CtkNetWebTransaction
     {
         public HttpWebRequest HwRequest;
         public string HwRequestData;
@@ -193,9 +197,9 @@ namespace CToolkit.v1_1.Net
             }
         }
 
-        public static CtkWebTransaction HttpRequestTx(HttpWebRequest wreq, string reqData = null, Encoding reqEncoding = null, Encoding respEncoding = null)
+        public static CtkNetWebTransaction HttpRequestTx(HttpWebRequest wreq, string reqData = null, Encoding reqEncoding = null, Encoding respEncoding = null)
         {
-            var rs = new CtkWebTransaction();
+            var rs = new CtkNetWebTransaction();
             rs.HwRequest = wreq;
             rs.HwRequestData = reqData;
             rs.HwRequestEncoding = reqEncoding;
@@ -205,6 +209,87 @@ namespace CToolkit.v1_1.Net
         }
 
         public static Regex RegexUrl() { return new Regex(@"^(?<proto>\w+)://[^/]+?(?<port>:\d+)?/", RegexOptions.Compiled); }
+
+
+
+
+
+
+        public static async Task<CtkNetHttpGetRtn<IWebDriver>> SeleniumChromeHttpGetAsyn(String uri,
+            Func<IWebDriver, bool> callback = null,
+            int timeout = 30 * 1000, int delayBrowserOpen = 5 * 1000)
+        {
+            var rtn = new CtkNetHttpGetRtn<IWebDriver>();
+
+            var start = DateTime.Now;
+
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument(string.Format("user-agent={0}", CtkNetUserAgents.Random().UserAgent));
+            using (var driver = rtn.Driver = new ChromeDriver())
+            {
+                //開啟網頁
+                driver.Navigate().GoToUrl(uri);
+                //隱式等待 - 直到畫面跑出資料才往下執行, 只需宣告一次, 之後找元件都等待同樣秒數.
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(delayBrowserOpen);
+
+
+
+
+                rtn.Html = await Task.Run<string>(() =>
+                {
+                    var interval = 500;
+
+                    for (int idx = 0; (DateTime.Now - start).TotalMilliseconds < timeout; idx++)
+                    {
+                        if (string.IsNullOrEmpty(driver.PageSource))
+                        {//等頁面載入完成
+                            Thread.Sleep(interval);
+                            continue;
+                        }
+                        if (callback != null && !callback(driver))
+                        {//有callback 要等callback完成
+                            Thread.Sleep(interval);
+                            continue;
+                        }
+
+                        return driver.PageSource;
+                    }
+                    return null;
+                });
+
+
+
+
+                driver.Quit();
+            }
+            return rtn;
+
+
+            ////輸入帳號
+            //IWebElement inputAccount = driver.FindElement(By.Name("Account"));
+            //Thread.Sleep(2000);
+            ////清除按鈕
+            //inputAccount.Clear();
+            //Thread.Sleep(2000);
+            //inputAccount.SendKeys("20180513");
+            //Thread.Sleep(2000);
+
+            ////輸入密碼
+            //IWebElement inputPassword = driver.FindElement(By.Name("Passwrod"));
+
+            //inputPassword.Clear();
+            //Thread.Sleep(2000);
+            //inputPassword.SendKeys("123456");
+            //Thread.Sleep(2000);
+
+            ////點擊執行
+            //IWebElement submitButton = driver.FindElement(By.XPath("/html/body/div[2]/form/table/tbody/tr[4]/td[2]/input"));
+            //Thread.Sleep(2000);
+            //submitButton.Click();
+            //Thread.Sleep(2000);
+
+
+        }
 
         #endregion
 
