@@ -18,11 +18,36 @@ namespace CToolkit.v1_1.TypeGuid
         static CtkTypeGuidMapper m_Singleton;
         SortedDictionary<Guid, Type> mapper;
 
-        public SortedDictionary<Guid, Type> GetCollector()
+        public SortedDictionary<Guid, Type> GetMapper()
         {
             if (this.mapper == null) this.mapper = LoadTypeMap();
             return this.mapper;
         }
+
+
+        public List<Type> GetChilds<T>() where T : class
+        {
+            var type = typeof(T);
+
+            var mapper = this.GetMapper();
+            var query = from row in mapper.Values
+                        where type.IsAssignableFrom(row)
+                        select row;
+            return query.ToList();
+        }
+
+
+        public List<Type> Get(Func<Type, bool> filter)
+        {
+            var mapper = this.GetMapper();
+            var query = from row in mapper.Values
+                        where filter(row)
+                        select row;
+            return query.ToList();
+        }
+
+
+
 
 
         #region Static
@@ -30,7 +55,7 @@ namespace CToolkit.v1_1.TypeGuid
         public static CtkTypeGuidMapper Singleton { get { if (m_Singleton == null) { m_Singleton = new CtkTypeGuidMapper(); } return m_Singleton; } }
         public static Type Get(Guid guid)
         {
-            var coll = Singleton.GetCollector();
+            var coll = Singleton.GetMapper();
             return coll[guid];
         }
         public static Type Get(string guid) { return Get(Guid.Parse(guid)); }
@@ -44,7 +69,7 @@ namespace CToolkit.v1_1.TypeGuid
                 foreach (var t in qTypes)
                 {
                     if (filter != null && !filter(t.FullName)) continue;
-                    
+
                     //var fullname = t.FullName;
                     ////Console.WriteLine(fullname);
                     //var guid_attrs = t.GetCustomAttributes(typeof(GuidAttribute), false);

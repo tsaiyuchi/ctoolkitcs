@@ -7,24 +7,29 @@ namespace CToolkit.v1_1.Diagnostics
 {
     public class CtkStopwatch : System.Diagnostics.Stopwatch
     {
-        string message;
+        public string message;
 
 
         public CtkStopwatch() { }
         public CtkStopwatch(bool restart) { if (restart) this.Restart(); }
 
-        public void RestartMsg(string format)
+        public String RestartMsg(string format)
         {
             this.Stop();
-            message += string.Format(format, this.ElapsedMilliseconds);
+            var msg = string.Format(format, this.ElapsedMilliseconds);
+            message += msg;
             this.Reset();
             this.Start();
+            return msg;
         }
         public void StopMsg(string format)
         {
             this.Stop();
             message += string.Format(format, this.ElapsedMilliseconds);
         }
+
+
+
 
         public void AppendMessage(string format) { this.message += string.Format(format, this.ElapsedMilliseconds); }
 
