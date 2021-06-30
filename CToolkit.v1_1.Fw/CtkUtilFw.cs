@@ -17,6 +17,17 @@ namespace CToolkit.v1_1
     public class CtkUtilFw
     {
 
+
+        public static TAttr GetAttribute<TEnum, TAttr>(TEnum val) where TAttr : Attribute
+        {
+            var type = typeof(TEnum);
+            var memberInfos = type.GetMember(val.ToString());
+            var mi = memberInfos.FirstOrDefault(x => x.DeclaringType == type);
+            if (mi == null) return default(TAttr);
+            var attr = mi.GetCustomAttribute(typeof(TAttr), false);
+            return (TAttr)attr;
+        }
+
         public static T ChangeType<T>(object data) { return (T)Convert.ChangeType(data, typeof(T)); }
 
         public static bool EnableUnsafeHeaderParsing()
@@ -156,7 +167,7 @@ namespace CToolkit.v1_1
                 ms.Position = 0;
 
                 using (var sr = new StreamReader(ms))
-                   return  (T)seri.Deserialize(sr);
+                    return (T)seri.Deserialize(sr);
             }
         }
 
