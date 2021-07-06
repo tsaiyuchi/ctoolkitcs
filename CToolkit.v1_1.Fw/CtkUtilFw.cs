@@ -267,11 +267,6 @@ namespace CToolkit.v1_1
             if (task == null) return;
             task.Dispose();
         }
-        public static void DisposeTask(CtkCancelTask task)
-        {
-            if (task == null) return;
-            task.Dispose();
-        }
         public static bool DisposeTaskTry(Task task, int millisecond = 100)
         {
             try
@@ -298,19 +293,7 @@ namespace CToolkit.v1_1
                 return false;
             }
         }
-        public static bool DisposeTaskTry(CtkCancelTask task)
-        {
-            try
-            {
-                DisposeTask(task);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                CtkLog.Warn(ex);
-                return false;
-            }
-        }
+
 
         #endregion
 

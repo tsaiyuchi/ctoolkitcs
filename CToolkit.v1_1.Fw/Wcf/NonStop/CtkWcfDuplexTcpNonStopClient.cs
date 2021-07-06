@@ -23,7 +23,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
         where TService : ICtkWcfDuplexTcpService//Server提供的, 必須是interface
         where TCallback : ICTkWcfDuplexTcpCallback//提供給Server呼叫的
     {
-        CtkCancelTask NonStopTask;
+        CtkTask NonStopTask;
         protected int m_IntervalTimeOfConnectCheck = 5000;
 
 
@@ -120,7 +120,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
         {
             AbortNonStopRun();
 
-            this.NonStopTask = CtkCancelTask.RunOnce((ct) =>
+            this.NonStopTask = CtkTask.RunOnce((ct) =>
             {
                 while (!this.disposed && !ct.IsCancellationRequested)
                 {

@@ -1,25 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CToolkit.v1_1.Threading
 {
-    public class CtkTask : IDisposable
+    public class CtkTask : IDisposable, IAsyncResult
     {
         public string Name;
         public Task Task;
+        public CancellationTokenSource CancelTokenSource = new CancellationTokenSource();
+        public CancellationToken CancelToken { get { return this.CancelTokenSource.Token; } }
+
+        public void Cancel() { this.CancelTokenSource.Cancel(); }
+
 
         public TaskStatus Status { get { return this.Task.Status; } }
 
-        public static CtkTask Run(Action act)
-        {
-            var task = new CtkTask();
-            task.Task = Task.Factory.StartNew(act);
-            return task;
-        }
 
+        public TaskAwaiter GetAwaiter() { return this.Task.GetAwaiter(); }
         public bool IsEnd() { return this.Task == null ? true : this.Task.IsCompleted || this.Task.IsFaulted || this.Task.IsCanceled; }
 
 
@@ -30,6 +32,87 @@ namespace CToolkit.v1_1.Threading
         }
         public bool Wait(int milliseconds) { return this.Task.Wait(milliseconds); }
         public void Wait() { this.Task.Wait(); }
+
+
+        #region --- IAsyncResult --- --- ---
+        public bool IsCompleted { get { return this.Task.IsCompleted; } }
+        public WaitHandle AsyncWaitHandle { get { throw new NotImplementedException(); } }
+        public object AsyncState { get { return this.Task.AsyncState; } }
+        public bool CompletedSynchronously { get { throw new NotImplementedException(); } }
+        #endregion--- --- ---
+
+        #region --- Static --- --- ---
+
+        public static CtkTask Run(Action act)
+        {
+            var task = new CtkTask();
+            task.Task = Task.Factory.StartNew(act);
+            return task;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="funcIsContinue">if return ture then continue</param>
+        /// <returns></returns>
+        public static CtkTask RunLoop(Func<bool> funcIsContinue)
+        {
+            var task = new CtkTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (!funcIsContinue()) break;
+                }
+            }, ct);
+
+            return task;
+        }
+        public static CtkTask RunLoop(Func<bool> funcIsContinue, int sleep)
+        {
+            var task = new CtkTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (!funcIsContinue()) break;
+                    Thread.Sleep(sleep);
+                }
+            }, ct);
+
+            return task;
+        }
+        public static CtkTask RunLoop(Func<bool> funcIsContinue, string name)
+        {
+            var task = new CtkTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (!funcIsContinue()) break;
+                }
+            }, ct);
+            task.Name = name;
+            return task;
+        }
+        public static CtkTask RunOnce(Action<CancellationToken> act)
+        {
+            var task = new CtkTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                act(ct);
+            }, ct);
+
+            return task;
+        }
+
+        #endregion --- --- ---
 
 
         #region IDisposable
@@ -79,8 +162,12 @@ namespace CToolkit.v1_1.Threading
              */
 
 
+
             if (this.Task != null)
             {
+                //只增加Cancel的呼叫, 剩的用父類別的
+                if (this.Status < TaskStatus.RanToCompletion)
+                    this.CancelTokenSource.Cancel();
                 //統一Dispose的方法, 有例外仍舊扔出, 確保在預期內
                 CtkUtilFw.DisposeTask(this.Task);
                 this.Task = null;

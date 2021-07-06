@@ -159,7 +159,6 @@
     <Compile Include="Paint\CtkRgbColor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\CtkMd5.cs" />
-    <Compile Include="Threading\CtkCancelTask.cs" />
     <Compile Include="Threading\CtkSpinWait.cs" />
     <Compile Include="Threading\CtkTask.cs" />
     <Compile Include="Threading\CtkThreadingUtil.cs" />

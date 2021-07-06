@@ -33,7 +33,7 @@ namespace CToolkit.v1_1.Net
         ManualResetEvent mreReading = new ManualResetEvent(true);
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
-        CtkCancelTask runningTask;
+        CtkTask runningTask;
         // = new BackgroundWorker();
         public CtkTcpListener() : base() { }
 
@@ -423,7 +423,7 @@ namespace CToolkit.v1_1.Net
         {
             AbortNonStopRun();
 
-            this.runningTask = CtkCancelTask.RunOnce(ct =>
+            this.runningTask = CtkTask.RunOnce(ct =>
             {
 
                 while (!disposed)

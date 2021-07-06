@@ -13,7 +13,7 @@ namespace CToolkit.v1_1.Logging
     {
 
         protected ConcurrentQueue<CtkLoggerEventArgs> queue = new ConcurrentQueue<CtkLoggerEventArgs>();
-        CtkCancelTask task;
+        CtkTask task;
 
         public virtual void Debug(string msg, params object[] args) { this.Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
         public virtual void Error(string msg, params object[] args) { this.Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
@@ -49,7 +49,7 @@ namespace CToolkit.v1_1.Logging
                 }
 
 
-                this.task = CtkCancelTask.RunLoop(() =>
+                this.task = CtkTask.RunLoop(() =>
                 {
                     CtkLoggerEventArgs myea;
                     lock (this)

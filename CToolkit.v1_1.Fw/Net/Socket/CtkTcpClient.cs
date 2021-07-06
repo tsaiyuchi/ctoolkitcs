@@ -34,7 +34,7 @@ namespace CToolkit.v1_1.Net
         TcpClient m_myTcpClient;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReading = new ManualResetEvent(true);
-        CtkCancelTask runningTask;
+        CtkTask runningTask;
 
         public CtkTcpClient() : base() { }
         public CtkTcpClient(Uri remote)
@@ -405,7 +405,7 @@ namespace CToolkit.v1_1.Net
         public void NonStopRunAsyn()
         {
             this.AbortNonStopRun();
-            this.runningTask = CtkCancelTask.RunOnce((ct) =>
+            this.runningTask = CtkTask.RunOnce((ct) =>
             {
                 //TODO: 重啟時, 會有執行緒被中止的狀況
                 while (!this.disposed)

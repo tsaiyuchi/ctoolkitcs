@@ -15,7 +15,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
     {
         protected int m_IntervalTimeOfConnectCheck = 5000;
         ICTkWcfDuplexTcpCallback activeWorkClient;
-        CtkCancelTask runningTask;
+        CtkTask runningTask;
 
 
 
@@ -114,7 +114,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         {
             AbortNonStopRun();
 
-            this.runningTask = CtkCancelTask.RunOnce((ct) =>
+            this.runningTask = CtkTask.RunOnce((ct) =>
             {
                 while (!this.disposed && !ct.IsCancellationRequested)
                 {
