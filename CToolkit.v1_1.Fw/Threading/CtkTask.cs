@@ -43,10 +43,11 @@ namespace CToolkit.v1_1.Threading
 
         #region --- Static --- --- ---
 
-        public static CtkTask Run(Action act)
+        public static CtkTask Run(Action act, String name= null)
         {
             var task = new CtkTask();
             task.Task = Task.Factory.StartNew(act);
+            task.Name = name;
             return task;
         }
         /// <summary>
