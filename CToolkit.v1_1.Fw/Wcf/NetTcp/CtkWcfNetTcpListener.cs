@@ -164,7 +164,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
         {
             var are = new AutoResetEvent(false);
 
-            CtkTask.Run(() =>
+            CtkTask.RunOnce(() =>
             {
                 var sample1 = new SampleCtkWcfNetTcpInst01();
                 using (var listener1 = new CtkWcfNetTcpListener<SampleICtkWcfNetTcp0101>(sample1, "net.tcp://127.0.0.1:5050/"))
@@ -189,7 +189,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
         {
             var are = new AutoResetEvent(false);
 
-            CtkTask.Run(() =>
+            CtkTask.RunOnce(() =>
             {
                 var sample1 = new SampleCtkWcfNetTcpInst01();
                 var sample2 = new SampleCtkWcfNetTcpInst02();

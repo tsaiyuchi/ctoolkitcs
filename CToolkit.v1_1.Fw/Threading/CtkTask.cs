@@ -43,7 +43,7 @@ namespace CToolkit.v1_1.Threading
 
         #region --- Static --- --- ---
 
-        public static CtkTask Run(Action act, String name= null)
+        public static CtkTask RunOnce(Action act, String name = null)
         {
             var task = new CtkTask();
             task.Task = Task.Factory.StartNew(act);
@@ -96,6 +96,22 @@ namespace CToolkit.v1_1.Threading
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue()) break;
+                }
+            }, ct);
+            task.Name = name;
+            return task;
+        }
+
+        public static CtkTask RunLoop(Func<CancellationToken, bool> funcIsContinue, string name)
+        {
+            var task = new CtkTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (!funcIsContinue(ct)) break;
                 }
             }, ct);
             task.Name = name;
