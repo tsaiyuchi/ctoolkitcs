@@ -7,6 +7,11 @@ namespace CToolkit.v1_1.ContextFlow
 {
     public interface ICtkContextFlowRun : ICtkContextFlow
     {
+        /*[d20210714] RunOnce, RunLoop 以及 RunLoopStart.
+         * 在介面中只定義各Method存在, 宣告該Method的用途
+         * 但實際用途是實作者決定, 實作者應自行注意如何符合定義.
+         */
+
         bool CfIsRunning { get; set; }
 
         /// <summary>

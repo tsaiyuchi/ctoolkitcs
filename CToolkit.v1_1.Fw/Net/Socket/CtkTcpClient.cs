@@ -36,10 +36,10 @@ namespace CToolkit.v1_1.Net
         ManualResetEvent mreIsReading = new ManualResetEvent(true);
         CtkTask runningTask;
 
-        public CtkTcpClient() : base() { }
-        public CtkTcpClient(Uri remote)
+        public CtkTcpClient(Uri remote = null, Uri local = null)
         {
             this.RemoteUri = remote;
+            this.LocalUri = local;
         }
         public CtkTcpClient(string remoteIp, int remotePort, string localIp = null, int localPort = 0)
         {
@@ -256,6 +256,11 @@ namespace CToolkit.v1_1.Net
                 CtkLog.WarnNs(this, ex);
             }
         }
+
+
+
+
+
 
 
         #region ICtkProtocolConnect

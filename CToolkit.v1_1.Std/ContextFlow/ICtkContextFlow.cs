@@ -20,7 +20,7 @@ namespace CToolkit.v1_1.ContextFlow
 
 
 
-    /// <Note>
+    /* <Note>
     /// 若與IDisposable並用, 需注意CfFree的定義
     /// IDispose.Dispose() 一般會執行自己的回收 GC.SuppressFinalize(this);
     /// 也就是真正釋放自己
@@ -39,10 +39,9 @@ namespace CToolkit.v1_1.ContextFlow
     /// CfFree 一般只要像解構子一樣, 釋放Member後, 由GC自行回收
     /// 而 Dispose(void) 則是給外面程式使用
     /// 
-    /// </Note>
-    /// 
+    /// </Note>*/
 
-    /// <Note>
+    /* <Note>
     /// Context Flow .CfFree, Dispose, Close 的順序?
     ///     結論: CfFree -> Dispose -> Close
     ///     
@@ -65,7 +64,7 @@ namespace CToolkit.v1_1.ContextFlow
     ///     再者 若真存在需要 UnLoad -> Free 的物件, 你也應照程序完成
     /// 
     /// 
-    /// </Note>
+    /// </Note>*/
 
 
     /* [d20210211]

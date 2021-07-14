@@ -82,6 +82,30 @@ namespace CToolkit.v1_1.Net
             }
         }
 
+        public static void DisposeTcpClient(CtkTcpClient client)
+        {
+            if (client == null) return;
+            client.Disconnect();
+            client.Dispose();
+        }
+        public static bool DisposeTcpClientTry(CtkTcpClient client)
+        {
+            try
+            {
+                DisposeTcpClient(client);
+                return true;
+            }
+            catch (SocketException) { return false; }
+            catch (ObjectDisposedException) { return false; }
+            catch (InvalidOperationException) { return false; }
+            catch (Exception ex)
+            {
+                //非預期的Exception, 記錄起來
+                CtkLog.Warn(ex);
+                return false;
+            }
+        }
+
 
 
         public static List<IPAddress> GetIP()
