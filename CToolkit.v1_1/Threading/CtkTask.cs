@@ -186,7 +186,7 @@ namespace CToolkit.v1_1.Threading
                 if (this.Status < TaskStatus.RanToCompletion)
                     this.CancelTokenSource.Cancel();
                 //統一Dispose的方法, 有例外仍舊扔出, 確保在預期內
-                CtkUtilFw.DisposeTask(this.Task);
+                CtkUtil.DisposeTask(this.Task);
                 this.Task = null;
             }
         }

@@ -493,8 +493,8 @@ namespace CToolkit.v1_1.Net
         public void DisposeSelf()
         {
             this.Disconnect();
-            CtkUtilFw.DisposeObjTry(this.mreIsConnecting);
-            CtkUtilFw.DisposeObjTry(this.mreIsReceiving);
+            CtkUtil.DisposeObjTry(this.mreIsConnecting);
+            CtkUtil.DisposeObjTry(this.mreIsReceiving);
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
         protected virtual void Dispose(bool disposing)

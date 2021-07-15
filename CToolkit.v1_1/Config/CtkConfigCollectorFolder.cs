@@ -47,7 +47,7 @@ namespace CToolkit.v1_1.Config
 
                 try
                 {
-                    var config = CtkUtilFw.LoadXmlFromFileOrDefault<T>(fi.FullName);
+                    var config = CtkUtil.LoadXmlFromFileOrDefault<T>(fi.FullName);
                     this[fi.Name] = config;
                 }
                 catch (Exception ex) { CtkLog.WriteNs(this, ex.Message); }

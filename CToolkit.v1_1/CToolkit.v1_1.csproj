@@ -91,7 +91,6 @@
     <Compile Include="CtkEventUtil.cs" />
     <Compile Include="CtkFileFormat.cs" />
     <Compile Include="CtkUtil.cs" />
-    <Compile Include="CtkUtilFw.cs" />
     <Compile Include="CtkGenericEventArgs.cs" />
     <Compile Include="CtkLog.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />

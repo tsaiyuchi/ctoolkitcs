@@ -8,9 +8,9 @@ namespace CToolkit.v1_1.Config
     public abstract class CtkConfigBase
     {
 
-        public void SaveXml(string fn) { CtkUtilFw.SaveXmlToFile(this, fn); }
+        public void SaveXml(string fn) { CtkUtil.SaveXmlToFile(this, fn); }
 
-        public static T LoadXml<T>(string fn) where T : class, new() { return CtkUtilFw.LoadXmlFromFileOrDefault<T>(fn); }
+        public static T LoadXml<T>(string fn) where T : class, new() { return CtkUtil.LoadXmlFromFileOrDefault<T>(fn); }
 
 
     }

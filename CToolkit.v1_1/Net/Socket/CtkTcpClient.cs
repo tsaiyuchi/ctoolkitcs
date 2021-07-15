@@ -359,7 +359,7 @@ namespace CToolkit.v1_1.Net
         }
         public void Disconnect()
         {
-            CtkUtilFw.DisposeTaskTry(this.runningTask);
+            CtkUtil.DisposeTaskTry(this.runningTask);
             CtkNetUtil.DisposeTcpClientTry(this.MyTcpClient);
             this.OnDisconnect(new CtkNonStopTcpStateEventArgs() { Message = "Disconnect method is executed" });
         }
@@ -404,7 +404,7 @@ namespace CToolkit.v1_1.Net
         public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Status < TaskStatus.RanToCompletion; } }
         public void AbortNonStopRun()
         {
-            CtkUtilFw.DisposeTaskTry(this.runningTask);
+            CtkUtil.DisposeTaskTry(this.runningTask);
             this.runningTask = null;
         }
         public void NonStopRunAsyn()
