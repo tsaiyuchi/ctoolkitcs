@@ -132,6 +132,7 @@
     <Compile Include="Modbus\CtkModbusMessage.cs" />
     <Compile Include="Modbus\CtkModbusMessageReceiver.cs" />
     <Compile Include="Modbus\CtkModbusOldMessage.cs" />
+    <Compile Include="Net\Socket\CtkUdpSocket.cs" />
     <Compile Include="Net\WebTx\CtkNetHttpGetRtn.cs" />
     <Compile Include="Net\WebTx\CtkNetUserAgent.cs" />
     <Compile Include="Net\WebTx\CtkNetUserAgents.cs" />
