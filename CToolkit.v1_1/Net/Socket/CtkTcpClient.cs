@@ -277,7 +277,7 @@ namespace CToolkit.v1_1.Net
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return CtkNetUtil.IsConnected(this.MyTcpClient); } }
 
-        public int ConnectIfNo()
+        public int ConnectTry()
         {
             try
             {
@@ -317,7 +317,7 @@ namespace CToolkit.v1_1.Net
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
         }
-        public int ConnectIfNoAsyn()
+        public int ConnectTryStart()
         {
             try
             {
@@ -402,14 +402,14 @@ namespace CToolkit.v1_1.Net
 
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Status < TaskStatus.RanToCompletion; } }
-        public void AbortNonStopRun()
+        public void NonStopRunEnd()
         {
             CtkUtil.DisposeTaskTry(this.runningTask);
             this.runningTask = null;
         }
-        public void NonStopRunAsyn()
+        public void NonStopRunStart()
         {
-            this.AbortNonStopRun();
+            this.NonStopRunEnd();
             this.runningTask = CtkTask.RunOnce((ct) =>
             {
                 //TODO: 重啟時, 會有執行緒被中止的狀況
@@ -417,7 +417,7 @@ namespace CToolkit.v1_1.Net
                 {
                     try
                     {
-                        this.ConnectIfNoAsyn();
+                        this.ConnectTryStart();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
 

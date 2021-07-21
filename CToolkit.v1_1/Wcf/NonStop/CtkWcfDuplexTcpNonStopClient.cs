@@ -48,8 +48,8 @@ namespace CToolkit.v1_1.Wcf.NonStop
         public bool IsOpenRequesting { get { try { return Monitor.TryEnter(this, 10); } finally { Monitor.Exit(this); } } }
         public bool IsRemoteConnected { get { return this.ChannelFactory.State == CommunicationState.Opened; } }
 
-        public int ConnectIfNo() { return this.ConnectIfNoAsyn(); }
-        public int ConnectIfNoAsyn()
+        public int ConnectTry() { return this.ConnectTryStart(); }
+        public int ConnectTryStart()
         {
             if (this.IsLocalReadyConnect) return 0;
             this.WcfConnect(cf =>
@@ -73,7 +73,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         public void Disconnect()
         {
-            this.AbortNonStopRun();
+            this.NonStopRunEnd();
             if (this.ChannelFactory != null)
             {
                 using (var obj = this.ChannelFactory)
@@ -108,7 +108,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         public bool IsNonStopRunning { get { return this.NonStopTask != null && this.NonStopTask.Task.Status < TaskStatus.RanToCompletion; } }
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-        public void AbortNonStopRun()
+        public void NonStopRunEnd()
         {
             if (this.NonStopTask != null)
             {
@@ -116,9 +116,9 @@ namespace CToolkit.v1_1.Wcf.NonStop
                     obj.Cancel();
             }
         }
-        public void NonStopRunAsyn()
+        public void NonStopRunStart()
         {
-            AbortNonStopRun();
+            NonStopRunEnd();
 
             this.NonStopTask = CtkTask.RunOnce((ct) =>
             {
@@ -127,7 +127,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
                     ct.ThrowIfCancellationRequested();
                     try
                     {
-                        this.ConnectIfNo();
+                        this.ConnectTry();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
                     Thread.Sleep(this.m_IntervalTimeOfConnectCheck);

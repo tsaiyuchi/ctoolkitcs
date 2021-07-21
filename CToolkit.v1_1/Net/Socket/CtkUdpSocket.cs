@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace CToolkit.v1_1.Net
 {
-    public class CtkTcpSocket : ICtkProtocolNonStopConnect, IDisposable
+    public class CtkUdpSocket : ICtkProtocolNonStopConnect, IDisposable
     {
         public bool IsActively = false;
         /// <summary>
@@ -25,7 +25,7 @@ namespace CToolkit.v1_1.Net
         bool m_isReceiveLoop = false;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
-        ~CtkTcpSocket() { this.Dispose(false); }
+        ~CtkUdpSocket() { this.Dispose(false); }
         public Socket ConnSocket { get { return m_connSocket; } }
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
@@ -301,7 +301,7 @@ namespace CToolkit.v1_1.Net
                 if (this.m_connSocket == null || !this.m_connSocket.Connected)
                 {
                     CtkNetUtil.DisposeSocketTry(this.m_connSocket);//Dispose舊的
-                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//建立新的
+                    this.m_connSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp);//建立新的
                 }
 
 

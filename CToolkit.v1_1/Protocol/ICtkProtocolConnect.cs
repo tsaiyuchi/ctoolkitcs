@@ -20,8 +20,8 @@ namespace CToolkit.v1_1.Protocol
         /// </summary>
         bool IsOpenRequesting { get; }
 
-        int ConnectIfNo();
-        int ConnectIfNoAsyn();
+        int ConnectTry();
+        int ConnectTryStart();
         void Disconnect();
 
 

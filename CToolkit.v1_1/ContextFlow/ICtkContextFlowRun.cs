@@ -5,6 +5,11 @@ using System.Text;
 
 namespace CToolkit.v1_1.ContextFlow
 {
+    /// <summary>
+    /// 建議:
+    ///     RunLoop call RunOnce call RunSelf(自定)
+    ///     RunLoopStart call RunSelf(自定)
+    /// </summary>
     public interface ICtkContextFlowRun : ICtkContextFlow
     {
         /*[d20210714] RunOnce, RunLoop 以及 RunLoopStart.

@@ -262,7 +262,10 @@ namespace CToolkit.v1_1.Net
                 stateea.Exception = ex;
                 this.OnFailConnect(stateea);
             }
-            finally { }
+            finally
+            {
+                this.mreConnecting.Set();
+            }
         }
         void EndReadCallback(IAsyncResult ar)
         {
@@ -313,7 +316,7 @@ namespace CToolkit.v1_1.Net
         public bool IsRemoteConnected { get { return this.ConnectCount() > 0; } }
 
         //用途是避免重複要求連線
-        public int ConnectIfNo()
+        public int ConnectTry()
         {
             try
             {
@@ -331,6 +334,12 @@ namespace CToolkit.v1_1.Net
                 this.TcpClientList.Enqueue(tcpClient);
                 this.ActiveWorkClient = tcpClient;
 
+
+                /*[d20210722] 一般Sync方法要開始讀取, 應該使用者決定*/
+                //if (this.IsAsynAutoRead) this.BeginRead();
+
+
+
                 return 0;
             }
             finally
@@ -339,7 +348,7 @@ namespace CToolkit.v1_1.Net
                 Monitor.Exit(this);
             }
         }
-        public int ConnectIfNoAsyn()
+        public int ConnectTryStart()
         {
             try
             {
@@ -359,7 +368,6 @@ namespace CToolkit.v1_1.Net
             }
             finally
             {
-                this.mreConnecting.Set();
                 Monitor.Exit(this);
             }
         }
@@ -414,14 +422,14 @@ namespace CToolkit.v1_1.Net
 
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Status < TaskStatus.RanToCompletion; } }
-        public void AbortNonStopRun()
+        public void NonStopRunEnd()
         {
             CtkUtil.DisposeTaskTry(this.runningTask);
             this.runningTask = null;
         }
-        public void NonStopRunAsyn()
+        public void NonStopRunStart()
         {
-            AbortNonStopRun();
+            NonStopRunEnd();
 
             this.runningTask = CtkTask.RunOnce(ct =>
             {
@@ -430,7 +438,7 @@ namespace CToolkit.v1_1.Net
                 {
                     try
                     {
-                        this.ConnectIfNo();
+                        this.ConnectTry();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
 

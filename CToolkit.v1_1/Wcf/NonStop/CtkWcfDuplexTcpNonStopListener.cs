@@ -40,8 +40,8 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         public bool IsOpenRequesting { get { try { return Monitor.TryEnter(this, 10); } finally { Monitor.Exit(this); } } }
         public bool IsRemoteConnected { get { return this.GetAllChannels().Count > 0; } }
 
-        public int ConnectIfNo() { return this.ConnectIfNoAsyn(); }
-        public int ConnectIfNoAsyn()
+        public int ConnectTry() { return this.ConnectTryStart(); }
+        public int ConnectTryStart()
         {
             if (this.IsLocalReadyConnect) return 0;
             try
@@ -84,7 +84,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         }
         public void Disconnect()
         {
-            this.AbortNonStopRun();
+            this.NonStopRunEnd();
             this.Close();
         }
 
@@ -110,9 +110,9 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
 
         public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Task.Status < TaskStatus.RanToCompletion; } }
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-        public void NonStopRunAsyn()
+        public void NonStopRunStart()
         {
-            AbortNonStopRun();
+            NonStopRunEnd();
 
             this.runningTask = CtkTask.RunOnce((ct) =>
             {
@@ -121,7 +121,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
                     ct.ThrowIfCancellationRequested();
                     try
                     {
-                        this.ConnectIfNo();
+                        this.ConnectTry();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
                     Thread.Sleep(this.IntervalTimeOfConnectCheck);
@@ -129,7 +129,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
 
             });
         }
-        public void AbortNonStopRun()
+        public void NonStopRunEnd()
         {
             if (this.runningTask != null)
             {

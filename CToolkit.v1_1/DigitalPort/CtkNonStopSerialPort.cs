@@ -63,7 +63,7 @@ namespace CToolkit.v1_1.DigitalPort
         public object ActiveWorkClient { get { return this.serialPort; } set { if (this.serialPort != value) throw new ArgumentException("不可傳入其它ActiveWorkClient"); } }
 
 
-        public int ConnectIfNo()
+        public int ConnectTry()
         {
             if (this.serialPort != null && this.serialPort.IsOpen) return 0;//連線中直接離開
             try
@@ -134,7 +134,7 @@ namespace CToolkit.v1_1.DigitalPort
             finally { Monitor.Exit(this); }
 
         }
-        public int ConnectIfNoAsyn() { return this.ConnectIfNo(); /*此通訊的連線方式, 同步=非同步*/ }
+        public int ConnectTryStart() { return this.ConnectTry(); /*此通訊的連線方式, 同步=非同步*/ }
         public void Disconnect()
         {
             if (this.threadNonStopConnect != null)
@@ -169,14 +169,14 @@ namespace CToolkit.v1_1.DigitalPort
 
         #region ICtkProtocolNonStopConnect
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-        public void AbortNonStopRun()
+        public void NonStopRunEnd()
         {
             if (this.threadNonStopConnect != null)
                 this.threadNonStopConnect.Abort();
         }
-        public void NonStopRunAsyn()
+        public void NonStopRunStart()
         {
-            AbortNonStopRun();
+            NonStopRunEnd();
 
             this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
             {
@@ -184,7 +184,7 @@ namespace CToolkit.v1_1.DigitalPort
                 {
                     try
                     {
-                        this.ConnectIfNo();
+                        this.ConnectTry();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
 
