@@ -73,7 +73,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         public void Disconnect()
         {
-            this.NonStopRunEnd();
+            this.NonStopRunStop();
             if (this.ChannelFactory != null)
             {
                 using (var obj = this.ChannelFactory)
@@ -108,7 +108,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
 
         public bool IsNonStopRunning { get { return this.NonStopTask != null && this.NonStopTask.Task.Status < TaskStatus.RanToCompletion; } }
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-        public void NonStopRunEnd()
+        public void NonStopRunStop()
         {
             if (this.NonStopTask != null)
             {
@@ -118,7 +118,7 @@ namespace CToolkit.v1_1.Wcf.NonStop
         }
         public void NonStopRunStart()
         {
-            NonStopRunEnd();
+            NonStopRunStop();
 
             this.NonStopTask = CtkTask.RunOnce((ct) =>
             {

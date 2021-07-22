@@ -84,7 +84,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         }
         public void Disconnect()
         {
-            this.NonStopRunEnd();
+            this.NonStopRunStop();
             this.Close();
         }
 
@@ -112,7 +112,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public void NonStopRunStart()
         {
-            NonStopRunEnd();
+            NonStopRunStop();
 
             this.runningTask = CtkTask.RunOnce((ct) =>
             {
@@ -129,7 +129,7 @@ namespace CToolkit.v1_1.Wcf.DuplexTcp
 
             });
         }
-        public void NonStopRunEnd()
+        public void NonStopRunStop()
         {
             if (this.runningTask != null)
             {

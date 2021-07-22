@@ -169,14 +169,14 @@ namespace CToolkit.v1_1.DigitalPort
 
         #region ICtkProtocolNonStopConnect
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
-        public void NonStopRunEnd()
+        public void NonStopRunStop()
         {
             if (this.threadNonStopConnect != null)
                 this.threadNonStopConnect.Abort();
         }
         public void NonStopRunStart()
         {
-            NonStopRunEnd();
+            NonStopRunStop();
 
             this.threadNonStopConnect = new Thread(new ThreadStart(delegate ()
             {

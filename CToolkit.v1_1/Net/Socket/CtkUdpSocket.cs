@@ -435,7 +435,7 @@ namespace CToolkit.v1_1.Net
 
         public int IntervalTimeOfConnectCheck { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool IsNonStopRunning => throw new NotImplementedException();
-        public void NonStopRunEnd()
+        public void NonStopRunStop()
         {
             throw new NotImplementedException();
         }

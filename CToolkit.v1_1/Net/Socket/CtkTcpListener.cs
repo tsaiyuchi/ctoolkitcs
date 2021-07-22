@@ -422,14 +422,14 @@ namespace CToolkit.v1_1.Net
 
         public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Status < TaskStatus.RanToCompletion; } }
-        public void NonStopRunEnd()
+        public void NonStopRunStop()
         {
             CtkUtil.DisposeTaskTry(this.runningTask);
             this.runningTask = null;
         }
         public void NonStopRunStart()
         {
-            NonStopRunEnd();
+            NonStopRunStop();
 
             this.runningTask = CtkTask.RunOnce(ct =>
             {
