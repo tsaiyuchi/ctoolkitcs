@@ -11,6 +11,7 @@ namespace CToolkit.v1_1.Logging
         public string Message;
         public Exception Exception;
         public CtkLoggerEnumLevel Level;
+        public DateTime CreateTime = DateTime.Now;
 
 
 
