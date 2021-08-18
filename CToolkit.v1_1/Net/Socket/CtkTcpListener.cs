@@ -438,7 +438,7 @@ namespace CToolkit.v1_1.Net
                 {
                     try
                     {
-                        this.ConnectTry();
+                        this.ConnectTryStart();
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
 
