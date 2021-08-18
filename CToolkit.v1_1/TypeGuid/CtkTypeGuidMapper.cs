@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,7 +66,15 @@ namespace CToolkit.v1_1.TypeGuid
             var qAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assem in qAssemblies)
             {
-                var qTypes = assem.GetTypes().ToList();
+
+                var qTypes = new List<Type>();
+
+
+                try { qTypes = assem.GetTypes().ToList(); }
+                catch (ReflectionTypeLoadException ex) { qTypes = ex.Types.ToList(); }
+                qTypes = qTypes.Where(x => x != null).ToList();
+
+
                 foreach (var t in qTypes)
                 {
                     if (filter != null && !filter(t.FullName)) continue;
