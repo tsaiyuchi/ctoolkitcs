@@ -17,6 +17,7 @@ namespace CToolkit.v1_1.Net
             using (socket)
             {
                 socket.Shutdown(SocketShutdown.Both);
+                //不想拋出例外的話, 請使用 XxxxxTry 版本
                 if (socket.Connected)
                     socket.Disconnect(false);
                 socket.Close();
@@ -47,6 +48,8 @@ namespace CToolkit.v1_1.Net
             //有exception先接起來, 但工作繼續
             Exception myex = null;
 
+
+            //不想拋出例外的話, 請使用 XxxxxTry 版本
             try { DisposeSocket(client.Client); }
             catch (Exception ex) { myex = ex; }
 
