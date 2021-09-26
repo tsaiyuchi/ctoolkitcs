@@ -198,6 +198,7 @@ namespace CToolkit.v1_1
         private static void RemoveSubscriberEvenIfItsPrivate(
           EventInfo eventInfo, object owningObject, Delegate subscriber, BindingFlags flags)
         {
+            if (eventInfo == null) return;
             MethodInfo privateRemoveMethod = eventInfo.GetRemoveMethod(true);
             privateRemoveMethod.Invoke(owningObject, flags, null, new object[] { subscriber }, CultureInfo.CurrentCulture);
         }
