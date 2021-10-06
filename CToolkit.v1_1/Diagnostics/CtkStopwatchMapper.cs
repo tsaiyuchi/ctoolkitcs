@@ -9,17 +9,19 @@ namespace CToolkit.v1_1.Diagnostics
     {
 
 
-        public void Restart(string key = "")
+        public CtkStopwatch Restart(string key = "")
         {
             var sw = this.Get(key);
             sw.Restart();
+            return sw;
         }
 
 
-        public void Stop(string key = "")
+        public CtkStopwatch Stop(string key = "")
         {
             var sw = this.Get(key);
             sw.Stop();
+            return sw;
         }
 
 
@@ -33,9 +35,33 @@ namespace CToolkit.v1_1.Diagnostics
         }
 
 
+        public static CtkStopwatch SRestart(string key = "")
+        {
+            var me = CtkStopwatchMapper.Singleton;
+            var sw = me.Get(key);
+            sw.Restart();
+            return sw;
+        }
+        public static CtkStopwatch SStop(string key = "")
+        {
+            var me = CtkStopwatchMapper.Singleton;
+            var sw = me.Get(key);
+            sw.Stop();
+            return sw;
+        }
+        public static CtkStopwatch SGet(string key = "")
+        {
+            var me = CtkStopwatchMapper.Singleton;
+            lock (me)
+                if (!me.ContainsKey(key))
+                    me[key] = new CtkStopwatch();
+
+            return me[key];
+        }
+
+
 
         static CtkStopwatchMapper m_singleton;
-
         public static CtkStopwatchMapper Singleton
         {
             get

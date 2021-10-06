@@ -7,34 +7,41 @@ namespace CToolkit.v1_1.Diagnostics
 {
     public class CtkStopwatch : System.Diagnostics.Stopwatch
     {
-        public string message;
+        public List<String> HistoryMessage = new List<string>();
 
 
         public CtkStopwatch() { }
+        ~CtkStopwatch() { this.Clear(); }
         public CtkStopwatch(bool restart) { if (restart) this.Restart(); }
 
         public String RestartMsg(string format)
         {
             this.Stop();
             var msg = string.Format(format, this.ElapsedMilliseconds);
-            message += msg;
+            this.HistoryMessage.Add(msg);
             this.Reset();
             this.Start();
             return msg;
         }
-        public void StopMsg(string format)
+        public String StopMsg(string format)
         {
             this.Stop();
-            message += string.Format(format, this.ElapsedMilliseconds);
+            var msg = string.Format(format, this.ElapsedMilliseconds);
+            this.HistoryMessage.Add(msg);
+            return msg;
         }
 
 
 
 
-        public void AppendMessage(string format) { this.message += string.Format(format, this.ElapsedMilliseconds); }
+        public void AppendMessage(string format) { this.HistoryMessage.Add(string.Format(format, this.ElapsedMilliseconds)); }
 
-        public void Clear() { this.Reset(); this.message = ""; }
-        public string GetMessage() { return this.message; }
+        public void Clear()
+        {
+            this.Reset();
+            this.HistoryMessage.Clear();
+        }
+        public string GetMessage(String separator = "\r\n") { return String.Join(separator, this.HistoryMessage); }
 
         public static CtkStopwatch Singleton { get { return CtkStopwatchMapper.Singleton.Get(); } }
     }
