@@ -43,6 +43,7 @@ namespace CToolkit.v1_1.Threading
 
         #region --- Static --- --- ---
 
+        /// <summary> 執行一次沒機會用 CancelToken </summary>
         public static CtkTask RunOnce(Action act, String name = null)
         {
             var task = new CtkTask();
@@ -54,8 +55,7 @@ namespace CToolkit.v1_1.Threading
         /// 
         /// </summary>
         /// <param name="funcIsContinue">if return ture then continue</param>
-        /// <returns></returns>
-        public static CtkTask RunLoop(Func<bool> funcIsContinue)
+        public static CtkTask RunLoop(Func<bool> funcIsContinue, int sleep = 0)
         {
             var task = new CtkTask();
             var ct = task.CancelTokenSource.Token;
@@ -65,12 +65,13 @@ namespace CToolkit.v1_1.Threading
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue()) break;
+                    if (sleep > 0) Thread.Sleep(sleep);
                 }
             }, ct);
 
             return task;
         }
-        public static CtkTask RunLoop(Func<bool> funcIsContinue, int sleep)
+        public static CtkTask RunLoop(Func<bool> funcIsContinue, string name, int sleep = 0)
         {
             var task = new CtkTask();
             var ct = task.CancelTokenSource.Token;
@@ -80,29 +81,14 @@ namespace CToolkit.v1_1.Threading
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue()) break;
-                    Thread.Sleep(sleep);
-                }
-            }, ct);
-
-            return task;
-        }
-        public static CtkTask RunLoop(Func<bool> funcIsContinue, string name)
-        {
-            var task = new CtkTask();
-            var ct = task.CancelTokenSource.Token;
-            task.Task = Task.Factory.StartNew(() =>
-            {
-                while (!ct.IsCancellationRequested)
-                {
-                    ct.ThrowIfCancellationRequested();
-                    if (!funcIsContinue()) break;
+                    if (sleep > 0) Thread.Sleep(sleep);
                 }
             }, ct);
             task.Name = name;
             return task;
         }
 
-        public static CtkTask RunLoop(Func<CancellationToken, bool> funcIsContinue, string name)
+        public static CtkTask RunLoop(Func<CancellationToken, bool> funcIsContinue, int sleep = 0)
         {
             var task = new CtkTask();
             var ct = task.CancelTokenSource.Token;
@@ -112,18 +98,35 @@ namespace CToolkit.v1_1.Threading
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue(ct)) break;
+                    if (sleep > 0) Thread.Sleep(sleep);
+                }
+            }, ct);
+            return task;
+        }
+        public static CtkTask RunLoop(Func<CancellationToken, bool> funcIsContinue, string name, int sleep = 0)
+        {
+            var task = new CtkTask();
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (!funcIsContinue(ct)) break;
+                    if (sleep > 0) Thread.Sleep(sleep);
                 }
             }, ct);
             task.Name = name;
             return task;
         }
-        public static CtkTask RunOnce(Action<CancellationToken> act)
+        public static CtkTask RunOnce(Action<CancellationToken> act, int sleep = 0)
         {
             var task = new CtkTask();
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
             {
                 act(ct);
+                if (sleep > 0) Thread.Sleep(sleep);
             }, ct);
 
             return task;
