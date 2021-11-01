@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CToolkit.v1_1.Net
 {
-    class CtkFtp
+    public class CtkFtp
     {
 
         public static void test()
@@ -27,5 +27,21 @@ namespace CToolkit.v1_1.Net
             // download the file again
             client.DownloadFile(@"C:\MyVideo_2.mp4", "/htdocs/big2.txt");
         }
+
+        public static void Upload(String host, String acc, String pwd, String src, String dest)
+        {
+            // connect to the FTP server
+            using (var client = new FtpClient())
+            {
+                client.Host = host;
+                client.Credentials = new NetworkCredential(acc, pwd);
+                client.Connect();
+                // upload a file
+                client.UploadFile(src, dest);
+            }
+        }
+
+
+
     }
 }
