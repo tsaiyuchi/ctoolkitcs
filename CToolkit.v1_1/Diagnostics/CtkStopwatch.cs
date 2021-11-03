@@ -14,20 +14,20 @@ namespace CToolkit.v1_1.Diagnostics
         ~CtkStopwatch() { this.Clear(); }
         public CtkStopwatch(bool restart) { if (restart) this.Restart(); }
 
-        public String RestartMsg(string format)
+        public String MsgWithRestart(string format, bool isRecordToHist = false)
         {
             this.Stop();
             var msg = string.Format(format, this.ElapsedMilliseconds);
-            this.HistoryMessage.Add(msg);
+            if (isRecordToHist) this.HistoryMessage.Add(msg);
             this.Reset();
             this.Start();
             return msg;
         }
-        public String StopMsg(string format)
+        public String MsgWithStop(string format, bool isRecordToHist = false)
         {
             this.Stop();
             var msg = string.Format(format, this.ElapsedMilliseconds);
-            this.HistoryMessage.Add(msg);
+            if (isRecordToHist) this.HistoryMessage.Add(msg);
             return msg;
         }
 
@@ -43,7 +43,6 @@ namespace CToolkit.v1_1.Diagnostics
         }
         public string GetMessage(String separator = "\r\n") { return String.Join(separator, this.HistoryMessage); }
 
-        public static CtkStopwatch Singleton { get { return CtkStopwatchMapper.Singleton.Get(); } }
     }
 
 
