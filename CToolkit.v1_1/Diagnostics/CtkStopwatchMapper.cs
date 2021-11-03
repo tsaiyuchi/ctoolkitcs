@@ -35,19 +35,28 @@ namespace CToolkit.v1_1.Diagnostics
         }
 
 
+
         public static CtkStopwatch SRestart(string key = "")
         {
-            var me = CtkStopwatchMapper.Singleton;
-            var sw = me.Get(key);
+            var sw = SGet(key);
             sw.Restart();
             return sw;
         }
         public static CtkStopwatch SStop(string key = "")
         {
-            var me = CtkStopwatchMapper.Singleton;
-            var sw = me.Get(key);
+            var sw = SGet(key);
             sw.Stop();
             return sw;
+        }
+        public static String SMsgWithRestart(String format, bool isRecordHist = false, string key = "")
+        {
+            var sw = SGet(key);
+            return sw.MsgWithRestart(format, isRecordHist);
+        }
+        public static String SMsgWithStop(String format, bool isRecordHist = false, string key = "")
+        {
+            var sw = SGet(key);
+            return sw.MsgWithStop(format, isRecordHist);
         }
         public static CtkStopwatch SGet(string key = "")
         {
