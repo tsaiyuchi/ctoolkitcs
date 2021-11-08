@@ -69,6 +69,16 @@ namespace CToolkit.v1_1.Wcf.NetTcp
             }
         }
 
+        public virtual void Close()
+        {
+            using (var obj = this.ChannelFactory)
+            {
+                obj.Abort();
+                obj.Close();
+            }
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);//關閉就代表此類別不用了
+        }
+
 
         public virtual TService CreateChannel() { return this.ChannelFactory.CreateChannel(); }
 
@@ -87,7 +97,7 @@ namespace CToolkit.v1_1.Wcf.NetTcp
 
         public virtual void DisposeSelf()
         {
-
+            this.Close();
         }
 
         protected virtual void Dispose(bool disposing)
