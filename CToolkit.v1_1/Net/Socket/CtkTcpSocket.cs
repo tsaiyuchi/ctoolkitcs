@@ -106,7 +106,8 @@ namespace CToolkit.v1_1.Net
             }
             finally
             {
-                this.mreIsReceiving.Set();//同步型的, 結束就可以Set
+                try { this.mreIsReceiving.Set(); /*同步型的, 結束就可以Set*/ }
+                catch (ObjectDisposedException) { }
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
             return 0;
@@ -155,7 +156,8 @@ namespace CToolkit.v1_1.Net
             }
             finally
             {
-                this.mreIsConnecting.Set();
+                try { this.mreIsReceiving.Set(); /*同步型的, 結束就可以Set*/ }
+                catch (ObjectDisposedException) { }
                 Monitor.Exit(this);
             }
         }
@@ -204,7 +206,8 @@ namespace CToolkit.v1_1.Net
             }
             finally
             {
-                this.mreIsConnecting.Set();
+                try { this.mreIsReceiving.Set(); /*同步型的, 結束就可以Set*/ }
+                catch (ObjectDisposedException) { }
                 Monitor.Exit(this);
             }
         }
