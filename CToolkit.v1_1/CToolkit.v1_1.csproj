@@ -237,6 +237,7 @@
     <Compile Include="WinApi\CtkEventArgsHookCallback.cs" />
     <Compile Include="WinApi\CtkHookKeyboard.cs" />
     <Compile Include="WinApi\CtkHookMouse.cs" />
+    <Compile Include="WinApi\CtkNetworkShare.cs" />
     <Compile Include="WinApi\CtkUtilUser32.cs" />
     <Compile Include="XmlSerialize\CtkDictionary.cs" />
     <Compile Include="XmlSerialize\CtkKeyValuePair.cs" />
