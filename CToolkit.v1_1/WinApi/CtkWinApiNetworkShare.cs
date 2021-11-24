@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CToolkit.v1_1.WinApi
 {
-    public static class CtkNetworkShare
+    public static class CtkWinApiNetworkShare
     {
         /// <summary>
         /// Connects to the remote share
