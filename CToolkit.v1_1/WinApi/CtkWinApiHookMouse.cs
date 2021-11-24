@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace CToolkit.v1_1.WinApi
 {
-    public class CtkHookMouse
+    public class CtkWinApiHookMouse
     {
         IntPtr intPtrHook;
         CtkUser32Lib.HookProc HookProcdure;
@@ -27,7 +27,7 @@ namespace CToolkit.v1_1.WinApi
         int m_OldX = 0;
         int m_OldY = 0;
 
-        ~CtkHookMouse()
+        ~CtkWinApiHookMouse()
         {
             this.Unhook();
         }
@@ -100,7 +100,7 @@ namespace CToolkit.v1_1.WinApi
                 catch (Exception ex)
                 {
                     //給背景執行緒處理, 再出Exception也與原執行緒無關, 可以正常工作
-                    ThreadPool.QueueUserWorkItem(delegate { this.OnHookCallbackException(new CtkEventArgsException() { exception = ex }); });
+                    ThreadPool.QueueUserWorkItem(delegate { this.OnHookCallbackException(new CtkWinApiEventArgsException() { exception = ex }); });
                 }
             }
 
@@ -117,8 +117,8 @@ namespace CToolkit.v1_1.WinApi
 
 
         //---HookCallback----------------------------------------------------------------
-        public event EventHandler<CtkEventArgsHookCallback> EhHookCallback;
-        protected void OnHookCallback(CtkEventArgsHookCallback ehargs)
+        public event EventHandler<CtkWinApiEventArgsHookCallback> EhHookCallback;
+        protected void OnHookCallback(CtkWinApiEventArgsHookCallback ehargs)
         {
             if (EhHookCallback == null) return;
             this.EhHookCallback(this, ehargs);
@@ -126,8 +126,8 @@ namespace CToolkit.v1_1.WinApi
 
 
 
-        public event EventHandler<CtkEventArgsException> EhHookCallbackException;
-        protected void OnHookCallbackException(CtkEventArgsException ex)
+        public event EventHandler<CtkWinApiEventArgsException> EhHookCallbackException;
+        protected void OnHookCallbackException(CtkWinApiEventArgsException ex)
         {
             if (EhHookCallbackException == null) return;
             this.EhHookCallbackException(this, ex);
@@ -147,7 +147,7 @@ namespace CToolkit.v1_1.WinApi
             /// <summary>
             /// 取得按下哪個滑鼠鍵的資訊。
             /// </summary>
-            public CtkEnumMouseLMR Button { get; private set; }
+            public CtkWinApiEnumMouseLMR Button { get; private set; }
             /// <summary>
             /// 取得滑鼠滾輪滾動時帶有正負號的刻度數乘以 WHEEL_DELTA 常數。 一個刻度是一個滑鼠滾輪的刻痕。
             /// </summary>
@@ -162,20 +162,20 @@ namespace CToolkit.v1_1.WinApi
             public int Y { get; private set; }
             internal EventArgsMouse(CtkEnumConst wParam, int x, int y, int delta)
             {
-                Button = CtkEnumMouseLMR.None;
+                Button = CtkWinApiEnumMouseLMR.None;
                 switch (wParam)
                 {
                     case CtkEnumConst.WM_LBUTTONDOWN:
                     case CtkEnumConst.WM_LBUTTONUP:
-                        Button = CtkEnumMouseLMR.Left;
+                        Button = CtkWinApiEnumMouseLMR.Left;
                         break;
                     case CtkEnumConst.WM_RBUTTONDOWN:
                     case CtkEnumConst.WM_RBUTTONUP:
-                        Button = CtkEnumMouseLMR.Right;
+                        Button = CtkWinApiEnumMouseLMR.Right;
                         break;
                     case CtkEnumConst.WM_MBUTTONDOWN:
                     case CtkEnumConst.WM_MBUTTONUP:
-                        Button = CtkEnumMouseLMR.Middle;
+                        Button = CtkWinApiEnumMouseLMR.Middle;
                         break;
                 }
                 this.X = x;

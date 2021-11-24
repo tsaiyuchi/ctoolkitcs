@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CToolkit.v1_1.WinApi
 {
-    public class CtkEventArgsHookCallback : EventArgs
+    public class CtkWinApiEventArgsHookCallback : EventArgs
     {
         public int nCode;
         public IntPtr wParam;

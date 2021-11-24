@@ -7,7 +7,7 @@ using System.Text;
 namespace CToolkit.v1_1.WinApi
 {
 
-    public class CtkUtilUser32
+    public class CtkWinApiUtilUser32
     {
 
 

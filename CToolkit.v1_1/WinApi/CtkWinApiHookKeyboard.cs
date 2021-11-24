@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace CToolkit.v1_1.WinApi
 {
-    public class CtkHookKeyboard
+    public class CtkWinApiHookKeyboard
     {
         IntPtr intPtrHook;
         CtkUser32Lib.HookProc hookProc;
@@ -18,7 +18,7 @@ namespace CToolkit.v1_1.WinApi
         public bool IsKeepAlt { get { return keepKeys[164]; } }
 
 
-        ~CtkHookKeyboard()
+        ~CtkWinApiHookKeyboard()
         {
             this.Unhook();
         }
@@ -52,8 +52,8 @@ namespace CToolkit.v1_1.WinApi
         {
             if (nCode >= 0)
             {
-                try { this.OnHookCallback(new CtkEventArgsHookCallback() { nCode = nCode, wParam = wParam, lParam = lParam }); }
-                catch (Exception ex) { ThreadPool.QueueUserWorkItem(delegate { this.OnHookCallbackException(new CtkEventArgsException() { exception = ex }); }); }
+                try { this.OnHookCallback(new CtkWinApiEventArgsHookCallback() { nCode = nCode, wParam = wParam, lParam = lParam }); }
+                catch (Exception ex) { ThreadPool.QueueUserWorkItem(delegate { this.OnHookCallbackException(new CtkWinApiEventArgsException() { exception = ex }); }); }
 
                 try
                 {
@@ -69,7 +69,7 @@ namespace CToolkit.v1_1.WinApi
                 catch (Exception ex)
                 {
                     //給背景執行緒處理, 再出Exception也與原執行緒無關, 可以正常工作
-                    ThreadPool.QueueUserWorkItem(delegate { this.OnHookCallbackException(new CtkEventArgsException() { exception = ex }); });
+                    ThreadPool.QueueUserWorkItem(delegate { this.OnHookCallbackException(new CtkWinApiEventArgsException() { exception = ex }); });
                 }
             }
             return CtkUser32Lib.CallNextHookEx(intPtrHook, nCode, wParam, lParam);
@@ -83,8 +83,8 @@ namespace CToolkit.v1_1.WinApi
 
 
         //---HookCallback----------------------------------------------------------------
-        public event EventHandler<CtkEventArgsHookCallback> EhHookCallback;
-        protected void OnHookCallback(CtkEventArgsHookCallback ehargs)
+        public event EventHandler<CtkWinApiEventArgsHookCallback> EhHookCallback;
+        protected void OnHookCallback(CtkWinApiEventArgsHookCallback ehargs)
         {
             if (EhHookCallback == null) return;
             this.EhHookCallback(this, ehargs);
@@ -93,8 +93,8 @@ namespace CToolkit.v1_1.WinApi
 
 
 
-        public event EventHandler<CtkEventArgsException> EhHookCallbackException;
-        protected void OnHookCallbackException(CtkEventArgsException ex)
+        public event EventHandler<CtkWinApiEventArgsException> EhHookCallbackException;
+        protected void OnHookCallbackException(CtkWinApiEventArgsException ex)
         {
             if (EhHookCallbackException == null) return;
             this.EhHookCallbackException(this, ex);

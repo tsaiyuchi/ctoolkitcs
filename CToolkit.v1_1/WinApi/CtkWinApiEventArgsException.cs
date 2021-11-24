@@ -5,11 +5,8 @@ using System.Text;
 
 namespace CToolkit.v1_1.WinApi
 {
-    public enum CtkEnumMouseLMR
+    public class CtkWinApiEventArgsException : EventArgs
     {
-        None,
-        Left,
-        Right,
-        Middle
+        public Exception exception;
     }
 }
