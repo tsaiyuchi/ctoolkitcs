@@ -236,6 +236,7 @@
     <Compile Include="WinApiNative\CtkMdlInputType.cs" />
     <Compile Include="WinApiNative\CtkUser32Lib.cs" />
     <Compile Include="WinApiNative\CtkWinInetLib.cs" />
+<<<<<<< HEAD
     <Compile Include="WinApi\CtkWinApiEnumMouseLMR.cs" />
     <Compile Include="WinApi\CtkWinApiEventArgsException.cs" />
     <Compile Include="WinApi\CtkWinApiEventArgsHookCallback.cs" />
@@ -244,6 +245,15 @@
     <Compile Include="WinApi\CtkWinApiHookKeyboard.cs" />
     <Compile Include="WinApi\CtkWinApiHookMouse.cs" />
     <Compile Include="WinApi\CtkWinApiUtilUser32.cs" />
+=======
+    <Compile Include="WinApi\CtkEnumMouseLMR.cs" />
+    <Compile Include="WinApi\CtkEventArgsException.cs" />
+    <Compile Include="WinApi\CtkEventArgsHookCallback.cs" />
+    <Compile Include="WinApi\CtkHookKeyboard.cs" />
+    <Compile Include="WinApi\CtkHookMouse.cs" />
+    <Compile Include="WinApi\CtkNetworkShare.cs" />
+    <Compile Include="WinApi\CtkUtilUser32.cs" />
+>>>>>>> e097dd8be232de8d1e4605f2a42cb4d40fc11e9e
     <Compile Include="XmlSerialize\CtkDictionary.cs" />
     <Compile Include="XmlSerialize\CtkKeyValuePair.cs" />
     <Compile Include="_Worker\ReadMe.cs" />
