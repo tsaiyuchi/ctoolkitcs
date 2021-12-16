@@ -11,7 +11,7 @@
             Debugging problems with FTP is much easier when you enable logging. See the FAQ on our Github project page for more info.
             </summary>
         </member>
-        <member name="M:FluentFTP.FtpClient.AutoDetect(System.Boolean)">
+        <member name="M:FluentFTP.FtpClient.AutoDetect(System.Boolean,System.Boolean)">
             <summary>
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
@@ -19,7 +19,21 @@
             You can then generate code for the profile using the FtpProfile.ToCode method.
             If no successful profiles are found, a blank list is returned.
             </summary>
-            <param name="firstOnly">Find all successful profiles (false) or stop after finding the first successful profile (true)?</param>
+            <param name="firstOnly">Find all successful profiles (false) or stop after finding the first successful profile (true)</param>
+            <param name="cloneConnection">Use a new cloned FtpClient for testing connection profiles (true) or use the source FtpClient (false)</param>
+            <returns></returns>
+        </member>
+        <member name="M:FluentFTP.FtpClient.AutoDetectAsync(System.Boolean,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Automatic FTP and FTPS connection negotiation.
+            This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
+            You can configure it to stop after finding the first successful profile, or to collect all successful profiles.
+            You can then generate code for the profile using the FtpProfile.ToCode method.
+            If no successful profiles are found, a blank list is returned.
+            </summary>
+            <param name="firstOnly">Find all successful profiles (false) or stop after finding the first successful profile (true)</param>
+            <param name="cloneConnection">Use a new cloned FtpClient for testing connection profiles (true) or use the source FtpClient (false)</param>
+            <param name="token">The token that can be used to cancel the entire process</param>
             <returns></returns>
         </member>
         <member name="M:FluentFTP.FtpClient.Connect(FluentFTP.FtpProfile)">
@@ -43,6 +57,7 @@
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and connects to the first successful profile.
             Returns the FtpProfile if the connection succeeded, or null if it failed.
+            It will throw exceptions for permanent failures like invalid host or invalid credentials.
             </summary>
         </member>
         <member name="M:FluentFTP.FtpClient.AutoConnectAsync(System.Threading.CancellationToken)">
@@ -50,6 +65,7 @@
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and connects to the first successful profile.
             Returns the FtpProfile if the connection succeeded, or null if it failed.
+            It will throw exceptions for permanent failures like invalid host or invalid credentials.
             </summary>
         </member>
         <member name="M:FluentFTP.FtpClient.#ctor">
@@ -150,21 +166,18 @@
             Clones the control connection for opening multiple data streams
             </summary>
             <returns>A new control connection with the same property settings as this one</returns>
-            <example><code source="..\Examples\CloneConnection.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.Connect">
             <summary>
             Connect to the server
             </summary>
             <exception cref="T:System.ObjectDisposedException">Thrown if this object has been disposed.</exception>
-            <example><code source="..\Examples\Connect.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.ConnectAsync(System.Threading.CancellationToken)">
             <summary>
             Connect to the server
             </summary>
             <exception cref="T:System.ObjectDisposedException">Thrown if this object has been disposed.</exception>
-            <example><code source="..\Examples\Connect.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.Connect(FluentFTP.FtpSocketStream)">
             <summary>
@@ -456,7 +469,6 @@
             Deletes a file on the server
             </summary>
             <param name="path">The full or relative path to the file</param>
-            <example><code source="..\Examples\DeleteFile.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DeleteFileAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -471,7 +483,6 @@
             </summary>
             <param name="path">The full or relative path to the file</param>
             <returns>True if the file exists</returns>
-            <example><code source="..\Examples\FileExists.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.FileExistsAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -489,7 +500,6 @@
             </summary>
             <param name="path">The full or relative path to the object</param>
             <param name="dest">The new full or relative path including the new name of the object</param>
-            <example><code source="..\Examples\Rename.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.RenameAsync(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -670,7 +680,6 @@
             </summary>
             <param name="item">The symbolic link</param>
             <returns>FtpListItem, null if the link can't be dereferenced</returns>
-            <example><code source="..\Examples\DereferenceLink.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DereferenceLink(FluentFTP.FtpListItem,System.Int32)">
             <summary>
@@ -679,7 +688,6 @@
             <param name="item">The symbolic link</param>
             <param name="recMax">The maximum depth of recursion that can be performed before giving up.</param>
             <returns>FtpListItem, null if the link can't be dereferenced</returns>
-            <example><code source="..\Examples\DereferenceLink.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DereferenceLink(FluentFTP.FtpListItem,System.Int32,System.Int32@)">
             <summary>
@@ -689,7 +697,6 @@
             <param name="recMax">Maximum recursive calls</param>
             <param name="count">Counter</param>
             <returns>FtpListItem, null if the link can't be dereferenced</returns>
-            <example><code source="..\Examples\DereferenceLink.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DereferenceLinkAsync(FluentFTP.FtpListItem,System.Int32,FluentFTP.IntRef,System.Threading.CancellationToken)">
             <summary>
@@ -718,28 +725,29 @@
             <param name="token">The token that can be used to cancel the entire process</param>
             <returns>FtpListItem, null if the link can't be dereferenced</returns>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetFileSize(System.String)">
+        <member name="M:FluentFTP.FtpClient.GetFileSize(System.String,System.Int64)">
             <summary>
             Gets the size of a remote file, in bytes.
             </summary>
             <param name="path">The full or relative path of the file</param>
-            <returns>-1 if the command fails, otherwise the file size</returns>
-            <example><code source="..\Examples\GetFileSize.cs" lang="cs" /></example>
+            <param name="defaultValue">Value to return if there was an error obtaining the file size, or if the file does not exist</param>
+            <returns>The size of the file, or defaultValue if there was a problem.</returns>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetFileSizeInternal(System.String,FluentFTP.FtpSizeReply)">
+        <member name="M:FluentFTP.FtpClient.GetFileSizeInternal(System.String,FluentFTP.FtpSizeReply,System.Int64)">
             <summary>
             Gets the file size of an object, without locking
             </summary>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetFileSizeAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.GetFileSizeAsync(System.String,System.Int64,System.Threading.CancellationToken)">
             <summary>
             Asynchronously gets the size of a remote file, in bytes.
             </summary>
             <param name="path">The full or relative path of the file</param>
+            <param name="defaultValue">Value to return if there was an error obtaining the file size, or if the file does not exist</param>
             <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>The size of the file, -1 if there was a problem.</returns>
+            <returns>The size of the file, or defaultValue if there was a problem.</returns>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetFileSizeInternalAsync(System.String,System.Threading.CancellationToken,FluentFTP.FtpSizeReply)">
+        <member name="M:FluentFTP.FtpClient.GetFileSizeInternalAsync(System.String,System.Int64,System.Threading.CancellationToken,FluentFTP.FtpSizeReply)">
             <summary>
             Gets the file size of an object, without locking
             </summary>
@@ -750,7 +758,6 @@
             </summary>
             <param name="path">The full path to the file</param>
             <returns>The modified time, or <see cref="F:System.DateTime.MinValue"/> if there was a problem</returns>
-            <example><code source="..\Examples\GetModifiedTime.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.GetModifiedTimeAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -1053,7 +1060,6 @@
             Deletes the specified directory and all its contents.
             </summary>
             <param name="path">The full or relative path of the directory to delete</param>
-            <example><code source="..\Examples\DeleteDirectory.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DeleteDirectory(System.String,FluentFTP.FtpListOption)">
             <summary>
@@ -1061,7 +1067,6 @@
             </summary>
             <param name="path">The full or relative path of the directory to delete</param>
             <param name="options">Useful to delete hidden files or dot-files.</param>
-            <example><code source="..\Examples\DeleteDirectory.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DeleteDirInternal(System.String,System.Boolean,FluentFTP.FtpListOption)">
             <summary>
@@ -1070,7 +1075,6 @@
             <param name="path">The full or relative path of the directory to delete</param>
             <param name="deleteContents">If the directory is not empty, remove its contents</param>
             <param name="options">Useful to delete hidden files or dot-files.</param>
-            <example><code source="..\Examples\DeleteDirectory.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.WasGetListingRecursive(FluentFTP.FtpListOption)">
             <summary>
@@ -1116,7 +1120,6 @@
             </summary>
             <param name="path">The path of the directory</param>
             <returns>True if it exists, false otherwise.</returns>
-            <example><code source="..\Examples\DirectoryExists.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DirectoryExistsAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -1137,7 +1140,6 @@
             directories do not exist, then they are created.
             </summary>
             <param name="path">The full or relative path to the new remote directory</param>
-            <example><code source="..\Examples\CreateDirectory.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.CreateDirectory(System.String,System.Boolean)">
             <summary>
@@ -1145,7 +1147,6 @@
             </summary>
             <param name="path">The full or relative path to the new remote directory</param>
             <param name="force">Try to force all non-existent pieces of the path to be created</param>
-            <example><code source="..\Examples\CreateDirectory.cs" lang="cs" /></example>
             <returns>True if directory was created, false if it was skipped</returns>
         </member>
         <member name="M:FluentFTP.FtpClient.CreateDirectoryAsync(System.String,System.Boolean,System.Threading.CancellationToken)">
@@ -1193,7 +1194,6 @@
             Sets the work directory on the server
             </summary>
             <param name="path">The path of the directory to change to</param>
-            <example><code source="..\Examples\SetWorkingDirectory.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.SetWorkingDirectoryAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -1207,13 +1207,24 @@
             Gets the current working directory
             </summary>
             <returns>The current working directory, ./ if the response couldn't be parsed.</returns>
-            <example><code source="..\Examples\GetWorkingDirectory.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.GetWorkingDirectoryAsync(System.Threading.CancellationToken)">
             <summary>
             Gets the current working directory asynchronously
             </summary>
             <returns>The current working directory, ./ if the response couldn't be parsed.</returns>
+        </member>
+        <member name="M:FluentFTP.FtpClient.IsRoot">
+            <summary>
+            Is the current working directory the root?
+            </summary>
+            <returns>true if root.</returns>
+        </member>
+        <member name="M:FluentFTP.FtpClient.IsRootAsync(System.Threading.CancellationToken)">
+            <summary>
+            Is the current working directory the root?
+            </summary>
+            <returns>true if root.</returns>
         </member>
         <member name="M:FluentFTP.FtpClient.UploadDirectory(System.String,System.String,FluentFTP.FtpFolderSyncMode,FluentFTP.FtpRemoteExists,FluentFTP.FtpVerify,System.Collections.Generic.List{FluentFTP.Rules.FtpRule},System.Action{FluentFTP.FtpProgress})">
             <summary>
@@ -1447,114 +1458,13 @@
             Returns a blank list if nothing was transfered. Never returns null.
             </returns>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetFirstMutualChecksum(FluentFTP.FtpClient)">
-            <summary>
-            Get the first checksum algorithm mutually supported by both servers.
-            </summary>
-        </member>
-        <member name="M:FluentFTP.FtpClient.GetHashAlgorithm">
-            <summary>
-            Gets the currently selected hash algorithm for the HASH command.
-            </summary>
-            <remarks>
-             This feature is experimental. See this link for details:
-            http://tools.ietf.org/html/draft-bryan-ftpext-hash-02
-            </remarks>
-            <returns>The <see cref="T:FluentFTP.FtpHashAlgorithm"/> flag or <see cref="F:FluentFTP.FtpHashAlgorithm.NONE"/> if there was a problem.</returns>
-            <example><code source="..\Examples\GetHashAlgorithm.cs" lang="cs" /></example>
-        </member>
-        <member name="M:FluentFTP.FtpClient.GetHashAlgorithmAsync(System.Threading.CancellationToken)">
-            <summary>
-            Gets the currently selected hash algorithm for the HASH command asynchronously.
-            </summary>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>The <see cref="T:FluentFTP.FtpHashAlgorithm"/> flag or <see cref="F:FluentFTP.FtpHashAlgorithm.NONE"/> if there was a problem.</returns>
-        </member>
-        <member name="M:FluentFTP.FtpClient.SetHashAlgorithm(FluentFTP.FtpHashAlgorithm)">
-            <summary>
-            Sets the hash algorithm on the server to use for the HASH command. 
-            </summary>
-            <remarks>
-            If you specify an algorithm not listed in <see cref="P:FluentFTP.FtpClient.HashAlgorithms"/>
-            a <see cref="T:System.NotImplementedException"/> will be thrown
-            so be sure to query that list of Flags before
-            selecting a hash algorithm. Support for the
-            HASH command is experimental. Please see
-            the following link for more details:
-            http://tools.ietf.org/html/draft-bryan-ftpext-hash-02
-            </remarks>
-            <param name="type">Hash Algorithm</param>
-            <exception cref="T:System.NotImplementedException">Thrown if the selected algorithm is not available on the server</exception>
-            <example><code source="..\Examples\SetHashAlgorithm.cs" lang="cs" /></example>
-        </member>
-        <member name="M:FluentFTP.FtpClient.SetHashAlgorithmAsync(FluentFTP.FtpHashAlgorithm,System.Threading.CancellationToken)">
-            <summary>
-            Sets the hash algorithm on the server to be used with the HASH command asynchronously.
-            </summary>
-            <param name="type">Hash algorithm to use</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <exception cref="T:System.NotImplementedException">Thrown if the selected algorithm is not available on the server</exception>
-        </member>
-        <member name="M:FluentFTP.FtpClient.GetHash(System.String)">
-            <summary>
-            Gets the hash of an object on the server using the currently selected hash algorithm. 
-            </summary>
-            <remarks>
-            Supported algorithms, if any, are available in the <see cref="P:FluentFTP.FtpClient.HashAlgorithms"/>
-            property. You should confirm that it's not equal
-            to <see cref="F:FluentFTP.FtpHashAlgorithm.NONE"/> before calling this method
-            otherwise the server trigger a <see cref="T:FluentFTP.FtpCommandException"/>
-            due to a lack of support for the HASH command. You can
-            set the algorithm using the <see cref="M:FluentFTP.FtpClient.SetHashAlgorithm(FluentFTP.FtpHashAlgorithm)"/> method and
-            you can query the server for the current hash algorithm
-            using the <see cref="M:FluentFTP.FtpClient.GetHashAlgorithm"/> method.
-            </remarks>
-            <param name="path">Full or relative path of the object to compute the hash for.</param>
-            <returns>The hash of the file.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">
-            Thrown if the <see cref="P:FluentFTP.FtpClient.HashAlgorithms"/> property is <see cref="F:FluentFTP.FtpHashAlgorithm.NONE"/>, 
-            the remote path does not exist, or the command cannot be executed.
-            </exception>
-            <exception cref="T:System.ArgumentException">Path argument is null</exception>
-            <exception cref="T:System.NotImplementedException">Thrown when an unknown hash algorithm type is returned by the server</exception>
-            <example><code source="..\Examples\GetHash.cs" lang="cs" /></example>
-        </member>
-        <member name="M:FluentFTP.FtpClient.ParseHashValue(FluentFTP.FtpReply,FluentFTP.FtpHash)">
-            <summary>
-            Parses the recieved hash value into the FtpHash object
-            </summary>
-        </member>
-        <member name="M:FluentFTP.FtpClient.GetHashAsync(System.String,System.Threading.CancellationToken)">
-            <summary>
-            Gets the hash of an object on the server using the currently selected hash algorithm asynchronously. 
-            </summary>
-            <remarks>
-            Supported algorithms, if any, are available in the <see cref="P:FluentFTP.FtpClient.HashAlgorithms"/>
-            property. You should confirm that it's not equal
-            to <see cref="F:FluentFTP.FtpHashAlgorithm.NONE"/> before calling this method
-            otherwise the server trigger a <see cref="T:FluentFTP.FtpCommandException"/>
-            due to a lack of support for the HASH command. You can
-            set the algorithm using the <see cref="M:FluentFTP.FtpClient.SetHashAlgorithm(FluentFTP.FtpHashAlgorithm)"/> method and
-            you can query the server for the current hash algorithm
-            using the <see cref="M:FluentFTP.FtpClient.GetHashAlgorithm"/> method.
-            </remarks>
-            <param name="path">The file you want the server to compute the hash for</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <exception cref="T:FluentFTP.FtpCommandException">
-            Thrown if the <see cref="P:FluentFTP.FtpClient.HashAlgorithms"/> property is <see cref="F:FluentFTP.FtpHashAlgorithm.NONE"/>, 
-            the remote path does not exist, or the command cannot be executed.
-            </exception>
-            <exception cref="T:System.ArgumentException">Path argument is null</exception>
-            <exception cref="T:System.NotImplementedException">Thrown when an unknown hash algorithm type is returned by the server</exception>
-            <returns>The hash of the file.</returns>
-        </member>
         <member name="M:FluentFTP.FtpClient.GetChecksum(System.String,FluentFTP.FtpHashAlgorithm)">
             <summary>
             Retrieves a checksum of the given file using the specified checksum algorithum, or using the first available algorithm that the server supports.
             </summary>
             <remarks>
             The algorithm used goes in this order:
-            1. HASH command; server preferred algorithm. See <see cref="M:FluentFTP.FtpClient.SetHashAlgorithm(FluentFTP.FtpHashAlgorithm)"/>
+            1. HASH command using the first supported algorithm.
             2. MD5 / XMD5 / MMD5 commands
             3. XSHA1 command
             4. XSHA256 command
@@ -1566,16 +1476,15 @@
             <returns><see cref="T:FluentFTP.FtpHash"/> object containing the value and algorithm. Use the <see cref="P:FluentFTP.FtpHash.IsValid"/> property to
             determine if this command was successful. <see cref="T:FluentFTP.FtpCommandException"/>s can be thrown from
             the underlying calls.</returns>
-            <example><code source="..\Examples\GetChecksum.cs" lang="cs" /></example>
             <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetChecksumAsync(System.String,System.Threading.CancellationToken,FluentFTP.FtpHashAlgorithm)">
+        <member name="M:FluentFTP.FtpClient.GetChecksumAsync(System.String,FluentFTP.FtpHashAlgorithm,System.Threading.CancellationToken)">
             <summary>
             Retrieves a checksum of the given file using the specified checksum algorithum, or using the first available algorithm that the server supports.
             </summary>
             <remarks>
             The algorithm used goes in this order:
-            1. HASH command; server preferred algorithm. See <see cref="M:FluentFTP.FtpClient.SetHashAlgorithm(FluentFTP.FtpHashAlgorithm)"/>
+            1. HASH command using the first supported algorithm.
             2. MD5 / XMD5 / MMD5 commands
             3. XSHA1 command
             4. XSHA256 command
@@ -1588,133 +1497,86 @@
             <returns><see cref="T:FluentFTP.FtpHash"/> object containing the value and algorithm. Use the <see cref="P:FluentFTP.FtpHash.IsValid"/> property to
             determine if this command was successful. <see cref="T:FluentFTP.FtpCommandException"/>s can be thrown from
             the underlying calls.</returns>
-            <example><code source="..\Examples\GetChecksum.cs" lang="cs" /></example>
             <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetMD5(System.String)">
+        <member name="M:FluentFTP.FtpClient.GetHashInternal(System.String,System.String)">
             <summary>
-            Gets the MD5 hash of the specified file using MD5. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Gets the hash of the specified file using the given command.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <returns>Server response, presumably the MD5 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetMD5Async(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.GetHashInternalAsync(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
-            Gets the MD5 hash of the specified file using MD5 asynchronously. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Gets the hash of the specified file using the given command.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>Server response, presumably the MD5 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXCRC(System.String)">
+        <member name="M:FluentFTP.FtpClient.GetHashAlgorithmUnused">
             <summary>
-            Get the CRC value of the specified file. This is a non-standard extension of the protocol 
-            and may throw a FtpCommandException if the server does not support it.
+            Gets the currently selected hash algorithm for the HASH command.
             </summary>
-            <param name="path">The path of the file you'd like the server to compute the CRC value for.</param>
-            <returns>The response from the server, typically the XCRC value. FtpCommandException thrown on error</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXCRCAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.GetHashAlgorithmUnusedAsync(System.Threading.CancellationToken)">
             <summary>
-            Gets the CRC hash of the specified file using XCRC asynchronously. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Gets the currently selected hash algorithm for the HASH command asynchronously.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>Server response, presumably the CRC hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXMD5(System.String)">
+        <member name="M:FluentFTP.FtpClient.SetHashAlgorithmInternal(FluentFTP.FtpHashAlgorithm)">
             <summary>
-            Gets the MD5 hash of the specified file using XMD5. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Sets the hash algorithm on the server to use for the HASH command. 
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <returns>Server response, presumably the MD5 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXMD5Async(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.SetHashAlgorithmInternalAsync(FluentFTP.FtpHashAlgorithm,System.Threading.CancellationToken)">
             <summary>
-            Gets the MD5 hash of the specified file using XMD5 asynchronously. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Sets the hash algorithm on the server to be used with the HASH command asynchronously.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>Server response, presumably the MD5 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXSHA1(System.String)">
+        <member name="M:FluentFTP.FtpClient.HashCommandInternal(System.String)">
             <summary>
-            Gets the SHA-1 hash of the specified file using XSHA1. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Gets the hash of an object on the server using the currently selected hash algorithm.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <returns>Server response, presumably the SHA-1 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXSHA1Async(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.HashCommandInternalAsync(System.String,System.Threading.CancellationToken)">
             <summary>
-            Gets the SHA-1 hash of the specified file using XSHA1 asynchronously. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Gets the hash of an object on the server using the currently selected hash algorithm.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>Server response, presumably the SHA-1 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXSHA256(System.String)">
+        <member name="M:FluentFTP.FtpClient.GetFirstMutualChecksum(FluentFTP.FtpClient)">
             <summary>
-            Gets the SHA-256 hash of the specified file using XSHA256. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Get the first checksum algorithm mutually supported by both servers.
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <returns>Server response, presumably the SHA-256 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXSHA256Async(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.GetZOSListRealm">
             <summary>
-            Gets the SHA-256 hash of the specified file using XSHA256 asynchronously. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            If an FTP Server has "different realms", in which realm is the
+            current working directory. 
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>Server response, presumably the SHA-256 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
+            <returns>The realm</returns>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXSHA512(System.String)">
+        <member name="M:FluentFTP.FtpClient.GetZOSListRealmAsync(System.Threading.CancellationToken)">
             <summary>
-            Gets the SHA-512 hash of the specified file using XSHA512. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            If an FTP Server has "different realms", in which realm is the
+            current working directory. 
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <returns>Server response, presumably the SHA-512 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
+            <returns>The realm</returns>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetXSHA512Async(System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.FtpClient.GetZOSFileSize(System.String)">
             <summary>
-            Gets the SHA-512 hash of the specified file using XSHA512 asynchronously. This is a non-standard extension
-            to the protocol and may or may not work. A FtpCommandException will be
-            thrown if the command fails.
+            Get z/OS file size
             </summary>
-            <param name="path">Full or relative path to remote file</param>
-            <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>Server response, presumably the SHA-512 hash.</returns>
-            <exception cref="T:FluentFTP.FtpCommandException">The command fails</exception>
+            <param name="path">The full path of th file whose size you want to retrieve</param>
+            <remarks>
+            Make sure you are in the right realm (z/OS or HFS) before doing this
+            </remarks>
+            <returns>The size of the file</returns>
+        </member>
+        <member name="M:FluentFTP.FtpClient.GetZOSFileSizeAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Get z/OS file size
+            </summary>
+            <param name="path">The full path of th file whose size you want to retrieve</param>
+            <remarks>
+            Make sure you are in the right realm (z/OS or HFS) before doing this
+            </remarks>
+            <returns>The size of the file</returns>
         </member>
         <member name="M:FluentFTP.FtpClient.GetObjectInfo(System.String,System.Boolean)">
             <summary>
@@ -1756,7 +1618,6 @@
             be retrieved.
             </remarks>
             <returns>An array of FtpListItem objects</returns>
-            <example><code source="..\Examples\GetListing.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.GetListing(System.String)">
             <summary>
@@ -1771,7 +1632,6 @@
             </remarks>
             <param name="path">The path of the directory to list</param>
             <returns>An array of FtpListItem objects</returns>
-            <example><code source="..\Examples\GetListing.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.GetListing(System.String,FluentFTP.FtpListOption)">
             <summary>
@@ -1787,7 +1647,6 @@
             <param name="path">The path of the directory to list</param>
             <param name="options">Options that dictate how a list is performed and what information is gathered.</param>
             <returns>An array of FtpListItem objects</returns>
-            <example><code source="..\Examples\GetListing.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.GetListingInternal(System.String,FluentFTP.FtpListOption,System.Boolean)">
             <summary>
@@ -1878,7 +1737,6 @@
             </summary>
             <param name="path">The path of the directory to list</param>
             <returns>A string array of file and directory names if any were returned.</returns>
-            <example><code source="..\Examples\GetNameListing.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.GetNameListingAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -1893,6 +1751,32 @@
             Returns a file/directory listing using the NLST command asynchronously
             </summary>
             <returns>An array of file and directory names if any were returned.</returns>
+        </member>
+        <member name="F:FluentFTP.FtpClient.OnLogEvent">
+            <summary>
+            Add a custom listener here to get events every time a message is logged.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpClient.LogFunc(System.String,System.Object[])">
+            <summary>
+            Log a function call with relevant arguments
+            </summary>
+            <param name="function">The name of the API function</param>
+            <param name="args">The args passed to the function</param>
+        </member>
+        <member name="M:FluentFTP.FtpClient.LogLine(FluentFTP.FtpTraceLevel,System.String)">
+            <summary>
+            Log a message
+            </summary>
+            <param name="eventType">The type of tracing event</param>
+            <param name="message">The message to write</param>
+        </member>
+        <member name="M:FluentFTP.FtpClient.LogStatus(FluentFTP.FtpTraceLevel,System.String)">
+            <summary>
+            Log a message, adding an automatic prefix to the message based on the `eventType`
+            </summary>
+            <param name="eventType">The type of tracing event</param>
+            <param name="message">The message to write</param>
         </member>
         <member name="F:FluentFTP.FtpClient._EPSVNotSupported">
             <summary>
@@ -1916,6 +1800,26 @@
         <member name="F:FluentFTP.FtpClient._AutoDispose">
             <summary>
             Used to automatically dispose cloned connections after FXP transfer has ended.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpClient._LastWorkingDir">
+            <summary>
+            Cached value of the last read working directory (absolute path).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpClient._LastHashAlgo">
+            <summary>
+            Cached value of the last set hash algorithm.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpClient._ConnectionFTPSFailure">
+            <summary>
+            Did the FTPS connection fail during the last Connect/ConnectAsync attempt?
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpClient._ConnectionUTF8Success">
+            <summary>
+            Did the UTF8 encoding setting work during the last Connect/ConnectAsync attempt?
             </summary>
         </member>
         <member name="M:FluentFTP.FtpClient.ResetStateFlags">
@@ -2003,7 +1907,14 @@
         </member>
         <member name="P:FluentFTP.FtpClient.IsConnected">
             <summary>
-            Gets a value indicating if the connection is alive
+            Returns true if the connection to the FTP server is open.
+            WARNING: Returns true even if our credentials are incorrect but connection to the server is open.
+            See the IsAuthenticated property if you want to check if we are correctly logged in.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.FtpClient.IsAuthenticated">
+            <summary>
+            Returns true if if the connection to the FTP server is open and if the FTP server accepted our credentials.
             </summary>
         </member>
         <member name="P:FluentFTP.FtpClient.EnableThreadSafeDataConnections">
@@ -2170,8 +2081,8 @@
         </member>
         <member name="P:FluentFTP.FtpClient.HashAlgorithms">
             <summary>
-            Get the hash types supported by the server, if any. This
-            is a recent extension to the protocol that is not fully
+            Get the hash types supported by the server for use with the HASH Command.
+            This is a recent extension to the protocol that is not fully
             standardized and is not guaranteed to work. See here for
             more details:
             http://tools.ietf.org/html/draft-bryan-ftpext-hash-02
@@ -2219,7 +2130,6 @@
             the connection will be aborted.
             Not fired if ValidateAnyCertificate is set to true.
             </summary>
-            <example><code source="..\Examples\ValidateCertificate.cs" lang="cs" /></example>
         </member>
         <member name="P:FluentFTP.FtpClient.ValidateAnyCertificate">
             <summary>
@@ -2272,7 +2182,8 @@
         <member name="P:FluentFTP.FtpClient.ListingParser">
             <summary>
             File listing parser to be used. 
-            Automatically calculated based on the type of the server, unless changed.
+            Automatically calculated based on the type of the server at the time of connection.
+            If you want to override this property, make sure to do it after calling Connect.
             </summary>
         </member>
         <member name="P:FluentFTP.FtpClient.ListingCulture">
@@ -2440,6 +2351,19 @@
             Returns the remote end point of the FTP socket, if it is available.
             </summary>
         </member>
+        <member name="P:FluentFTP.FtpClient.zOSListingRealm">
+            <summary>
+            During and after a z/OS GetListing(), this value shows the
+            z/OS filesystem realm that was encountered.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.FtpClient.zOSListingLRECL">
+            <summary>
+            During and after a z/OS GetListing(), this value shows the
+            the LRECL that was encountered (for a realm = Member only).
+            The value is used internally to calculate member sizes
+            </summary>
+        </member>
         <member name="M:FluentFTP.FtpClient.Connect(System.Uri,System.Boolean)">
             <summary>
             Connects to the specified URI. If the path specified by the URI ends with a
@@ -2475,7 +2399,6 @@
             </summary>
             <param name="command">The command to execute</param>
             <returns>The servers reply to the command</returns>
-            <example><code source="..\Examples\Execute.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.ExecuteAsync(System.String,System.Threading.CancellationToken)">
             <summary>
@@ -2510,7 +2433,6 @@
             indefinitely waiting for a server reply that is never coming.
             </summary>
             <returns>FtpReply representing the response from the server</returns>
-            <example><code source="..\Examples\BeginGetReply.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.DecodeStringToReply(System.String,FluentFTP.FtpReply@)">
             <summary>
@@ -2526,7 +2448,6 @@
             indefinitely waiting for a server reply that is never coming.
             </summary>
             <returns>FtpReply representing the response from the server</returns>
-            <example><code source="..\Examples\BeginGetReply.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenPassiveDataStream(FluentFTP.FtpDataConnectionType,System.String,System.Int64)">
             <summary>
@@ -2617,7 +2538,6 @@
             </summary>
             <param name="path">The full or relative path of the file</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenRead(System.String,FluentFTP.FtpDataType)">
             <summary>
@@ -2626,7 +2546,6 @@
             <param name="path">The full or relative path of the file</param>
             <param name="type">ASCII/Binary</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenRead(System.String,FluentFTP.FtpDataType,System.Boolean)">
             <summary>
@@ -2636,7 +2555,6 @@
             <param name="type">ASCII/Binary</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenRead(System.String,FluentFTP.FtpDataType,System.Int64)">
             <summary>
@@ -2646,7 +2564,6 @@
             <param name="type">ASCII/Binary</param>
             <param name="restart">Resume location</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenRead(System.String,System.Int64)">
             <summary>
@@ -2655,7 +2572,6 @@
             <param name="path">The full or relative path of the file</param>
             <param name="restart">Resume location</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenRead(System.String,System.Int64,System.Boolean)">
             <summary>
@@ -2665,7 +2581,6 @@
             <param name="restart">Resume location</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenRead(System.String,FluentFTP.FtpDataType,System.Int64,System.Boolean)">
             <summary>
@@ -2676,7 +2591,6 @@
             <param name="restart">Resume location</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
             <returns>A stream for reading the file on the server</returns>
-            <example><code source="..\Examples\OpenRead.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenReadAsync(System.String,FluentFTP.FtpDataType,System.Int64,System.Boolean,System.Threading.CancellationToken)">
             <summary>
@@ -2732,7 +2646,6 @@
             </summary>
             <param name="path">Full or relative path of the file</param>
             <returns>A stream for writing to the file on the server</returns>
-            <example><code source="..\Examples\OpenWrite.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenWrite(System.String,FluentFTP.FtpDataType)">
             <summary>
@@ -2741,7 +2654,6 @@
             <param name="path">Full or relative path of the file</param>
             <param name="type">ASCII/Binary</param>
             <returns>A stream for writing to the file on the server</returns>
-            <example><code source="..\Examples\OpenWrite.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenWrite(System.String,FluentFTP.FtpDataType,System.Boolean)">
             <summary>
@@ -2751,7 +2663,6 @@
             <param name="type">ASCII/Binary</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
             <returns>A stream for writing to the file on the server</returns>
-            <example><code source="..\Examples\OpenWrite.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenWriteAsync(System.String,FluentFTP.FtpDataType,System.Boolean,System.Threading.CancellationToken)">
             <summary>
@@ -2786,7 +2697,6 @@
             </summary>
             <param name="path">The full or relative path to the file to be opened</param>
             <returns>A stream for writing to the file on the server</returns>
-            <example><code source="..\Examples\OpenAppend.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenAppend(System.String,FluentFTP.FtpDataType)">
             <summary>
@@ -2795,7 +2705,6 @@
             <param name="path">The full or relative path to the file to be opened</param>
             <param name="type">ASCII/Binary</param>
             <returns>A stream for writing to the file on the server</returns>
-            <example><code source="..\Examples\OpenAppend.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenAppend(System.String,FluentFTP.FtpDataType,System.Boolean)">
             <summary>
@@ -2805,7 +2714,6 @@
             <param name="type">ASCII/Binary</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
             <returns>A stream for writing to the file on the server</returns>
-            <example><code source="..\Examples\OpenAppend.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenAppendAsync(System.String,FluentFTP.FtpDataType,System.Boolean,System.Threading.CancellationToken)">
             <summary>
@@ -2934,32 +2842,6 @@
             Returns true if the file passes all the rules
             </summary>
         </member>
-        <member name="F:FluentFTP.FtpClient.OnLogEvent">
-            <summary>
-            Add a custom listener here to get events every time a message is logged.
-            </summary>
-        </member>
-        <member name="M:FluentFTP.FtpClient.LogFunc(System.String,System.Object[])">
-            <summary>
-            Log a function call with relevant arguments
-            </summary>
-            <param name="function">The name of the API function</param>
-            <param name="args">The args passed to the function</param>
-        </member>
-        <member name="M:FluentFTP.FtpClient.LogLine(FluentFTP.FtpTraceLevel,System.String)">
-            <summary>
-            Log a message
-            </summary>
-            <param name="eventType">The type of tracing event</param>
-            <param name="message">The message to write</param>
-        </member>
-        <member name="M:FluentFTP.FtpClient.LogStatus(FluentFTP.FtpTraceLevel,System.String)">
-            <summary>
-            Log a message, adding an automatic prefix to the message based on the `eventType`
-            </summary>
-            <param name="eventType">The type of tracing event</param>
-            <param name="message">The message to write</param>
-        </member>
         <member name="T:FluentFTP.IFtpClient">
             <summary>
             Interface for the FtpClient class.
@@ -3003,7 +2885,7 @@
         </member>
         <member name="F:FluentFTP.FtpCapability.PRET">
             <summary>
-            PRET Command used in distributed ftp server software DrFTPD
+            PRET Command used by DrFTPD
             </summary>
         </member>
         <member name="F:FluentFTP.FtpCapability.MFMT">
@@ -3464,32 +3346,32 @@
         </member>
         <member name="F:FluentFTP.FtpHashAlgorithm.NONE">
             <summary>
-            HASH command is not supported
+            Automatic algorithm, or hashing not supported.
             </summary>
         </member>
         <member name="F:FluentFTP.FtpHashAlgorithm.SHA1">
             <summary>
-            SHA-1
+            SHA-1 algorithm
             </summary>
         </member>
         <member name="F:FluentFTP.FtpHashAlgorithm.SHA256">
             <summary>
-            SHA-256
+            SHA-256 algorithm
             </summary>
         </member>
         <member name="F:FluentFTP.FtpHashAlgorithm.SHA512">
             <summary>
-            SHA-512
+            SHA-512 algorithm
             </summary>
         </member>
         <member name="F:FluentFTP.FtpHashAlgorithm.MD5">
             <summary>
-            MD5
+            MD5 algorithm
             </summary>
         </member>
         <member name="F:FluentFTP.FtpHashAlgorithm.CRC">
             <summary>
-            CRC
+            CRC algorithm
             </summary>
         </member>
         <member name="T:FluentFTP.FtpIpVersion">
@@ -3619,7 +3501,7 @@
             Overwrites the file if it exists on disk.
             </summary>
         </member>
-        <member name="F:FluentFTP.FtpLocalExists.Append">
+        <member name="F:FluentFTP.FtpLocalExists.Resume">
             <summary>
             Resume the download of a file if it is partially downloaded.
             Appends to the file if it exists, by checking the length and adding the missing data.
@@ -3630,6 +3512,11 @@
             <summary>
             Blindly skip downloading the file if it exists on disk, without any more checks.
             This is only included to be compatible with legacy behaviour.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpLocalExists.Append">
+            <summary>
+            Append is now renamed to Resume.
             </summary>
         </member>
         <member name="T:FluentFTP.FtpOperatingSystem">
@@ -3752,9 +3639,14 @@
             File listing parser for Vax/VMS/OpenVMS.
             </summary>
         </member>
-        <member name="F:FluentFTP.FtpParser.IBM">
+        <member name="F:FluentFTP.FtpParser.IBMzOS">
             <summary>
-            File listing parser for IBM OS400.
+            File listing parser for IBM z/OS
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpParser.IBMOS400">
+            <summary>
+            File listing parser for IBM OS/400.
             </summary>
         </member>
         <member name="F:FluentFTP.FtpParser.NonStop">
@@ -3804,6 +3696,20 @@
             Otherwise it can cause the UploadFile method to hang due to filesize mismatch.
             </summary>
         </member>
+        <member name="F:FluentFTP.FtpRemoteExists.ResumeNoCheck">
+            <summary>
+            Resume uploading by appending to the remote file, but don't check if it exists and add missing data.
+            This might be required if you don't have permissions on the server to list files in the folder.
+            Only use this if you are SURE that the file does not exist on the server otherwise it can cause the UploadFile method to hang due to filesize mismatch.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpRemoteExists.AddToEndNoCheck">
+            <summary>
+            Append the local file to the end of the remote file, but don't check if it exists and add missing data.
+            This might be required if you don't have permissions on the server to list files in the folder.
+            Only use this if you are SURE that the file does not exist on the server otherwise it can cause the UploadFile method to hang due to filesize mismatch.
+            </summary>
+        </member>
         <member name="F:FluentFTP.FtpRemoteExists.Skip">
             <summary>
             Skip the file if it exists, without any more checks.
@@ -3814,16 +3720,20 @@
             Overwrite the file if it exists.
             </summary>
         </member>
-        <member name="F:FluentFTP.FtpRemoteExists.Append">
+        <member name="F:FluentFTP.FtpRemoteExists.Resume">
             <summary>
-            Append to the file if it exists, by checking the length and adding the missing data.
+            Resume uploading by appending to the remote file if it exists.
+            It works by checking the remote file length and adding the missing data.
             </summary>
         </member>
-        <member name="F:FluentFTP.FtpRemoteExists.AppendNoCheck">
+        <member name="F:FluentFTP.FtpRemoteExists.AddToEnd">
             <summary>
-            Append to the file, but don't check if it exists and add missing data.
-            This might be required if you don't have permissions on the server to list files in the folder.
-            Only use this if you are SURE that the file does not exist on the server otherwise it can cause the UploadFile method to hang due to filesize mismatch.
+            Append the local file to the end of the remote file.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpRemoteExists.Append">
+            <summary>
+            Append is now renamed to Resume. Alternatively you can use AddToEnd.
             </summary>
         </member>
         <member name="T:FluentFTP.FtpResponseType">
@@ -3992,6 +3902,11 @@
             Definitely IBM z/OS FTP server
             </summary>
         </member>
+        <member name="F:FluentFTP.FtpServer.IBMOS400FTP">
+            <summary>
+            Definitely IBM OS/400 FTP server
+            </summary>
+        </member>
         <member name="F:FluentFTP.FtpServer.FritzBox">
             <summary>
             Definitely FritzBox FTP server
@@ -4115,6 +4030,36 @@
             If the checksum comparison fails then the method returns false and no other action is taken.
             </summary>
         </member>
+        <member name="T:FluentFTP.FtpZOSListRealm">
+            <summary>
+            Flags that can control how a file listing is performed. If you are unsure what to use, set it to Auto.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpZOSListRealm.Invalid">
+            <summary>
+            Not z/OS Server
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpZOSListRealm.Unix">
+            <summary>
+            HFS / USS 
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpZOSListRealm.Dataset">
+            <summary>
+            z/OS classic dataset
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpZOSListRealm.Member">
+            <summary>
+            Partitioned dataset member, RECFM != U
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpZOSListRealm.MemberU">
+            <summary>
+            Partitioned dataset member, RECFM = U
+            </summary>
+        </member>
         <member name="T:FluentFTP.FtpSocketStreamSslValidation">
             <summary>
             Event fired if a bad SSL certificate is encountered. This even is used internally; if you
@@ -4232,6 +4177,52 @@
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         </member>
         <member name="M:FluentFTP.FtpException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Must be implemented so every Serializer can Deserialize the Exception
+            </summary>
+        </member>
+        <member name="T:FluentFTP.FtpHashUnsupportedException">
+            <summary>
+            Exception is thrown when the required hash algorithm is unsupported by the server.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.FtpHashUnsupportedException.Algorithm">
+            <summary>
+            Gets the unsupported hash algorithm
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpHashUnsupportedException.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpHashUnsupportedException.#ctor(FluentFTP.FtpHashAlgorithm,System.String)">
+            <summary>
+            Algorithm-specific constructor
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpHashUnsupportedException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Must be implemented so every Serializer can Deserialize the Exception
+            </summary>
+        </member>
+        <member name="T:FluentFTP.FtpInvalidCertificateException">
+            <summary>
+            Exception is thrown when TLS/SSL encryption could not be negotiated by the FTP server.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpInvalidCertificateException.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpInvalidCertificateException.#ctor(System.String)">
+            <summary>
+            Custom error message
+            </summary>
+            <param name="message">Error message</param>
+        </member>
+        <member name="M:FluentFTP.FtpInvalidCertificateException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
             <summary>
             Must be implemented so every Serializer can Deserialize the Exception
             </summary>
@@ -4375,7 +4366,7 @@
         <member name="M:FluentFTP.Helpers.FileListings.FileExistsInNameListing(System.String[],System.String)">
             <summary>
             Checks if the given file exists in the given file listing.
-            Supports servers that return:  1) full paths,  2) only filenames,  3) full paths without slash prefixed
+            Supports servers that return:  1) full paths,  2) only filenames,  3) full paths without slash prefixed,  4) full paths with invalid slashes
             </summary>
             <param name="fileList">The listing returned by GetNameListing</param>
             <param name="path">The full file path you want to check</param>
@@ -4574,24 +4565,34 @@
             <param name="eventType">The type of tracing event</param>
             <param name="message">A formattable string to write</param>
         </member>
-        <member name="T:FluentFTP.Helpers.HashAlgorithms">
+        <member name="T:FluentFTP.Helpers.Hashing.HashAlgorithms">
             <summary>
             Helper class to convert FtpHashAlgorithm
             </summary>
         </member>
-        <member name="M:FluentFTP.Helpers.HashAlgorithms.FromString(System.String)">
+        <member name="M:FluentFTP.Helpers.Hashing.HashAlgorithms.FromString(System.String)">
             <summary>
-            Get FtpHashAlgorithm from it's string representation
+            Get FtpHashAlgorithm from its string representation
             </summary>
-            <param name="ftpHashAlgorithm">Name of the hash algorithm</param>
+            <param name="name">Name of the hash algorithm</param>
             <returns>The FtpHashAlgorithm</returns>
         </member>
-        <member name="M:FluentFTP.Helpers.HashAlgorithms.ToString(FluentFTP.FtpHashAlgorithm)">
+        <member name="M:FluentFTP.Helpers.Hashing.HashAlgorithms.PrintToString(FluentFTP.FtpHashAlgorithm)">
             <summary>
             Get string representation of FtpHashAlgorithm
             </summary>
-            <param name="ftpHashAlgorithm">FtpHashAlgorithm to be converted into string</param>
+            <param name="name">FtpHashAlgorithm to be converted into string</param>
             <returns>Name of the hash algorithm</returns>
+        </member>
+        <member name="M:FluentFTP.Helpers.Hashing.HashAlgorithms.FirstSupported(FluentFTP.FtpHashAlgorithm)">
+            <summary>
+            Get the first supported algorithm, in the standard order of preference. If no hashing algos found, returns NONE.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Helpers.Hashing.HashParser.Parse(System.String)">
+            <summary>
+            Parses the recieved FTP hash response into a new FtpHash object.
+            </summary>
         </member>
         <member name="T:FluentFTP.Helpers.LocalPaths">
             <summary>
@@ -4623,12 +4624,12 @@
             Get random local port for the given local IP address
             </summary>
         </member>
-        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMParser.IsValid(FluentFTP.FtpClient,System.String[])">
+        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMOS400Parser.IsValid(FluentFTP.FtpClient,System.String[])">
             <summary>
             Checks if the given listing is a valid IBM OS/400 file listing
             </summary>
         </member>
-        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMParser.Parse(FluentFTP.FtpClient,System.String)">
+        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMOS400Parser.Parse(FluentFTP.FtpClient,System.String)">
             <summary>
             Parses IBM OS/400 format listings
             </summary>
@@ -4636,9 +4637,27 @@
             <param name="record">A line from the listing</param>
             <returns>FtpListItem if the item is able to be parsed</returns>
         </member>
-        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMParser.ParseDateTime(FluentFTP.FtpClient,System.String)">
+        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMOS400Parser.ParseDateTime(FluentFTP.FtpClient,System.String)">
             <summary>
             Parses the last modified date from IBM OS/400 format listings
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMzOSParser.IsValid(FluentFTP.FtpClient,System.String[])">
+            <summary>
+            Checks if the given listing is a valid IBM z/OS file listing
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMzOSParser.Parse(FluentFTP.FtpClient,System.String,System.String)">
+            <summary>
+            Parses IBM z/OS format listings
+            </summary>
+            <param name="client">The FTP client</param>
+            <param name="record">A line from the listing</param>
+            <returns>FtpListItem if the item is able to be parsed</returns>
+        </member>
+        <member name="M:FluentFTP.Helpers.Parsers.FtpIBMzOSParser.ParseDateTime(FluentFTP.FtpClient,System.String)">
+            <summary>
+            Parses the last modified date from IBM z/OS format listings
             </summary>
         </member>
         <member name="M:FluentFTP.Helpers.Parsers.FtpMachineListParser.Parse(System.String,System.Collections.Generic.List{FluentFTP.FtpCapability},FluentFTP.FtpClient)">
@@ -4850,9 +4869,19 @@
             Checks if this FTP path is a top level path
             </summary>
         </member>
+        <member name="M:FluentFTP.Helpers.RemotePaths.IsFtpRootDirectory(System.String)">
+            <summary>
+            Checks if the given path is a root directory or working directory path
+            </summary>
+            <param name="ftppath"></param>
+            <returns></returns>
+        </member>
         <member name="M:FluentFTP.Helpers.RemotePaths.GetFtpPath(System.String)">
             <summary>
-            Converts the specified path into a valid FTP file system path
+            Converts the specified path into a valid FTP file system path.
+            Replaces invalid back-slashes with valid forward-slashes.
+            Replaces multiple slashes with single slashes.
+            Removes the ending postfix slash if any.
             </summary>
             <param name="path">The file system path</param>
             <returns>A path formatted for FTP</returns>
@@ -4874,17 +4903,11 @@
         </member>
         <member name="M:FluentFTP.Helpers.RemotePaths.GetFtpFileName(System.String)">
             <summary>
-            Gets the file name and extension from the path
+            Gets the file name and extension from the path.
+            Supports paths with backslashes and forwardslashes.
             </summary>
             <param name="path">The full path to the file</param>
             <returns>The file name</returns>
-        </member>
-        <member name="M:FluentFTP.Helpers.RemotePaths.IsFtpRootDirectory(System.String)">
-            <summary>
-            Checks if the given path is a root directory or working directory path
-            </summary>
-            <param name="ftppath"></param>
-            <returns></returns>
         </member>
         <member name="M:FluentFTP.Helpers.RemotePaths.GetPathSegments(System.String)">
             <summary>
@@ -4892,7 +4915,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:FluentFTP.Helpers.RemotePaths.CalculateFullFtpPath(FluentFTP.FtpListItem,FluentFTP.FtpClient,System.String,System.Boolean)">
+        <member name="M:FluentFTP.Helpers.RemotePaths.CalculateFullFtpPath(FluentFTP.FtpListItem,FluentFTP.FtpClient,System.String)">
             <summary>
             Get the full path of a given FTP Listing entry
             </summary>
@@ -5084,7 +5107,6 @@
             <summary>
             Represents a file system object on the server
             </summary>
-            <example><code source="..\Examples\CustomParser.cs" lang="cs" /></example>
         </member>
         <member name="M:FluentFTP.FtpListItem.#ctor">
             <summary>
@@ -5262,6 +5284,11 @@
             A working RetryAttempts setting found for this profile, or 0 if default value should be used
             </summary>
         </member>
+        <member name="F:FluentFTP.FtpProfile.EncodingVerified">
+            <summary>
+            If the server surely supports the given encoding.
+            </summary>
+        </member>
         <member name="M:FluentFTP.FtpProfile.ToCode">
             <summary>
             Generates valid C# code for this connection profile.
@@ -5366,7 +5393,8 @@
         </member>
         <member name="P:FluentFTP.FtpReply.Success">
             <summary>
-            General success or failure of the last command executed
+            General success or failure of the last command executed, by checking the FTP status code.
+            1xx, 2xx, 3xx indicate success and 4xx, 5xx are failures.
             </summary>
         </member>
         <member name="P:FluentFTP.FtpReply.ErrorMessage">
@@ -5558,6 +5586,12 @@
         <member name="P:FluentFTP.Proxy.ProxyInfo.Credentials">
             <summary> Proxy login credentials </summary>
         </member>
+        <member name="T:FluentFTP.Proxy.Socks.SocksProxy">
+            <summary>
+                This class is not reusable.
+                You have to create a new instance for each connection / attempt.
+            </summary>
+        </member>
         <member name="T:FluentFTP.Rules.FtpFileExtensionRule">
             <summary>
             Only accept files that have the given extension, or exclude files of a given extension.
@@ -5656,12 +5690,18 @@
             The files names to match
             </summary>
         </member>
-        <member name="M:FluentFTP.Rules.FtpFolderRegexRule.#ctor(System.Boolean,System.Collections.Generic.IList{System.String})">
+        <member name="F:FluentFTP.Rules.FtpFolderRegexRule.StartSegment">
+            <summary>
+            Which path segment to start checking from
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Rules.FtpFolderRegexRule.#ctor(System.Boolean,System.Collections.Generic.IList{System.String},System.Int32)">
             <summary>
             Only accept items that one of the supplied regex pattern.
             </summary>
             <param name="whitelist">If true, only folders where one of the supplied regex pattern matches are uploaded or downloaded. If false, folders where one of the supplied regex pattern matches are excluded.</param>
             <param name="regexPatterns">The list of regex patterns to match. Only valid patterns are accepted and stored. If none of the patterns are valid, this rule is disabled and passes all objects.</param>
+            <param name="startSegment">Which path segment to start checking from. 0 checks root folder onwards. 1 skips root folder.</param>
         </member>
         <member name="M:FluentFTP.Rules.FtpFolderRegexRule.IsAllowed(FluentFTP.FtpListItem)">
             <summary>
@@ -5684,12 +5724,18 @@
             The folder names to match
             </summary>
         </member>
-        <member name="M:FluentFTP.Rules.FtpFolderNameRule.#ctor(System.Boolean,System.Collections.Generic.IList{System.String})">
+        <member name="F:FluentFTP.Rules.FtpFolderNameRule.StartSegment">
+            <summary>
+            Which path segment to start checking from
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Rules.FtpFolderNameRule.#ctor(System.Boolean,System.Collections.Generic.IList{System.String},System.Int32)">
             <summary>
             Only accept folders that have the given name, or exclude folders of a given name.
             </summary>
             <param name="whitelist">If true, only folders of the given name are downloaded. If false, folders of the given name are excluded.</param>
             <param name="names">The folder names to match</param>
+            <param name="startSegment">Which path segment to start checking from. 0 checks root folder onwards. 1 skips root folder.</param>
         </member>
         <member name="M:FluentFTP.Rules.FtpFolderNameRule.IsAllowed(FluentFTP.FtpListItem)">
             <summary>
@@ -6030,6 +6076,26 @@
         <member name="M:FluentFTP.Servers.Handlers.HomegateFtpServer.DetectByWelcome(System.String)">
             <summary>
             Return true if your server is detected by the given FTP server welcome message.
+            </summary>
+        </member>
+        <member name="T:FluentFTP.Servers.Handlers.IbmOs400FtpServer">
+            <summary>
+            Server-specific handling for IBMOS400FTP servers
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Servers.Handlers.IbmOs400FtpServer.ToEnum">
+            <summary>
+            Return the FtpServer enum value corresponding to your server, or Unknown if its a custom implementation.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Servers.Handlers.IbmOs400FtpServer.DetectByWelcome(System.String)">
+            <summary>
+            Return true if your server is detected by the given FTP server welcome message.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.Servers.Handlers.IbmOs400FtpServer.GetParser">
+            <summary>
+            Return the default file listing parser to be used with your FTP server.
             </summary>
         </member>
         <member name="T:FluentFTP.Servers.Handlers.IbmZosFtpServer">
