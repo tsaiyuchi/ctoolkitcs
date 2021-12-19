@@ -10,18 +10,14 @@ namespace CToolkit.v1_1.Threading
 {
     public class CtkTask : IDisposable, IAsyncResult
     {
-        public string Name;
-        public Task Task;
         public CancellationTokenSource CancelTokenSource = new CancellationTokenSource();
-        public CancellationToken CancelToken { get { return this.CancelTokenSource.Token; } }
+        public string Name;
         public int Sleep = 0;
-
-        public void Cancel() { this.CancelTokenSource.Cancel(); }
-
-
+        public Task Task;
+        public CancellationToken CancelToken { get { return this.CancelTokenSource.Token; } }
         public TaskStatus Status { get { return this.Task.Status; } }
 
-
+        public void Cancel() { this.CancelTokenSource.Cancel(); }
         public TaskAwaiter GetAwaiter() { return this.Task.GetAwaiter(); }
         public bool IsEnd() { return this.Task == null ? true : this.Task.IsCompleted || this.Task.IsFaulted || this.Task.IsCanceled; }
 
@@ -34,24 +30,25 @@ namespace CToolkit.v1_1.Threading
         public bool Wait(int milliseconds) { return this.Task.Wait(milliseconds); }
         public void Wait() { this.Task.Wait(); }
 
+        void SetupThreadName()
+        {
+            if (!String.IsNullOrEmpty(this.Name) && String.IsNullOrEmpty(Thread.CurrentThread.Name))
+                Thread.CurrentThread.Name = this.Name;
+        }
+
 
         #region --- IAsyncResult --- --- ---
-        public bool IsCompleted { get { return this.Task.IsCompleted; } }
-        public WaitHandle AsyncWaitHandle { get { throw new NotImplementedException(); } }
         public object AsyncState { get { return this.Task.AsyncState; } }
+        public WaitHandle AsyncWaitHandle { get { throw new NotImplementedException(); } }
         public bool CompletedSynchronously { get { throw new NotImplementedException(); } }
+        public bool IsCompleted { get { return this.Task.IsCompleted; } }
         #endregion--- --- ---
+
+
+
 
         #region --- Static --- --- ---
 
-        /// <summary> 執行一次沒機會用 CancelToken </summary>
-        public static CtkTask RunOnce(Action act, String name = null)
-        {
-            var task = new CtkTask();
-            task.Task = Task.Factory.StartNew(act);
-            task.Name = name;
-            return task;
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -64,6 +61,7 @@ namespace CToolkit.v1_1.Threading
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
             {
+                task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -82,6 +80,7 @@ namespace CToolkit.v1_1.Threading
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
             {
+                task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -92,7 +91,6 @@ namespace CToolkit.v1_1.Threading
             task.Name = name;
             return task;
         }
-
         public static CtkTask RunLoop(Func<CancellationToken, bool> funcIsContinue, int sleep = 0)
         {
             var task = new CtkTask();
@@ -101,6 +99,7 @@ namespace CToolkit.v1_1.Threading
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
             {
+                task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -118,6 +117,7 @@ namespace CToolkit.v1_1.Threading
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
             {
+                task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -128,6 +128,18 @@ namespace CToolkit.v1_1.Threading
             task.Name = name;
             return task;
         }
+        /// <summary> 執行一次沒機會用 CancelToken </summary>
+        public static CtkTask RunOnce(Action act, String name = null)
+        {
+            var task = new CtkTask();
+            task.Name = name;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                task.SetupThreadName();
+                act();
+            });
+            return task;
+        }
         public static CtkTask RunOnce(Action<CancellationToken> act, int sleep = 0)
         {
             var task = new CtkTask();
@@ -136,6 +148,7 @@ namespace CToolkit.v1_1.Threading
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
             {
+                task.SetupThreadName();
                 act(ct);
                 if (task.Sleep > 0) Thread.Sleep(task.Sleep);
             }, ct);
