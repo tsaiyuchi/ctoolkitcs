@@ -128,15 +128,33 @@ namespace CToolkit.v1_1.Threading
             task.Name = name;
             return task;
         }
-        /// <summary> 執行一次沒機會用 CancelToken </summary>
-        public static CtkTask RunOnce(Action act, String name = null)
+
+
+
+        public static CtkTask RunOnce(Action act, int sleep = 0)
         {
             var task = new CtkTask();
-            task.Name = name;
+            task.Sleep = sleep;
+
             task.Task = Task.Factory.StartNew(() =>
             {
                 task.SetupThreadName();
                 act();
+                if (task.Sleep > 0) Thread.Sleep(task.Sleep);
+            });
+            return task;
+        }
+        public static CtkTask RunOnce(Action act, String name, int sleep = 0)
+        {
+            var task = new CtkTask();
+            task.Sleep = sleep;
+            task.Name = name;
+
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                task.SetupThreadName();
+                act();
+                if (task.Sleep > 0) Thread.Sleep(task.Sleep);
             });
             return task;
         }
@@ -144,6 +162,22 @@ namespace CToolkit.v1_1.Threading
         {
             var task = new CtkTask();
             task.Sleep = sleep;
+
+            var ct = task.CancelTokenSource.Token;
+            task.Task = Task.Factory.StartNew(() =>
+            {
+                task.SetupThreadName();
+                act(ct);
+                if (task.Sleep > 0) Thread.Sleep(task.Sleep);
+            }, ct);
+
+            return task;
+        }
+        public static CtkTask RunOnce(Action<CancellationToken> act, String name, int sleep = 0)
+        {
+            var task = new CtkTask();
+            task.Sleep = sleep;
+            task.Name = name;
 
             var ct = task.CancelTokenSource.Token;
             task.Task = Task.Factory.StartNew(() =>
