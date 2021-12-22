@@ -410,7 +410,7 @@ namespace CToolkit.v1_1.Net
         public void NonStopRunStart()
         {
             this.NonStopRunStop();
-            this.runningTask = CtkTask.RunOnce((ct) =>
+            this.runningTask = CtkTask.RunOnce(() =>
             {
                 //TODO: 重啟時, 會有執行緒被中止的狀況
                 while (!this.disposed)

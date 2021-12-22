@@ -431,7 +431,7 @@ namespace CToolkit.v1_1.Net
         {
             NonStopRunStop();
 
-            this.runningTask = CtkTask.RunOnce(ct =>
+            this.runningTask = CtkTask.RunOnce(() =>
             {
 
                 while (!disposed)
