@@ -25,6 +25,69 @@ namespace CToolkit.v1_1
 
 
 
+        public static T ChangeType<T>(object data) { return (T)Convert.ChangeType(data, typeof(T)); }
+
+        public static bool EnableUnsafeHeaderParsing()
+        {
+            //Get the assembly that contains the internal class
+            Assembly aNetAssembly = Assembly.GetAssembly(typeof(System.Net.Configuration.SettingsSection));
+            if (aNetAssembly != null)
+            {
+                //Use the assembly in order to get the internal type for the internal class
+                System.Type aSettingsType = aNetAssembly.GetType("System.Net.Configuration.SettingsSectionInternal");
+                if (aSettingsType != null)
+                {
+                    //Use the internal static property to get an instance of the internal settings class.
+                    //If the static instance isn't created allready the property will create it for us.
+                    object anInstance = aSettingsType.InvokeMember("Section",
+                      BindingFlags.Static | BindingFlags.GetProperty | BindingFlags.NonPublic, null, null, new object[] { });
+
+                    if (anInstance != null)
+                    {
+                        //Locate the private bool field that tells the framework is unsafe header parsing should be allowed or not
+                        FieldInfo aUseUnsafeHeaderParsing = aSettingsType.GetField("useUnsafeHeaderParsing", BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (aUseUnsafeHeaderParsing != null)
+                        {
+                            aUseUnsafeHeaderParsing.SetValue(anInstance, true);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static TAttr GetAttribute<TEnum, TAttr>(TEnum val) where TAttr : Attribute
+        {
+            var type = typeof(TEnum);
+            var memberInfos = type.GetMember(val.ToString());
+            var mi = memberInfos.FirstOrDefault(x => x.DeclaringType == type);
+            if (mi == null) return default(TAttr);
+            var attr = mi.GetCustomAttribute(typeof(TAttr), false);
+            return (TAttr)attr;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static string GetCurrentMethod()
+        {
+            var st = new StackTrace();
+            var sf = st.GetFrame(1);
+
+            return sf.GetMethod().Name;
+        }
+
+        public static string GetEntryVersion()
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            return assembly.GetName().Version.ToString();
+        }
+
+        public static string GetExecutingVersion()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetName().Version.ToString();
+        }
+
         public static bool MonitorTryEnter(object obj, int millisecond, Action act)
         {
             try
@@ -71,8 +134,6 @@ namespace CToolkit.v1_1
         #region Enum
 
 
-        public static Enum EnumParse(String val, Type type) { return (Enum)Enum.Parse(type, val, true); }
-        public static T EnumParse<T>(String val) { return (T)Enum.Parse(typeof(T), val, true); }
         public static List<T> EnumList<T>()
         {
             var ary = Enum.GetValues(typeof(T));
@@ -81,6 +142,8 @@ namespace CToolkit.v1_1
             return list;
         }
 
+        public static Enum EnumParse(String val, Type type) { return (Enum)Enum.Parse(type, val, true); }
+        public static T EnumParse<T>(String val) { return (T)Enum.Parse(typeof(T), val, true); }
         #endregion
 
 
@@ -191,7 +254,7 @@ namespace CToolkit.v1_1
         #endregion
 
 
-      
+
         #region Foreach
 
         public static void Foreach<T>(IEnumerable<T> list, Action<T> act)
@@ -200,67 +263,6 @@ namespace CToolkit.v1_1
         }
 
         #endregion
-
-
-
-
-        public static TAttr GetAttribute<TEnum, TAttr>(TEnum val) where TAttr : Attribute
-        {
-            var type = typeof(TEnum);
-            var memberInfos = type.GetMember(val.ToString());
-            var mi = memberInfos.FirstOrDefault(x => x.DeclaringType == type);
-            if (mi == null) return default(TAttr);
-            var attr = mi.GetCustomAttribute(typeof(TAttr), false);
-            return (TAttr)attr;
-        }
-
-        public static T ChangeType<T>(object data) { return (T)Convert.ChangeType(data, typeof(T)); }
-
-        public static bool EnableUnsafeHeaderParsing()
-        {
-            //Get the assembly that contains the internal class
-            Assembly aNetAssembly = Assembly.GetAssembly(typeof(System.Net.Configuration.SettingsSection));
-            if (aNetAssembly != null)
-            {
-                //Use the assembly in order to get the internal type for the internal class
-                System.Type aSettingsType = aNetAssembly.GetType("System.Net.Configuration.SettingsSectionInternal");
-                if (aSettingsType != null)
-                {
-                    //Use the internal static property to get an instance of the internal settings class.
-                    //If the static instance isn't created allready the property will create it for us.
-                    object anInstance = aSettingsType.InvokeMember("Section",
-                      BindingFlags.Static | BindingFlags.GetProperty | BindingFlags.NonPublic, null, null, new object[] { });
-
-                    if (anInstance != null)
-                    {
-                        //Locate the private bool field that tells the framework is unsafe header parsing should be allowed or not
-                        FieldInfo aUseUnsafeHeaderParsing = aSettingsType.GetField("useUnsafeHeaderParsing", BindingFlags.NonPublic | BindingFlags.Instance);
-                        if (aUseUnsafeHeaderParsing != null)
-                        {
-                            aUseUnsafeHeaderParsing.SetValue(anInstance, true);
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static string GetCurrentMethod()
-        {
-            var st = new StackTrace();
-            var sf = st.GetFrame(1);
-
-            return sf.GetMethod().Name;
-        }
-
-        public static string GetEntryVersion()
-        {
-            var assembly = Assembly.GetEntryAssembly();
-            return assembly.GetName().Version.ToString();
-        }
-
         public static object TryCatch(Action theMethod, params object[] parameters)
         {
             try
@@ -273,13 +275,6 @@ namespace CToolkit.v1_1
                 return ex;
             }
         }
-
-        public static string GetExecutingVersion()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            return assembly.GetName().Version.ToString();
-        }
-
         #region Process
 
         public static long MemorySize(string processName)
@@ -312,6 +307,22 @@ namespace CToolkit.v1_1
                 return (T)obj;
             }
         }
+        public static T LoadXml<T>(String xml)
+        {
+            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
+
+            using (var ms = new MemoryStream())
+            {
+                using (var sw = new StreamWriter(ms))
+                    sw.Write(xml);
+
+                ms.Position = 0;
+
+                using (var sr = new StreamReader(ms))
+                    return (T)seri.Deserialize(sr);
+            }
+        }
+
         public static T LoadXmlFromFile<T>(String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
@@ -340,20 +351,16 @@ namespace CToolkit.v1_1
                 return seri.Deserialize(stm) as T;
             }
         }
-
-        public static T LoadXml<T>(String xml)
+        public static void SaveToXmlFileT<T>(T obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var fi = new FileInfo(fn);
 
-            using (var ms = new MemoryStream())
+            if (!fi.Directory.Exists) fi.Directory.Create();
+
+            using (var stm = fi.Open(FileMode.Create))
             {
-                using (var sw = new StreamWriter(ms))
-                    sw.Write(xml);
-
-                ms.Position = 0;
-
-                using (var sr = new StreamReader(ms))
-                    return (T)seri.Deserialize(sr);
+                seri.Serialize(stm, obj);
             }
         }
 
@@ -372,18 +379,6 @@ namespace CToolkit.v1_1
         public static void SaveXmlToFile(System.Type type, object obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(type);
-            var fi = new FileInfo(fn);
-
-            if (!fi.Directory.Exists) fi.Directory.Create();
-
-            using (var stm = fi.Open(FileMode.Create))
-            {
-                seri.Serialize(stm, obj);
-            }
-        }
-        public static void SaveToXmlFileT<T>(T obj, String fn)
-        {
-            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
             var fi = new FileInfo(fn);
 
             if (!fi.Directory.Exists) fi.Directory.Create();
@@ -447,20 +442,24 @@ namespace CToolkit.v1_1
             foreach (var obj in objs) DisposeObjTry(obj, exceptionHandler);
         }
 
-        public static void DisposeTask(Task task, int millisecond = 100)
+        public static void DisposeTask(Task task, int millisecond = 0)
         {
             if (task == null) return;
-            // <0 代表不等待, 直接dispose
-            if (task.Status < TaskStatus.RanToCompletion && millisecond >= 0)
-                task.Wait(millisecond);
+            if (task.Status < TaskStatus.RanToCompletion)
+            {
+                if (millisecond < 0) task.Wait();//無限等待
+                else if (millisecond > 0) task.Wait(millisecond);//等待一段時間
+                //else 不等待
+            }
             task.Dispose();
         }
-        public static void DisposeTask(CtkTask task)
+        public static void DisposeTask(CtkTask task, int? millisecond = null)
         {
             if (task == null) return;
+            if (millisecond.HasValue) task.DisposeWaitTime = millisecond.Value;
             task.Dispose();
         }
-        public static bool DisposeTaskTry(Task task, int millisecond = 100)
+        public static bool DisposeTaskTry(Task task, int millisecond = 0)
         {
             try
             {
@@ -473,11 +472,11 @@ namespace CToolkit.v1_1
                 return false;
             }
         }
-        public static bool DisposeTaskTry(CtkTask task)
+        public static bool DisposeTaskTry(CtkTask task, int? millisecond = null)
         {
             try
             {
-                DisposeTask(task);
+                DisposeTask(task, millisecond);
                 return true;
             }
             catch (Exception ex)
