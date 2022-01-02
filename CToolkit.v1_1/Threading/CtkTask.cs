@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace CToolkit.v1_1.Threading
 {
+
     public class CtkTask : IDisposable, IAsyncResult
     {
         public CancellationTokenSource CancelTokenSource = new CancellationTokenSource();
@@ -16,6 +17,11 @@ namespace CToolkit.v1_1.Threading
         public Task Task;
         public CancellationToken CancelToken { get { return this.CancelTokenSource.Token; } }
         public TaskStatus Status { get { return this.Task.Status; } }
+        public int DisposeWaitTime = 0;
+
+
+
+        ~CtkTask() { this.Dispose(false); }
 
         public void Cancel() { this.CancelTokenSource.Cancel(); }
         public TaskAwaiter GetAwaiter() { return this.Task.GetAwaiter(); }
@@ -236,18 +242,18 @@ namespace CToolkit.v1_1.Threading
              * (2) 應用程式強制關閉時, 其實Task也會被關閉
              * 所以, 若你要用一個不受控的Task, 那不如用原生的
              * 
+             * 
              * 結論: 其實原生Task 你也沒辦法強制關閉它, 你也只能直接Try/Catch起來
+             * [d20211230] 最好是 應用的代碼 可以確保在一段時間內可以進入下個迴圈
              */
 
 
 
             if (this.Task != null)
             {
-                //只增加Cancel的呼叫, 剩的用父類別的
                 if (this.Status < TaskStatus.RanToCompletion)
                     this.CancelTokenSource.Cancel();
-                //統一Dispose的方法, 有例外仍舊扔出, 確保在預期內
-                CtkUtil.DisposeTask(this.Task);
+                CtkUtil.DisposeTask(this.Task, this.DisposeWaitTime);//統一Dispose的方法, 有例外仍舊扔出, 確保在預期內
                 this.Task = null;
             }
         }
