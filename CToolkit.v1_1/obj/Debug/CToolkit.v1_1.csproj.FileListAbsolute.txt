@@ -19,3 +19,6 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.pdb
+<<<<<<< HEAD
+=======
+>>>>>>> 909fbcf1f539dbdf9d95b420b893030756f3d82a
