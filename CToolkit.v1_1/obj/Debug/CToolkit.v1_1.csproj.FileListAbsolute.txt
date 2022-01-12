@@ -19,14 +19,3 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.pdb
-<<<<<<< HEAD
-<<<<<<< HEAD
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\FluentFTP.dll
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csprojAssemblyReference.cache
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 909fbcf1f539dbdf9d95b420b893030756f3d82a
->>>>>>> c124041426553e438fa6c9dff5a6ec56aded89b9
-=======
->>>>>>> ffd8b7e81d9e5622193768a6ecb2c6f934e96ad4
