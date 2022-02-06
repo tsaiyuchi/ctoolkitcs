@@ -39,6 +39,7 @@ namespace CToolkit.v1_1.Timing
         public static int HalfOfYear(DateTime dt) { return (dt.Month - 1) / 6 + 1; }
 
         public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
+
         #region Week Operation
         //--- Week ---------
 
@@ -309,6 +310,9 @@ namespace CToolkit.v1_1.Timing
         public static string ToYyyyWw(DateTime? dt) { return dt.HasValue ? ToYyyyWw(dt.Value) : null; }
 
         #endregion
+
+
+
 
 
         #region Sign DateTime / String : 一代目, prefix 1 字元
