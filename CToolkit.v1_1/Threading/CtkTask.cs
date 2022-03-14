@@ -12,17 +12,14 @@ namespace CToolkit.v1_1.Threading
     public class CtkTask : IDisposable, IAsyncResult
     {
         public CancellationTokenSource CancelTokenSource = new CancellationTokenSource();
+        public int DisposeWaitTime = 0;
         public string Name;
         public int Sleep = 0;
         public Task Task;
-        public CancellationToken CancelToken { get { return this.CancelTokenSource.Token; } }
-        public TaskStatus Status { get { return this.Task.Status; } }
-        public int DisposeWaitTime = 0;
-
-
-
         ~CtkTask() { this.Dispose(false); }
 
+        public CancellationToken CancelToken { get { return this.CancelTokenSource.Token; } }
+        public TaskStatus Status { get { return this.Task.Status; } }
         public void Cancel() { this.CancelTokenSource.Cancel(); }
         public TaskAwaiter GetAwaiter() { return this.Task.GetAwaiter(); }
         public bool IsEnd() { return this.Task == null ? true : this.Task.IsCompleted || this.Task.IsFaulted || this.Task.IsCanceled; }
@@ -261,4 +258,13 @@ namespace CToolkit.v1_1.Threading
         #endregion
 
     }
+
+
+
+    public class CtkTask<TResult>
+    {
+
+    }
+
+
 }

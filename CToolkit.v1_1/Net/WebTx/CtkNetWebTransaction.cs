@@ -29,7 +29,7 @@ namespace CToolkit.v1_1.Net.WebTx
 
 
 
-        #region Static
+        #region === Static === === ===
 
         public static String HttpGet(string uri, System.Net.Cache.RequestCacheLevel cachePolicy) { return HttpGet(new Uri(uri), cachePolicy); }
         public static String HttpGet(Uri uri, System.Net.Cache.RequestCacheLevel cachePolicy)
@@ -213,6 +213,7 @@ namespace CToolkit.v1_1.Net.WebTx
 
 
 
+        #region Selenium
 
 
         public static async Task<CtkNetHttpGetRtn<IWebDriver>> SeleniumChromeHttpGetAsyn(String uri,
@@ -225,12 +226,13 @@ namespace CToolkit.v1_1.Net.WebTx
 
             ChromeOptions options = new ChromeOptions();
             options.AddArgument(string.Format("user-agent={0}", CtkNetUserAgents.Random().UserAgent));
-            using (var driver = rtn.Driver = new ChromeDriver())
+            using (var driver = rtn.Driver = new ChromeDriver(options))
             {
                 //開啟網頁
                 driver.Navigate().GoToUrl(uri);
                 //隱式等待 - 直到畫面跑出資料才往下執行, 只需宣告一次, 之後找元件都等待同樣秒數.
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(delayBrowserOpen);
+
 
 
 
@@ -291,9 +293,13 @@ namespace CToolkit.v1_1.Net.WebTx
 
         }
 
+
+
+
+
         #endregion
 
-
+        #endregion
 
     }
 }

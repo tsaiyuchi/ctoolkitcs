@@ -99,7 +99,8 @@
     <Compile Include="Data\CtkCsvReader.cs" />
     <Compile Include="Data\CtkCsvWriter.cs" />
     <Compile Include="Data\CtkDataUtil.cs" />
-    <Compile Include="Data\CtkExcel.cs" />
+    <Compile Include="Data\CtkExcelOleDb.cs" />
+    <Compile Include="Data\CtkExcelOleDbParam.cs" />
     <Compile Include="Data\CtkMsSql.cs" />
     <Compile Include="Data\CtkOracle.cs" />
     <Compile Include="Diagnostics\CtkStopwatch.cs" />

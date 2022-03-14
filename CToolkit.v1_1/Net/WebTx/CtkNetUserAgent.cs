@@ -14,7 +14,7 @@ namespace CToolkit.v1_1.Net.WebTx
         public string HardwareType;
         public string UserAgent;
 
-
+        public DateTime UpdateTime;
 
 
 
