@@ -4,7 +4,6 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj.CopyComplete
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.pdb
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csprojAssemblyReference.cache
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\Cudafy.NET.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\FluentFTP.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\MathNet.Filtering.dll
@@ -19,3 +18,4 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\MathNet.Numerics.xml
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\Newtonsoft.Json.xml
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\System.ValueTuple.xml
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\WebDriver.xml
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj.AssemblyReference.cache
