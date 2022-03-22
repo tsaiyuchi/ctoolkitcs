@@ -10,9 +10,9 @@ using System.IO.Compression;
 using System.IO;
 using CToolkit.v1_1.Compress;
 using System.Threading.Tasks;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using System.Threading;
 
 namespace CToolkit.v1_1.Net.WebTx
 {
