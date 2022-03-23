@@ -7,10 +7,6 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.pdb
 =======
 >>>>>>> bceeb24e3869d2f8c16f2b17e9d7fd576c9c9d9e
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\Cudafy.NET.dll
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\FluentFTP.dll
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\MathNet.Filtering.dll
-D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\MathNet.Numerics.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\Newtonsoft.Json.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\WebDriver.dll
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\Cudafy.NET.xml
