@@ -115,6 +115,8 @@ namespace CToolkit.v1_1.Net.WebTx
                     reqstm.Write(byteData, 0, byteData.Length);
             }
 
+            
+
             using (var wresp = (HttpWebResponse)wreq.GetResponse())
             {
                 if (respEncoding == null && !string.IsNullOrEmpty(wresp.CharacterSet))
