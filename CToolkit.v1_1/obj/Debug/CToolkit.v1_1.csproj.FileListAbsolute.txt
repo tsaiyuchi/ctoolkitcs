@@ -22,3 +22,4 @@ D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\System.ValueTuple.xm
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\WebDriver.xml
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csproj.AssemblyReference.cache
 D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\bin\Debug\System.ValueTuple.dll
+D:\ycProject\github\ctoolkit.csharp\CToolkit.v1_1\obj\Debug\CToolkit.v1_1.csprojAssemblyReference.cache
