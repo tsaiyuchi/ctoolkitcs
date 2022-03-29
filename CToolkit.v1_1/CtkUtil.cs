@@ -287,6 +287,25 @@ namespace CToolkit.v1_1
                 return ex;
             }
         }
+
+        public static void Try(Action act, int times = 3)
+        {
+            for (var idx = 0; idx < times; idx++)
+            {
+                try
+                {
+                    act();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    if (idx >= times - 1)
+                        throw ex;
+                }
+            }
+        }
+
+
         #region Process
 
         public static long MemorySize(string processName)
