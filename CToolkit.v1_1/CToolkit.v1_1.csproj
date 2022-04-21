@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{94A51F40-EA6D-41F5-9139-95B88D928D5D}</ProjectGuid>
+    <ProjectGuid>{41EC2792-06C7-4C3D-916C-B7E7F378950F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CToolkit.v1_1</RootNamespace>
@@ -12,7 +12,6 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,26 +29,24 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cudafy.NET, Version=1.29.5576.13786, Culture=neutral, PublicKeyToken=63a4c9931616906b, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev.v0_0\packages\CUDAfy.NET.1.29.5576.13786\lib\net40\Cudafy.NET.dll</HintPath>
+      <HintPath>..\packages\CUDAfy.NET.1.29.5576.13786\lib\net40\Cudafy.NET.dll</HintPath>
     </Reference>
-    <Reference Include="FluentFTP, Version=35.2.2.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev.v0_0\packages\FluentFTP.35.2.2\lib\net45\FluentFTP.dll</HintPath>
+    <Reference Include="FluentFTP, Version=37.0.2.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.37.0.2\lib\net45\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Filtering, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev.v0_0\packages\MathNet.Filtering.0.7.0\lib\net40\MathNet.Filtering.dll</HintPath>
+      <HintPath>..\packages\MathNet.Filtering.0.7.0\lib\net40\MathNet.Filtering.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=4.15.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev.v0_0\packages\MathNet.Numerics.4.15.0\lib\net40\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\packages\MathNet.Numerics.4.15.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas002\chidev.csharp\ChiDev.v1_0\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -60,14 +56,14 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\gitnas001\chidev.csharp\ChiDev\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WebDriver, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.4.1.0\lib\net45\WebDriver.dll</HintPath>
@@ -81,20 +77,21 @@
     <Compile Include="Config\CtkConfigCollectorFolder.cs" />
     <Compile Include="ContextFlow\ICtkContextFlow.cs" />
     <Compile Include="ContextFlow\ICtkContextFlowRun.cs" />
-    <Compile Include="Cryptography\CtkCryptographyUtil.cs" />
     <Compile Include="Cryptography\CtkCryptographyRsa.cs" />
+    <Compile Include="Cryptography\CtkCryptographyUtil.cs" />
     <Compile Include="CtkAspectUtil.cs" />
     <Compile Include="CtkCommandLine.cs" />
     <Compile Include="CtkEquality.cs" />
-    <Compile Include="CtkException.cs" />
-    <Compile Include="CtkSerializableDictionary.cs" />
     <Compile Include="CtkEventUtil.cs" />
+    <Compile Include="CtkException.cs" />
     <Compile Include="CtkFileFormat.cs" />
-    <Compile Include="CtkUtil.cs" />
     <Compile Include="CtkGenericEventArgs.cs" />
+    <Compile Include="CtkKeyValuePair.cs" />
     <Compile Include="CtkLog.cs" />
     <Compile Include="CtkMemcpyUtil.cs" />
     <Compile Include="CtkObject.cs" />
+    <Compile Include="CtkSerializableDictionary.cs" />
+    <Compile Include="CtkUtil.cs" />
     <Compile Include="Data\CtkCsvEnumReadType.cs" />
     <Compile Include="Data\CtkCsvReader.cs" />
     <Compile Include="Data\CtkCsvWriter.cs" />
@@ -113,7 +110,6 @@
     <Compile Include="Extension\CtkExtProtocol.cs" />
     <Compile Include="IO\CtkStreamSegment.cs" />
     <Compile Include="IO\CtkStreamSegmentBuffer.cs" />
-    <Compile Include="CtkKeyValuePair.cs" />
     <Compile Include="Logging\CtkLogger.cs" />
     <Compile Include="Logging\CtkLoggerEnumDisplay.cs" />
     <Compile Include="Logging\CtkLoggerEnumLevel.cs" />
@@ -134,23 +130,23 @@
     <Compile Include="Modbus\CtkModbusMessage.cs" />
     <Compile Include="Modbus\CtkModbusMessageReceiver.cs" />
     <Compile Include="Modbus\CtkModbusOldMessage.cs" />
+    <Compile Include="Net\CtkFtp.cs" />
+    <Compile Include="Net\CtkMail.cs" />
+    <Compile Include="Net\CtkNetUtil.cs" />
+    <Compile Include="Net\EnumCtkConnectMode.cs" />
+    <Compile Include="Net\Sample\CtkEgSimple_BeginSocket.cs" />
+    <Compile Include="Net\Sample\CtkEgSimple_Socket.cs" />
+    <Compile Include="Net\Sample\CtkEgSimple_SocketCloseTest.cs" />
+    <Compile Include="Net\Socket\CtkNonStopTcpStateEventArgs.cs" />
+    <Compile Include="Net\Socket\CtkTcpClient.cs" />
+    <Compile Include="Net\Socket\CtkTcpListener.cs" />
+    <Compile Include="Net\Socket\CtkTcpListenerEx.cs" />
+    <Compile Include="Net\Socket\CtkTcpSocket.cs" />
     <Compile Include="Net\Socket\CtkUdpSocket.cs" />
     <Compile Include="Net\WebTx\CtkNetHttpGetRtn.cs" />
     <Compile Include="Net\WebTx\CtkNetUserAgent.cs" />
     <Compile Include="Net\WebTx\CtkNetUserAgents.cs" />
-    <Compile Include="Net\Sample\CtkEgSimple_BeginSocket.cs" />
-    <Compile Include="Net\Sample\CtkEgSimple_Socket.cs" />
-    <Compile Include="Net\Sample\CtkEgSimple_SocketCloseTest.cs" />
-    <Compile Include="Net\CtkFtp.cs" />
-    <Compile Include="Net\CtkMail.cs" />
-    <Compile Include="Net\CtkNetUtil.cs" />
-    <Compile Include="Net\Socket\CtkTcpClient.cs" />
-    <Compile Include="Net\Socket\CtkTcpListener.cs" />
-    <Compile Include="Net\Socket\CtkNonStopTcpStateEventArgs.cs" />
-    <Compile Include="Net\Socket\CtkTcpListenerEx.cs" />
-    <Compile Include="Net\Socket\CtkTcpSocket.cs" />
     <Compile Include="Net\WebTx\CtkNetWebTransaction.cs" />
-    <Compile Include="Net\EnumCtkConnectMode.cs" />
     <Compile Include="Numeric\CtkCudafyCannotUseException.cs" />
     <Compile Include="Numeric\CtkCudafyContext.cs" />
     <Compile Include="Numeric\CtkEnumPassFilterMode.cs" />
@@ -208,8 +204,8 @@
     <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpInst01.cs" />
     <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpInst02.cs" />
     <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpMsg.cs" />
-    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpResp.cs" />
     <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpReq.cs" />
+    <Compile Include="Wcf\NetTcp\SampleCtkWcfNetTcpResp.cs" />
     <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0101.cs" />
     <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0102.cs" />
     <Compile Include="Wcf\NetTcp\SampleICtkWcfNetTcp0201.cs" />
@@ -229,6 +225,7 @@
     <Compile Include="WinApiNative\CtkEnumHookType.cs" />
     <Compile Include="WinApiNative\CtkEnumKeyboardFlag.cs" />
     <Compile Include="WinApiNative\CtkEnumMouseFlag.cs" />
+    <Compile Include="WinApiNative\CtkGdiPlus.cs" />
     <Compile Include="WinApiNative\CtkGpStatus.cs" />
     <Compile Include="WinApiNative\CtkKernel32Lib.cs" />
     <Compile Include="WinApiNative\CtkMdlHookHardwareStruct.cs" />
@@ -238,18 +235,22 @@
     <Compile Include="WinApiNative\CtkMdlInputType.cs" />
     <Compile Include="WinApiNative\CtkUser32Lib.cs" />
     <Compile Include="WinApiNative\CtkWinInetLib.cs" />
-    <Compile Include="WinApi\CtkWinApiNetworkShare.cs" />
     <Compile Include="WinApi\CtkWinApiEnumMouseLMR.cs" />
     <Compile Include="WinApi\CtkWinApiEventArgsException.cs" />
     <Compile Include="WinApi\CtkWinApiEventArgsHookCallback.cs" />
-    <Compile Include="WinApiNative\CtkGdiPlus.cs" />
     <Compile Include="WinApi\CtkWinApiGdiPlus.cs" />
     <Compile Include="WinApi\CtkWinApiHookKeyboard.cs" />
     <Compile Include="WinApi\CtkWinApiHookMouse.cs" />
+    <Compile Include="WinApi\CtkWinApiNetworkShare.cs" />
     <Compile Include="WinApi\CtkWinApiUtilUser32.cs" />
     <Compile Include="XmlSerialize\CtkDictionary.cs" />
     <Compile Include="XmlSerialize\CtkKeyValuePair.cs" />
     <Compile Include="_Worker\ReadMe.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Tools\place_these_executables_in_same_folder_as_Cudafy.NET.dll_" />
+    <None Include="_nuget\upload.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mathing\CtkMath.ReadMe.txt" />
@@ -260,16 +261,6 @@
     <Content Include="Readme\README.txt" />
     <Content Include="Tools\cudafycl.exe" />
     <Content Include="Tools\CudafyViewer.exe" />
-    <None Include="Tools\place_these_executables_in_same_folder_as_Cudafy.NET.dll_" />
-    <None Include="_nuget\upload.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
 </Project>

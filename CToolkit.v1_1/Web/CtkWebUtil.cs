@@ -96,7 +96,7 @@ namespace CToolkit.v1_1.Web
         public static void AlertMessage(System.Web.UI.Page ctrl, string strMessage)
         {
             //this.ClientScript.RegisterClientScriptBlock(this.GetType(), "msg", "<script>alert('" + strMessage + "');</script>");
-            System.Web.UI.ScriptManager.RegisterStartupScript(ctrl, ctrl.GetType(), "msg", "alert('" + strMessage + "');", true);
+            //System.Web.UI.ScriptManager.RegisterStartupScript(ctrl, ctrl.GetType(), "msg", "alert('" + strMessage + "');", true);
         }
 
 
