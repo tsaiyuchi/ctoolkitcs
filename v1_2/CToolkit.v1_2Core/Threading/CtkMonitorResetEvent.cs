@@ -84,7 +84,10 @@ namespace CToolkit.v1_2Core.Threading
                         isGetLock = Monitor.TryEnter(this);
 
                     if (isGetLock)
+                    {
                         this.resetEvent.Set();
+                        return true;
+                    }
                 }
                 finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
             }
