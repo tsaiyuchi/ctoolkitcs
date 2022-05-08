@@ -39,6 +39,9 @@ namespace CToolkit.v1_2Core.Threading
             //waitTimeMs <= 0 代表無限等待
             while (waitTimeMs <= 0 || (DateTime.Now - entryTime).TotalMilliseconds < waitTimeMs)
             {
+                //注意: 如果 tryGetLockTimeMs <= 0, 執行緒會一直在嘗試取得 lock, 無法回到這行
+                if (this.disposed) return false;
+
                 try
                 {//不做大範圍Lock, 只對關鍵的
                     var isGetLock = false;
@@ -74,6 +77,9 @@ namespace CToolkit.v1_2Core.Threading
             //waitTimeMs <= 0 代表無限等待
             while (waitTimeMs <= 0 || (DateTime.Now - entryTime).TotalMilliseconds < waitTimeMs)
             {
+                //注意: 如果 tryGetLockTimeMs <= 0, 執行緒會一直在嘗試取得 lock, 無法回到這行
+                if (this.disposed) return false;
+
                 try
                 {
                     //不做大範圍Lock, 只對關鍵的
@@ -127,7 +133,11 @@ namespace CToolkit.v1_2Core.Threading
         protected virtual void DisposeSelf()
         {
             if (this.resetEvent != null)
+            {
+                this.resetEvent.Close();
                 this.resetEvent.Dispose();
+            }
+
         }
 
         #endregion
