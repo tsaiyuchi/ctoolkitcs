@@ -32,5 +32,8 @@ namespace CToolkit.v1_2Core.Timing
 
         public static bool operator >=(CtkTimeSecond a, CtkTimeSecond b) { return a.CompareTo(b) >= 0; }
         public int CompareTo(CtkTimeSecond other) { return this.TotalSecond.CompareTo(other.TotalSecond); }
+
+        public override bool Equals(object obj) { return base.Equals(obj); }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }
