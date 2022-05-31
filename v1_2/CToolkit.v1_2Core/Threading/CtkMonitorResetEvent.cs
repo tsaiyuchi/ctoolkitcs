@@ -53,6 +53,7 @@ namespace CToolkit.v1_2Core.Threading
 
                     if (isGetLock)
                     {
+                        //若在這Wait不歸還Lock, 會導致其它Thread無法取得Lock, 無法進行Set就永遠等不到
                         if (tryResetTimeMs <= 0)
                             throw new ArgumentException("if you can get locker then another cannot, reset time <= 0 will cause dead lock");
 
