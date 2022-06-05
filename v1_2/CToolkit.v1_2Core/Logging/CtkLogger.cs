@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace CToolkit.v1_2Core.Logging
 {
-    public class CtkLogger
+    public class CtkLogger : IDisposable
     {
 
         protected ConcurrentQueue<CtkLoggerEventArgs> queue = new ConcurrentQueue<CtkLoggerEventArgs>();
@@ -38,16 +38,9 @@ namespace CToolkit.v1_2Core.Logging
             if (!Monitor.TryEnter(this, 1000)) return;
             try
             {
-                if (this.task != null)
-                {
-                    //若還沒結束執行, 先return
-                    if (!this.task.IsEnd()) return;
-                    //若之前有, 把它清乾淨
-                    using (var obj = this.task)
-                        if (!obj.IsEnd())
-                            obj.Cancel();
-                }
-
+                //若還沒結束執行, 先return
+                if (this.task != null && !this.task.IsEnd()) return;
+                this.CloseTask();
 
                 this.task = CtkTask.RunLoop(() =>
                 {
@@ -71,6 +64,24 @@ namespace CToolkit.v1_2Core.Logging
         }
 
 
+        public void CloseTask()
+        {
+            if (this.task != null)
+            {
+                //若之前有, 把它清乾淨
+                using (var obj = this.task)
+                {
+                    if (!obj.IsEnd()) obj.Cancel();
+                    obj.Dispose();
+                }
+            }
+        }
+        public void Close()
+        {
+            this.CloseTask();
+        }
+
+
 
         #region Event
 
@@ -86,6 +97,52 @@ namespace CToolkit.v1_2Core.Logging
         #endregion
 
 
+
+        #region IDisposable
+        // Flag: Has Dispose already been called?
+        bool disposed = false;
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                //
+            }
+
+            // Free any unmanaged objects here.
+            //
+
+            this.DisposeSelf();
+
+            disposed = true;
+        }
+
+
+        void DisposeSelf()
+        {
+            try { this.Close(); }
+            catch (Exception ex) { CtkLog.Write(ex); }
+            //斷線不用清除Event, 但Dispsoe需要, 因為即使斷線此物件仍存活著
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+        }
+
+        #endregion
+
+
+
+
         #region Static
 
 
@@ -99,4 +156,6 @@ namespace CToolkit.v1_2Core.Logging
         #endregion
 
     }
+
+
 }
