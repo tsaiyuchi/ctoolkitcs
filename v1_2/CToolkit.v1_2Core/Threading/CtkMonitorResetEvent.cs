@@ -138,6 +138,10 @@ namespace CToolkit.v1_2Core.Threading
                 this.resetEvent.Close();
                 this.resetEvent.Dispose();
             }
+            if (Monitor.IsEntered(this))
+            {
+                Monitor.Exit(this);
+            }
 
         }
 
