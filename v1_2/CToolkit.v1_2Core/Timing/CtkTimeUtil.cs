@@ -224,15 +224,19 @@ namespace CToolkit.v1_2Core.Timing
         }
         public static DateTime FromYyyyMm(string s) { return DateTimeParseExact(s, "yyyyMM"); }
         public static DateTime FromYyyyMmDd(string s) { return DateTimeParseExact(s, "yyyyMMdd"); }
+        public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
+
+        public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
+
+        public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
+
+        public static bool FromYyyyMmDdHhIiSsTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMddHHmmss"); }
+
         public static DateTime? FromYyyyMmDdNullable(string s)
         {
             if (string.IsNullOrEmpty(s)) return null;
             return new Nullable<DateTime>(FromYyyyMmDd(s));
         }
-        public static DateTime FromYyyyMmDdHh(string s) { return DateTimeParseExact(s, "yyyyMMddHH"); }
-        public static DateTime FromYyyyMmDdHhIi(string s) { return DateTimeParseExact(s, "yyyyMMddHHmm"); }
-        public static DateTime FromYyyyMmDdHhIiSs(string s) { return DateTimeParseExact(s, "yyyyMMddHHmmss"); }
-        public static bool FromYyyyMmDdHhIiSsTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMddHHmmss"); }
         public static bool FromYyyyMmDdTry(string s, out DateTime dt) { return DateTimeTryParseExact(s, out dt, "yyyyMMdd"); }
         /// <summary>
         /// 
@@ -346,7 +350,7 @@ namespace CToolkit.v1_2Core.Timing
         /// </summary>
         /// <param name="yyyyqq"></param>
         /// <returns>該季第一天</returns>
-        public static DateTime FromSign1QuarterYear(string yyyyqq)
+        public static DateTime FromSign1Quarter(string yyyyqq)
         {
             if (!yyyyqq.StartsWith("q")) throw new ArgumentException("錯誤的Sign");
             yyyyqq = yyyyqq.Substring(1);

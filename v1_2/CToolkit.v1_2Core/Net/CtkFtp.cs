@@ -1,5 +1,4 @@
-﻿using FluentFTP;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,13 +6,76 @@ using System.Text;
 
 namespace CToolkit.v1_2Core.Net
 {
-    public class CtkFtp
+    public class CtkFtp : IDisposable
     {
+        public NetworkCredential Credentials;
+        public FluentFTP.FtpClient FluentFtp;
+        public String Host;
+        public bool isUseSslTls = false;
+
+        public void Close()
+        {
+            if (this.FluentFtp != null) { using (var obj = this.FluentFtp) obj.Disconnect(); }
+        }
+
+        public FluentFTP.FtpClient UseFluent()
+        {
+            if (this.FluentFtp != null) return this.FluentFtp;
+
+            var rtn = this.FluentFtp = new FluentFTP.FtpClient();
+            rtn.Host = this.Host;
+            rtn.Credentials = this.Credentials;
+            if (this.isUseSslTls)
+            {
+                rtn.EncryptionMode = FluentFTP.FtpEncryptionMode.Explicit;
+                rtn.ValidateCertificate += (ss, ee) => { ee.Accept = true; };
+            }
+            rtn.Connect();
+            return rtn;
+        }
+        #region IDisposable
+        // Flag: Has Dispose already been called?
+        protected bool disposed = false;
+        // Public implementation of Dispose pattern callable by consumers.
+        public virtual void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                //
+            }
+
+            // Free any unmanaged objects here.
+            //
+
+            this.DisposeSelf();
+
+            disposed = true;
+        }
+        protected virtual void DisposeSelf()
+        {
+            try { this.Close(); }
+            catch (Exception ex) { CtkLog.Write(ex); }
+        }
+        #endregion
+
+
+        #region Static
+
 
         public static void test()
         {
             // connect to the FTP server
-            var client = new FtpClient();
+            var client = new FluentFTP.FtpClient();
             client.Host = "123.123.123.123";
             client.Credentials = new NetworkCredential("david", "pass123");
             client.Connect();
@@ -31,7 +93,7 @@ namespace CToolkit.v1_2Core.Net
         public static void Upload(String host, String acc, String pwd, String src, String dest)
         {
             // connect to the FTP server
-            using (var client = new FtpClient())
+            using (var client = new FluentFTP.FtpClient())
             {
                 client.Host = host;
                 client.Credentials = new NetworkCredential(acc, pwd);
@@ -40,6 +102,10 @@ namespace CToolkit.v1_2Core.Net
                 client.UploadFile(src, dest);
             }
         }
+
+
+
+        #endregion
 
 
 
