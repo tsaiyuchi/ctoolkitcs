@@ -181,6 +181,9 @@ namespace CToolkit.v1_2Core.Timing
 
 
         #region Normal DateTime / String
+        /*[d20220627] 一般日期時間字串 = 沒有符號
+         */
+
 
         public static DateTime DateTimeParseExact(string s, string format = "yyyyMMdd") { return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture); }
         public static DateTime DateTimeParseExact(string s, DateTime defaultDt, string format = "yyyyMMdd")
@@ -502,11 +505,7 @@ namespace CToolkit.v1_2Core.Timing
 
         #region Sign DateTime / String : prefix 3 字元
 
-        /// <summary>
-        /// day20201223
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
+        /// <summary> day20201223 </summary>
         public static string ToSign3Day(DateTime dt) { return "day" + dt.ToString("yyyyMMdd"); }
         /// <summary>
         /// day20201223
