@@ -13,6 +13,8 @@ namespace CToolkit.v1_2Core.Net
         public String Host;
         public bool isUseSslTls = false;
 
+        public bool IsDisposed { get { return this.disposed; } }
+
         public void Close()
         {
             if (this.FluentFtp != null) { using (var obj = this.FluentFtp) obj.Disconnect(); }
