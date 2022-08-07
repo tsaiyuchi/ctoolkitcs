@@ -17,24 +17,33 @@ namespace CToolkit.v1_2Core.Net
 
         public void Close()
         {
-            if (this.FluentFtp != null) { using (var obj = this.FluentFtp) obj.Disconnect(); }
+            if (this.FluentFtp != null)
+            {
+                using (var obj = this.FluentFtp)
+                    obj.Disconnect();
+            }
         }
 
         public FluentFTP.FtpClient UseFluent()
         {
-            if (this.FluentFtp != null) return this.FluentFtp;
-
-            var rtn = this.FluentFtp = new FluentFTP.FtpClient();
-            rtn.Host = this.Host;
-            rtn.Credentials = this.Credentials;
-            if (this.isUseSslTls)
+            lock (this)
             {
-                rtn.EncryptionMode = FluentFTP.FtpEncryptionMode.Explicit;
-                rtn.ValidateCertificate += (ss, ee) => { ee.Accept = true; };
+                if (this.FluentFtp != null) return this.FluentFtp;
+
+                var rtn = this.FluentFtp = new FluentFTP.FtpClient();
+                rtn.Host = this.Host;
+                rtn.Credentials = this.Credentials;
+                if (this.isUseSslTls)
+                {
+                    rtn.EncryptionMode = FluentFTP.FtpEncryptionMode.Explicit;
+                    rtn.ValidateCertificate += (ss, ee) => { ee.Accept = true; };
+                }
+                rtn.Connect();
+                return rtn;
             }
-            rtn.Connect();
-            return rtn;
         }
+
+
         #region IDisposable
         // Flag: Has Dispose already been called?
         protected bool disposed = false;

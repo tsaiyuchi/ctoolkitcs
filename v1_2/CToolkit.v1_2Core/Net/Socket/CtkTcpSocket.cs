@@ -10,7 +10,7 @@ namespace CToolkit.v1_2Core.Net
     {
         public bool IsActively = false;
         /// <summary>
-        /// 若開敋自動讀取,
+        /// 若開啟自動讀取,
         /// 在連線完成 及 讀取完成 時, 會自動開始下一次的讀取.
         /// 這不適用在Sync作業, 因為Sync讀完會需要使用者處理後續.
         /// 因此只有非同步類的允許自動讀取

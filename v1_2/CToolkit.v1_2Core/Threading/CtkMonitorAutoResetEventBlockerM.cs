@@ -4,19 +4,19 @@ using System.Text;
 
 namespace CToolkit.v1_2Core.Threading
 {
-    public class CtkMonitorResetEventLocker : IDisposable
+    public class CtkMonitorAutoResetEventBlockerM : IDisposable
     {
 
-        protected CtkMonitorResetEvent mre;
-        public CtkMonitorResetEventLocker(CtkMonitorResetEvent mre)
+        protected CtkMonitorAutoResetEvent _mare;
+        public CtkMonitorAutoResetEventBlockerM(CtkMonitorAutoResetEvent mare)
         {
-            this.mre = mre;
+            this._mare = mare;
         }
 
 
         public void Close()
         {
-            this.mre.TryExit();
+            this._mare.TryExit();
         }
 
 
