@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Text;
 
-namespace CToolkit.v1_2Core.Net
+namespace CToolkit.v1_2Core.Net.FtpTx
 {
-    public class CtkFtp : IDisposable
+    public class CtkNetFtpTransaction : IDisposable
     {
         public NetworkCredential Credentials;
         public FluentFTP.FtpClient FluentFtp;
@@ -14,6 +16,13 @@ namespace CToolkit.v1_2Core.Net
         public bool isUseSslTls = false;
 
         public bool IsDisposed { get { return this.disposed; } }
+
+        public void Sign()
+        {
+
+
+
+        }
 
         public void Close()
         {
@@ -42,6 +51,38 @@ namespace CToolkit.v1_2Core.Net
                 return rtn;
             }
         }
+
+
+
+        public List<String> ListFiles(Uri uri)
+        {
+            try
+            {
+                var request = (FtpWebRequest)WebRequest.Create(uri);
+                request.Method = WebRequestMethods.Ftp.ListDirectory;
+                request.EnableSsl = this.isUseSslTls;
+
+                request.Credentials = this.Credentials;
+                using (var response = (FtpWebResponse)request.GetResponse())
+                using (var responseStream = response.GetResponseStream())
+                {
+                    var reader = new StreamReader(responseStream);
+                    string names = reader.ReadToEnd();
+
+                    responseStream.Close();
+                    response.Close();
+                    return names.Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
 
 
         #region IDisposable
@@ -113,7 +154,6 @@ namespace CToolkit.v1_2Core.Net
                 client.UploadFile(src, dest);
             }
         }
-
 
 
         #endregion
