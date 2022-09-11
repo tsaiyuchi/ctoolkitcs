@@ -9,55 +9,18 @@ namespace CToolkit.v1_2Core.Diagnostics
     {
 
 
-        public CtkStopwatch Restart(string key = "")
+        static CtkStopwatchMapper m_singleton;
+
+        public static CtkStopwatchMapper Singleton
         {
-            var sw = this.Get(key);
-            sw.Restart();
-            return sw;
+            get
+            {
+                if (m_singleton == null)
+                    m_singleton = new CtkStopwatchMapper();
+                return m_singleton;
+            }
         }
 
-
-        public CtkStopwatch Stop(string key = "")
-        {
-            var sw = this.Get(key);
-            sw.Stop();
-            return sw;
-        }
-
-
-        public CtkStopwatch Get(string key = "")
-        {
-            lock (this)
-                if (!this.ContainsKey(key))
-                    this[key] = new CtkStopwatch();
-
-            return this[key];
-        }
-
-
-
-        public static CtkStopwatch SRestart(string key = "")
-        {
-            var sw = SGet(key);
-            sw.Restart();
-            return sw;
-        }
-        public static CtkStopwatch SStop(string key = "")
-        {
-            var sw = SGet(key);
-            sw.Stop();
-            return sw;
-        }
-        public static String SMsgWithRestart(String format, bool isRecordHist = false, string key = "")
-        {
-            var sw = SGet(key);
-            return sw.MsgWithRestart(format, isRecordHist);
-        }
-        public static String SMsgWithStop(String format, bool isRecordHist = false, string key = "")
-        {
-            var sw = SGet(key);
-            return sw.MsgWithStop(format, isRecordHist);
-        }
         public static CtkStopwatch SGet(string key = "")
         {
             var me = CtkStopwatchMapper.Singleton;
@@ -68,17 +31,37 @@ namespace CToolkit.v1_2Core.Diagnostics
             return me[key];
         }
 
-
-
-        static CtkStopwatchMapper m_singleton;
-        public static CtkStopwatchMapper Singleton
+        public static String SMsgRestart(String format, string key = "")
         {
-            get
-            {
-                if (m_singleton == null)
-                    m_singleton = new CtkStopwatchMapper();
-                return m_singleton;
-            }
+            var sw = SGet(key);
+            return sw.MsgRestart(format);
         }
+
+        public static String SMsgStop(String format, string key = "")
+        {
+            var sw = SGet(key);
+            return sw.MsgStop(format);
+        }
+
+        public static CtkStopwatch SRestart(string key = "")
+        {
+            var sw = SGet(key);
+            sw.Restart();
+            return sw;
+        }
+
+        public static CtkStopwatch SStop(string key = "")
+        {
+            var sw = SGet(key);
+            sw.Stop();
+            return sw;
+        }
+
+
+
+
+
+
+
     }
 }

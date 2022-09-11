@@ -14,30 +14,33 @@ namespace CToolkit.v1_2Core.Diagnostics
         ~CtkStopwatch() { this.Clear(); }
         public CtkStopwatch(bool restart) { if (restart) this.Restart(); }
 
-        public String MsgWithRestart(string format, bool isRecordToHist = false)
+        public String Message(string format) { return string.Format(format, this.ElapsedMilliseconds); }
+
+        public String MsgRestart(string format)
         {
             this.Stop();
-            var msg = string.Format(format, this.ElapsedMilliseconds);
-            if (isRecordToHist) this.HistoryMessage.Add(msg);
-            this.Reset();
-            this.Start();
+            var msg = this.Message(format);
+            this.Restart();
             return msg;
         }
-        public String MsgWithStop(string format, bool isRecordToHist = false)
+        public String MsgStop(string format)
         {
             this.Stop();
-            var msg = string.Format(format, this.ElapsedMilliseconds);
-            if (isRecordToHist) this.HistoryMessage.Add(msg);
+            var msg = this.Message(format);
             return msg;
         }
 
 
-
-
-        public void AppendMessage(string format) { this.HistoryMessage.Add(string.Format(format, this.ElapsedMilliseconds)); }
+        public string AppendMsg(string format)
+        {
+            var msg = this.Message(format);
+            this.HistoryMessage.Add(msg);
+            return msg;
+        }
 
         public void Clear()
         {
+            this.Stop();
             this.Reset();
             this.HistoryMessage.Clear();
         }

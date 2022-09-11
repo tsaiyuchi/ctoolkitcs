@@ -505,6 +505,61 @@ namespace CToolkit.v1_2Core.Timing
 
         #region Sign DateTime / String : prefix 3 ¦r¤¸
 
+
+        /// <summary> wek202212 </summary>
+        public static DateTime FromSign3Week(string yyyyww)
+        {
+            if (!yyyyww.StartsWith("wek")) throw new ArgumentException("¿ù»~ªºSign");
+            yyyyww = yyyyww.Substring(3);
+            return FromYyyyWw(yyyyww);
+        }
+
+
+        /// <summary> mth20220911 </summary>
+        public static DateTime FromSign3Day(string yyyymmdd)
+        {
+            if (!yyyymmdd.StartsWith("day")) throw new ArgumentException("¿ù»~ªºSign");
+            yyyymmdd = yyyymmdd.Substring(3);
+            return FromYyyyMmDd(yyyymmdd);
+        }
+
+        /// <summary> mth202209 </summary>
+        public static DateTime FromSign3Month(string yyyymm)
+        {
+            if (!yyyymm.StartsWith("mth")) throw new ArgumentException("¿ù»~ªºSign");
+            yyyymm = yyyymm.Substring(3);
+            return FromYyyyMm(yyyymm);
+        }
+
+        /// <summary> qyr202203 </summary>
+        public static DateTime FromSign3Quarter(string yyyyqq)
+        {
+            if (!yyyyqq.StartsWith("qyr")) throw new ArgumentException("¿ù»~ªºSign");
+            yyyyqq = yyyyqq.Substring(3);
+            return FromYyyyQq(yyyyqq);
+        }
+
+        /// <summary> yr_202203 </summary>
+        public static DateTime FromSign3Year(string yyyy)
+        {
+            if (!yyyy.StartsWith("yr_")) throw new ArgumentException("¿ù»~ªºSign");
+            yyyy = yyyy.Substring(3);
+            return FromYyyy(yyyy);
+        }
+
+        /// <summary> sec20220911201435 </summary>
+        public static DateTime FromSign3Second(string yyyymmddhhiiss)
+        {
+            if (!yyyymmddhhiiss.StartsWith("sec")) throw new ArgumentException("¿ù»~ªºSign");
+            yyyymmddhhiiss = yyyymmddhhiiss.Substring(3);
+            return FromYyyyMmDdHhIiSs(yyyymmddhhiiss);
+        }
+
+        /// <summary> same as Seoncd </summary>
+        public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
+
+
+
         /// <summary> day20201223 </summary>
         public static string ToSign3Day(DateTime dt) { return "day" + dt.ToString("yyyyMMdd"); }
         /// <summary>
@@ -570,8 +625,6 @@ namespace CToolkit.v1_2Core.Timing
         /// <summary>
         /// mth202012
         /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         public static string ToSign3Month(DateTime? dt) { return dt.HasValue ? ToSign3Month(dt.Value) : null; }
         /// <summary>
         /// qyr202004

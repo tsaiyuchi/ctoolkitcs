@@ -121,10 +121,13 @@ namespace CToolkit.v1_2Core.Net.FtpTx
         #endregion
 
 
+
+
+
         #region Static
 
 
-        public static void test()
+        public static void TestFluent()
         {
             // connect to the FTP server
             var client = new FluentFTP.FtpClient();
@@ -142,7 +145,7 @@ namespace CToolkit.v1_2Core.Net.FtpTx
             client.DownloadFile(@"C:\MyVideo_2.mp4", "/htdocs/big2.txt");
         }
 
-        public static void Upload(String host, String acc, String pwd, String src, String dest)
+        public static void TestFluentUpload(String host, String acc, String pwd, String src, String dest)
         {
             // connect to the FTP server
             using (var client = new FluentFTP.FtpClient())
