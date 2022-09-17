@@ -523,6 +523,20 @@ namespace CToolkit.v1_2Core.Timing
             return FromYyyyMmDd(yyyymmdd);
         }
 
+        /// <summary> mth20220911 </summary>
+        public static DateTime? FromSign3DayTry(string yyyymmdd)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(yyyymmdd)) return null;
+                if (!yyyymmdd.StartsWith("day")) throw new ArgumentException("¿ù»~ªºSign");
+                yyyymmdd = yyyymmdd.Substring(3);
+                return FromYyyyMmDd(yyyymmdd);
+            }
+            catch (Exception) { return null; }
+        }
+
+
         /// <summary> mth202209 </summary>
         public static DateTime FromSign3Month(string yyyymm)
         {

@@ -13,7 +13,7 @@ namespace CToolkit.v1_2Core.ContextFlow
     {
         int CfBoot();
         int CfLoad();
-        int CfUnLoad();
+        int CfUnload();
         int CfFree();
     }
 
