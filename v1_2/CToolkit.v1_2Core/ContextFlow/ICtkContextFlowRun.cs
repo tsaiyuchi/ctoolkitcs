@@ -17,14 +17,14 @@ namespace CToolkit.v1_2Core.ContextFlow
          * 但實際用途是實作者決定, 實作者應自行注意如何符合定義.
          */
 
-        bool CfIsRunning { get; set; }
+        bool CtkCfIsRunning { get; set; }
 
         /// <summary>
         /// 會執行一次特定功能的method
         /// Exec: 執行特定功能, 若有需要, 可自行重複執行此作業
         /// </summary>
         /// <returns></returns>
-        int CfRunOnce();
+        int CtkCfRunOnce();
 
         /// <summary>
         /// 會持續執行特定功能的method
@@ -32,13 +32,13 @@ namespace CToolkit.v1_2Core.ContextFlow
         /// 若不做事, 請直接return
         /// </summary>
         /// <returns></returns>
-        int CfRunLoop();
+        int CtkCfRunLoop();
 
         /// <summary>
         /// 會持續執行特定功能的method
         /// 需實作非同步作業, e.q. 開啟一個Thread/Task後離開函式
         /// </summary>
         /// <returns></returns>
-        int CfRunLoopStart();
+        int CtkCfRunLoopStart();
     }
 }

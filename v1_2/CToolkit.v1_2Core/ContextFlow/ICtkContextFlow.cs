@@ -11,10 +11,10 @@ namespace CToolkit.v1_2Core.ContextFlow
     /// </summary>
     public interface ICtkContextFlow
     {
-        int CfBoot();
-        int CfLoad();
-        int CfUnload();
-        int CfFree();
+        int CtkCfBoot();
+        int CtkCfLoad();
+        int CtkCfUnload();
+        int CtkCfFree();
     }
 
 
