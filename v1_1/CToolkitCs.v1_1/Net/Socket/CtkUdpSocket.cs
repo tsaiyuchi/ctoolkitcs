@@ -26,10 +26,10 @@ namespace CToolkitCs.v1_1.Net
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         ~CtkUdpSocket() { this.Dispose(false); }
-        public Socket ConnSocket { get { return m_connSocket; } }
+        public Socket SocketConn { get { return m_connSocket; } }
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
-        public Socket WorkSocket { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
+        public Socket SocketWork { get { return m_workSocket; } set { lock (this) { m_workSocket = value; } } }
 
 
 
@@ -91,7 +91,7 @@ namespace CToolkitCs.v1_1.Net
                 var trxBuffer = ea.TrxMessage.ToBuffer();
 
 
-                trxBuffer.Length = this.WorkSocket.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
+                trxBuffer.Length = this.SocketWork.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
                 if (trxBuffer.Length == 0) return -1;
                 this.OnDataReceive(ea);
             }
@@ -100,8 +100,8 @@ namespace CToolkitCs.v1_1.Net
                 this.OnErrorReceive(new CtkProtocolEventArgs() { Message = "Read Fail" });
                 //當 this.ConnSocket == this.WorkSocket 時, 代表這是 client 端
                 this.Disconnect();
-                if (this.ConnSocket != this.WorkSocket)
-                    CtkNetUtil.DisposeSocketTry(this.WorkSocket);//執行出現例外, 先釋放Socket
+                if (this.SocketConn != this.SocketWork)
+                    CtkNetUtil.DisposeSocketTry(this.SocketWork);//執行出現例外, 先釋放Socket
                 throw ex;//同步型作業, 直接拋出例外, 不用寫Log
             }
             finally
@@ -128,9 +128,9 @@ namespace CToolkitCs.v1_1.Net
                 //Monitor使用在保護一段代碼
 
                 Monitor.Enter(this);//一定要等到進去
-                var state = (CtkTcpSocket)ar.AsyncState;
-                var client = state.ConnSocket.EndAccept(ar);
-                state.WorkSocket = client;
+                var state = (CtkUdpSocket)ar.AsyncState;
+                var client = state.SocketConn.EndAccept(ar);
+                state.SocketWork = client;
 
                 myea.Sender = state;
                 myea.WorkSocket = client;//觸發EndAccept的Socket未必是同一個, 所以要帶WorkSocket
@@ -175,10 +175,10 @@ namespace CToolkitCs.v1_1.Net
                 //Monitor使用在保護一段代碼
 
                 Monitor.Enter(this);//一定要等到進去
-                var state = (CtkTcpSocket)ar.AsyncState;
-                state.WorkSocket = state.ConnSocket;//作為Client時, Work = Conn
+                var state = (CtkUdpSocket)ar.AsyncState;
+                state.SocketWork = state.SocketConn;//作為Client時, Work = Conn
 
-                var client = state.WorkSocket;
+                var client = state.SocketWork;
                 client.EndConnect(ar);
 
                 myea.Sender = state;
@@ -256,7 +256,7 @@ namespace CToolkitCs.v1_1.Net
 
         public bool CheckConnectReadable()
         {
-            var socket = this.WorkSocket;
+            var socket = this.SocketWork;
             if (socket == null) return false;
             if (!socket.Connected) return false;
             return !(socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0));
@@ -264,8 +264,8 @@ namespace CToolkitCs.v1_1.Net
         public void DisconnectIfUnReadable()
         {
             if (this.IsOpenRequesting) return;//開啟中不執行
-            if (this.ConnSocket == null) return;//沒連線不執行
-            if (this.WorkSocket == null) return;//沒連線不執行
+            if (this.SocketConn == null) return;//沒連線不執行
+            if (this.SocketWork == null) return;//沒連線不執行
             if (!this.CheckConnectReadable())//確認無法連線
                 this.Disconnect();//先斷線再
         }
@@ -282,10 +282,10 @@ namespace CToolkitCs.v1_1.Net
         public event EventHandler<CtkProtocolEventArgs> EhFailConnect;
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
-        public object ActiveWorkClient { get { return this.WorkSocket; } set { this.WorkSocket = value as Socket; } }
+        public object ActiveWorkClient { get { return this.SocketWork; } set { this.SocketWork = value as Socket; } }
         public bool IsLocalReadyConnect { get { return this.m_connSocket != null && this.m_connSocket.IsBound; } }
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
-        public bool IsRemoteConnected { get { return this.WorkSocket != null && this.WorkSocket.Connected; } }
+        public bool IsRemoteConnected { get { return this.SocketWork != null && this.SocketWork.Connected; } }
 
         public int ConnectTry()
         {
@@ -310,22 +310,22 @@ namespace CToolkitCs.v1_1.Net
 
                 if (this.IsActively)
                 {
-                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    if (this.LocalUri != null && !this.SocketConn.IsBound)
+                        this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     if (this.RemoteUri == null)
                         throw new CtkException("remote field can not be null");
-                    this.ConnSocket.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
+                    this.SocketConn.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
-                    this.WorkSocket = this.ConnSocket;
+                    this.SocketWork = this.SocketConn;
                 }
                 else
                 {
                     if (this.LocalUri == null)
                         throw new Exception("local field can not be null");
-                    if (!this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
-                    this.ConnSocket.Listen(100);
-                    this.WorkSocket = this.ConnSocket.Accept();
+                    if (!this.SocketConn.IsBound)
+                        this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    this.SocketConn.Listen(100);
+                    this.SocketWork = this.SocketConn.Accept();
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                 }
 
@@ -370,21 +370,21 @@ namespace CToolkitCs.v1_1.Net
 
                 if (this.IsActively)
                 {
-                    if (this.LocalUri != null && !this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    if (this.LocalUri != null && !this.SocketConn.IsBound)
+                        this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     if (this.RemoteUri == null)
                         throw new CtkException("remote field can not be null");
 
-                    this.ConnSocket.BeginConnect(CtkNetUtil.ToIPEndPoint(this.RemoteUri), new AsyncCallback(EndConnectCallback), this);
+                    this.SocketConn.BeginConnect(CtkNetUtil.ToIPEndPoint(this.RemoteUri), new AsyncCallback(EndConnectCallback), this);
                 }
                 else
                 {
                     if (this.LocalUri == null)
                         throw new Exception("local field can not be null");
-                    if (!this.ConnSocket.IsBound)
-                        this.ConnSocket.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
-                    this.ConnSocket.Listen(100);
-                    this.ConnSocket.BeginAccept(new AsyncCallback(EndAcceptCallback), this);
+                    if (!this.SocketConn.IsBound)
+                        this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
+                    this.SocketConn.Listen(100);
+                    this.SocketConn.BeginAccept(new AsyncCallback(EndAcceptCallback), this);
                 }
 
                 return 0;
@@ -422,7 +422,7 @@ namespace CToolkitCs.v1_1.Net
                 //所以其它作業卡同一個沒問題: Monitor.TryEnter(this, 1000)
 
                 var buffer = msg.ToBuffer();
-                this.WorkSocket.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
+                this.SocketWork.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
             }
             catch (Exception ex)
             {
