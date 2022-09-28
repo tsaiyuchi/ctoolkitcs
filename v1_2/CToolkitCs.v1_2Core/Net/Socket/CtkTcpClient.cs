@@ -190,10 +190,9 @@ namespace CToolkitCs.v1_2Core.Net
 
                 myea.Sender = state;
                 myea.WorkTcpClient = client;
+
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                {
                     throw new CtkException("Connection Fail");
-                }
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }

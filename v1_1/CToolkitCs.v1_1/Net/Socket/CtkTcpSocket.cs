@@ -163,9 +163,10 @@ namespace CToolkitCs.v1_1.Net
                 Monitor.Enter(this);//一定要等到進去
                 var state = (CtkTcpSocket)ar.AsyncState;
                 client = state.SocketConn.EndAccept(ar);
+                state.SocketWorks.Enqueue(client);
+
                 myea.Sender = state;
                 myea.WorkSocket = client;//觸發EndAccept的Socket未必是同一個, 所以要帶WorkSocket
-                state.SocketWorks.Enqueue(client);
 
                 //預設是不斷的去聆聽, 但是否要維持連線, 由應用端決定
                 state.SocketConn.BeginAccept(new AsyncCallback(EndAcceptCallback), state);
@@ -173,6 +174,7 @@ namespace CToolkitCs.v1_1.Net
 
                 if (!ar.IsCompleted || client == null || !client.Connected)
                     throw new CtkException("Connection Fail");
+
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -209,22 +211,18 @@ namespace CToolkitCs.v1_1.Net
             Socket client = null;
             try
             {
-                //Lock使用在短碼保護, 例如: 保護一個變數的get/set
-                //Monitor使用在保護一段代碼
-
                 Monitor.Enter(this);//一定要等到進去
                 var state = (CtkTcpSocket)ar.AsyncState;
                 client.EndConnect(ar);
                 client = state.SocketConn;
                 state.SocketWorks.Enqueue(client);//作為Client時, Work = Conn
 
-
-
                 myea.Sender = state;
                 myea.WorkSocket = client;
+
+
                 if (!ar.IsCompleted || client == null || !client.Connected)
                     throw new CtkException("Connection Fail");
-
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -564,6 +562,5 @@ namespace CToolkitCs.v1_1.Net
 
 
     }
-
 
 }

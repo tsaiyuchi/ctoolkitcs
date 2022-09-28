@@ -29,8 +29,8 @@ namespace CToolkitCs.v1_1.Net
         protected int m_IntervalTimeOfConnectCheck = 5000;
         bool IsReceiveLoop = false;
         ConcurrentQueue<TcpClient> m_tcpClientList = new ConcurrentQueue<TcpClient>();
-        ManualResetEvent mreConnecting = new ManualResetEvent(true);
-        ManualResetEvent mreReading = new ManualResetEvent(true);
+        AutoResetEvent areIsConnecting = new AutoResetEvent(true);
+        AutoResetEvent aeReading = new AutoResetEvent(true);
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
         CtkTask runningTask;
@@ -90,7 +90,7 @@ namespace CToolkitCs.v1_1.Net
             catch (Exception ex) { CtkLog.Write(ex); }
             finally { Monitor.Exit(sourceList); }
         }
-        public void CleanInvalidClient()
+        public void CleanInvalidWorks()
         {
             try
             {
@@ -185,8 +185,8 @@ namespace CToolkitCs.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                if (!this.mreReading.WaitOne(10)) return 0;//接收中先離開
-                this.mreReading.Reset();//先卡住, 不讓後面的再次進行
+                if (!this.aeReading.WaitOne(10)) return 0;//接收中先離開
+                this.aeReading.Reset();//先卡住, 不讓後面的再次進行
 
                 var ea = new CtkProtocolEventArgs()
                 {
@@ -209,7 +209,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                this.mreReading.Set();//同步型的, 結束就可以Set
+                this.aeReading.Set();//同步型的, 結束就可以Set
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
             return 0;
@@ -224,71 +224,92 @@ namespace CToolkitCs.v1_1.Net
 
         }
 
-        void EndConnectCallback(IAsyncResult ar)
+        protected virtual void EndAcceptCallback(IAsyncResult ar)
         {
-            var stateea = new CtkTcpStateEventArgs();
-            var ctkBuffer = stateea.TrxMessageBuffer;
+            var myea = new CtkTcpStateEventArgs();
+            var trxmBuffer = myea.TrxMessageBuffer;
+            TcpClient client = null;
             try
             {
-                // End the operation and display the received data on 
-                // the console.
+                Monitor.Enter(this);//一定要等到進去
                 var state = (CtkTcpListener)ar.AsyncState;
-                stateea.Sender = state;
-                var tcpClient = state.myTcpListener.EndAcceptTcpClient(ar);
-                stateea.WorkTcpClient = tcpClient;
-                this.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndConnectCallback), this);
+                client = state.myTcpListener.EndAcceptTcpClient(ar);
+                state.TcpClientList.Enqueue(client);//有連成功才記錄
 
+                myea.Sender = state;
+                myea.WorkTcpClient = client;
 
-                if (tcpClient.Client == null || !tcpClient.Connected)
+                //預設是不斷的去聆聽, 但是否要維持連線, 由應用端決定
+                state.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
+
+                if (!ar.IsCompleted || client.Client == null || !client.Connected)
                     throw new CtkException("連線失敗");
 
-                this.TcpClientList.Enqueue(tcpClient);
-
-
                 //呼叫他人不應影響自己運作, catch起來
-                try { this.OnFirstConnect(stateea); }
+                try { this.OnFirstConnect(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
                 if (this.IsAsynAutoRead)
                 {
-                    NetworkStream stream = tcpClient.GetStream();
-                    stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), stateea);
+                    var stream = client.GetStream();
+                    stream.BeginRead(trxmBuffer.Buffer, 0, trxmBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
                 }
 
             }
             catch (Exception ex)
             {
-                stateea.Message = ex.Message;
-                stateea.Exception = ex;
-                this.OnFailConnect(stateea);
+                CtkNetUtil.DisposeTcpClientTry(client);
+                myea.Message = ex.Message;
+                myea.Exception = ex;
+                this.OnFailConnect(myea);
+                CtkLog.WarnNs(this, ex);
             }
             finally
             {
-                this.mreConnecting.Set();
+                try { this.areIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
+                catch (ObjectDisposedException) { }
+                Monitor.Exit(this);
             }
         }
         void EndReadCallback(IAsyncResult ar)
         {
+            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
+            var client = myea.WorkTcpClient;
+
             try
             {
-                var tcpstate = (CtkTcpStateEventArgs)ar.AsyncState;
-                var ctkBuffer = tcpstate.TrxMessageBuffer;
-                var client = tcpstate.WorkTcpClient;
+                if (!ar.IsCompleted || client == null || !client.Connected)
+                {
+                    throw new CtkException("Read Fail");
+                }
 
-                if (client == null || client.Client == null || !client.Connected) return;
-                NetworkStream stream = client.GetStream();
+                var trxmBuffer = myea.TrxMessageBuffer;
+                var stream = client.GetStream();
                 int bytesRead = stream.EndRead(ar);
-                ctkBuffer.Length = bytesRead;
+                trxmBuffer.Length = bytesRead;
 
                 //呼叫他人不應影響自己運作, catch起來
-                try { this.OnDataReceive(tcpstate); }
+                try { this.OnDataReceive(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
 
                 if (this.IsAsynAutoRead)
-                    stream.BeginRead(ctkBuffer.Buffer, 0, ctkBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), tcpstate);
+                    stream.BeginRead(trxmBuffer.Buffer, 0, trxmBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
 
             }
-            catch (Exception ex) { CtkLog.Write(ex); }
+            catch (Exception ex)
+            {
+                //僅關閉讀取失敗的連線
+                CtkNetUtil.DisposeTcpClientTry(client);
+                myea.Message = ex.Message;
+                myea.Exception = ex;
+                this.OnErrorReceive(myea);//但要呼叫 OnErrorReceive
+                CtkLog.Write(ex);
+            }
+            finally
+            {
+                //會有多個Socket進入 Receive Callback, 所以不用 Reset Event
+            }
+
         }
 
 
@@ -312,7 +333,7 @@ namespace CToolkitCs.v1_1.Net
         }
 
         public bool IsLocalReadyConnect { get { return this.myTcpListener != null && this.myTcpListener.Active; } }
-        public bool IsOpenRequesting { get { return !this.mreConnecting.WaitOne(10); } }
+        public bool IsOpenRequesting { get { return !this.areIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return this.ConnectCount() > 0; } }
 
         //用途是避免重複要求連線
@@ -321,9 +342,9 @@ namespace CToolkitCs.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                this.CleanInvalidClient();
-                if (!mreConnecting.WaitOne(10)) return 0;//連線中就離開
-                this.mreConnecting.Reset();//先卡住, 不讓後面的再次進行連線
+                this.CleanInvalidWorks();
+                if (!areIsConnecting.WaitOne(10)) return 0;//連線中就離開
+                this.areIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
 
                 if (this.myTcpListener != null) return 0;//若要重新再聆聽, 請先清除Listener
@@ -344,7 +365,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                this.mreConnecting.Set();
+                this.areIsConnecting.Set();
                 Monitor.Exit(this);
             }
         }
@@ -353,16 +374,16 @@ namespace CToolkitCs.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                this.CleanInvalidClient();
-                if (!mreConnecting.WaitOne(10)) return 0;//連線中就離開
-                this.mreConnecting.Reset();//先卡住, 不讓後面的再次進行連線
+                this.CleanInvalidWorks();
+                if (!areIsConnecting.WaitOne(10)) return 0;//連線中就離開
+                this.areIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
 
                 if (this.myTcpListener != null) return 0;//若要重新再聆聽, 請先清除Listener
                 //this.m_tcpListener.Stop();
                 this.myTcpListener = new CtkTcpListenerEx(IPAddress.Parse(this.LocalUri.Host), this.LocalUri.Port);
                 this.myTcpListener.Start();
-                this.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndConnectCallback), this);
+                this.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), this);
 
                 return 0;
             }

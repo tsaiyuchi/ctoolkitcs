@@ -228,22 +228,22 @@ namespace CToolkitCs.v1_2Core.Net
         {
             var myea = new CtkTcpStateEventArgs();
             var trxmBuffer = myea.TrxMessageBuffer;
+            TcpClient client = null;
             try
             {
                 Monitor.Enter(this);//一定要等到進去
                 var state = (CtkTcpListener)ar.AsyncState;
+                client = state.myTcpListener.EndAcceptTcpClient(ar);
+                state.TcpClientList.Enqueue(client);//有連成功才記錄
+
                 myea.Sender = state;
-                var tcpClient = state.myTcpListener.EndAcceptTcpClient(ar);
-                myea.WorkTcpClient = tcpClient;
+                myea.WorkTcpClient = client;
 
                 //預設是不斷的去聆聽, 但是否要維持連線, 由應用端決定
-                this.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
+                state.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
 
-
-                if (tcpClient.Client == null || !tcpClient.Connected)
+                if (!ar.IsCompleted || client.Client == null || !client.Connected)
                     throw new CtkException("連線失敗");
-                this.TcpClientList.Enqueue(tcpClient);//有連成功才記錄
-
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -251,13 +251,14 @@ namespace CToolkitCs.v1_2Core.Net
 
                 if (this.IsAsynAutoRead)
                 {
-                    var stream = tcpClient.GetStream();
+                    var stream = client.GetStream();
                     stream.BeginRead(trxmBuffer.Buffer, 0, trxmBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
                 }        
 
             }
             catch (Exception ex)
             {
+                CtkNetUtil.DisposeTcpClientTry(client);
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnFailConnect(myea);
