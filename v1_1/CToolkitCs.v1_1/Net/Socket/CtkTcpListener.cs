@@ -55,7 +55,7 @@ namespace CToolkitCs.v1_1.Net
         /// </summary>
         public void BeginRead()
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             myea.Sender = this;
             var client = this.ActiveWorkClient as TcpClient;
             myea.WorkTcpClient = client;
@@ -226,7 +226,7 @@ namespace CToolkitCs.v1_1.Net
 
         void EndConnectCallback(IAsyncResult ar)
         {
-            var stateea = new CtkNonStopTcpStateEventArgs();
+            var stateea = new CtkTcpStateEventArgs();
             var ctkBuffer = stateea.TrxMessageBuffer;
             try
             {
@@ -271,7 +271,7 @@ namespace CToolkitCs.v1_1.Net
         {
             try
             {
-                var tcpstate = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+                var tcpstate = (CtkTcpStateEventArgs)ar.AsyncState;
                 var ctkBuffer = tcpstate.TrxMessageBuffer;
                 var client = tcpstate.WorkTcpClient;
 
@@ -387,7 +387,7 @@ namespace CToolkitCs.v1_1.Net
             if (this.myTcpListener != null) this.myTcpListener.Stop();
             this.myTcpListener = null;
 
-            this.OnDisconnect(new CtkNonStopTcpStateEventArgs() { Message = "Disconnect method is executed" });
+            this.OnDisconnect(new CtkTcpStateEventArgs() { Message = "Disconnect method is executed" });
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
         {

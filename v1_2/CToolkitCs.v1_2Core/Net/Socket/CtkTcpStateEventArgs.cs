@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CToolkitCs.v1_2Core.Net
 {
-    public class CtkNonStopTcpStateEventArgs : CtkProtocolEventArgs
+    public class CtkTcpStateEventArgs : CtkProtocolEventArgs
     {
         public Object WorkClient;
         public CtkProtocolBufferMessage TrxMessageBuffer
@@ -21,10 +21,8 @@ namespace CToolkitCs.v1_2Core.Net
             set { this.TrxMessage = value; }
         }
 
-        public TcpClient WorkTcpClient { get { return this.WorkClient as TcpClient; }  set { this.WorkClient = value; } }
         public Socket WorkSocket { get { return this.WorkClient as Socket; } set { this.WorkClient = value; } }
-
-
+        public TcpClient WorkTcpClient { get { return this.WorkClient as TcpClient; }  set { this.WorkClient = value; } }
         public void WriteMsg(byte[] buff, int offset, int length)
         {
             if (this.WorkTcpClient == null) return;

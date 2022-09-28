@@ -40,7 +40,7 @@ namespace CToolkitCs.v1_1.Net
         /// </summary>
         public void BeginReceive()
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
 
             //採用現正操作中的Socket進行接收
             var client = this.ActiveWorkClient as Socket;
@@ -120,7 +120,7 @@ namespace CToolkitCs.v1_1.Net
         /// <param name="ar"></param>
         void EndAcceptCallback(IAsyncResult ar)
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
@@ -167,7 +167,7 @@ namespace CToolkitCs.v1_1.Net
         /// <param name="ar"></param>
         void EndConnectCallback(IAsyncResult ar)
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
@@ -218,7 +218,7 @@ namespace CToolkitCs.v1_1.Net
         void EndReceiveCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-            var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
             try
             {
                 var client = myea.WorkSocket;

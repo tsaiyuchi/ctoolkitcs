@@ -138,7 +138,7 @@
     <Compile Include="Net\Sample\CtkEgSimple_BeginSocket.cs" />
     <Compile Include="Net\Sample\CtkEgSimple_Socket.cs" />
     <Compile Include="Net\Sample\CtkEgSimple_SocketCloseTest.cs" />
-    <Compile Include="Net\Socket\CtkNonStopTcpStateEventArgs.cs" />
+    <Compile Include="Net\Socket\CtkTcpStateEventArgs.cs" />
     <Compile Include="Net\Socket\CtkTcpClient.cs" />
     <Compile Include="Net\Socket\CtkTcpListener.cs" />
     <Compile Include="Net\Socket\CtkTcpListenerEx.cs" />

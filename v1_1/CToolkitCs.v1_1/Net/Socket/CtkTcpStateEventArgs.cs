@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CToolkitCs.v1_1.Net
 {
-    public class CtkNonStopTcpStateEventArgs : CtkProtocolEventArgs
+    public class CtkTcpStateEventArgs : CtkProtocolEventArgs
     {
         public Object WorkClient;
         public CtkProtocolBufferMessage TrxMessageBuffer

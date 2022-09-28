@@ -40,7 +40,7 @@ namespace CToolkitCs.v1_2Core.Net
         /// </summary>
         public void BeginReceive()
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
 
             //採用現正操作中的Socket進行接收
             var client = this.ActiveWorkClient as Socket;
@@ -120,7 +120,7 @@ namespace CToolkitCs.v1_2Core.Net
         /// <param name="ar"></param>
         void EndAcceptCallback(IAsyncResult ar)
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
@@ -128,8 +128,8 @@ namespace CToolkitCs.v1_2Core.Net
                 //Monitor使用在保護一段代碼
 
                 Monitor.Enter(this);//一定要等到進去
-                var state = (CtkTcpSocket)ar.AsyncState;
-                var client = state.ConnSocket.EndAccept(ar);
+                var state = (CtkUdpSocket)ar.AsyncState;
+                var client = state.SocketConn.EndAccept(ar);
                 state.WorkSocket = client;
 
                 myea.Sender = state;
@@ -167,7 +167,7 @@ namespace CToolkitCs.v1_2Core.Net
         /// <param name="ar"></param>
         void EndConnectCallback(IAsyncResult ar)
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
@@ -175,8 +175,8 @@ namespace CToolkitCs.v1_2Core.Net
                 //Monitor使用在保護一段代碼
 
                 Monitor.Enter(this);//一定要等到進去
-                var state = (CtkTcpSocket)ar.AsyncState;
-                state.WorkSocket = state.ConnSocket;//作為Client時, Work = Conn
+                var state = (CtkUdpSocket)ar.AsyncState;
+                state.m_workSocket = state.ConnSocket;//作為Client時, Work = Conn
 
                 var client = state.WorkSocket;
                 client.EndConnect(ar);
@@ -218,7 +218,7 @@ namespace CToolkitCs.v1_2Core.Net
         void EndReceiveCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-            var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
             try
             {
                 var client = myea.WorkSocket;

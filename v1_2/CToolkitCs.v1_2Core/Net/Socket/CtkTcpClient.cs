@@ -67,7 +67,7 @@ namespace CToolkitCs.v1_2Core.Net
         /// </summary>
         public void BeginRead()
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             var client = this.ActiveWorkClient as TcpClient;
             myea.Sender = this;
             myea.WorkTcpClient = client;
@@ -176,7 +176,7 @@ namespace CToolkitCs.v1_2Core.Net
         }
         void EndConnectCallback(IAsyncResult ar)
         {
-            var myea = new CtkNonStopTcpStateEventArgs();
+            var myea = new CtkTcpStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
@@ -224,19 +224,20 @@ namespace CToolkitCs.v1_2Core.Net
         void EndReadCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-            var myea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
+            var client = myea.WorkTcpClient;
             try
             {
-                var client = myea.WorkTcpClient;
                 if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)
                 {
                     throw new CtkException("Read Fail");
                 }
 
                 var ctkBuffer = myea.TrxMessageBuffer;
-                NetworkStream stream = client.GetStream();
+                var stream = client.GetStream();
                 int bytesRead = stream.EndRead(ar);
                 ctkBuffer.Length = bytesRead;
+
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnDataReceive(myea); }
                 catch (Exception ex) { CtkLog.Write(ex); }
@@ -248,12 +249,15 @@ namespace CToolkitCs.v1_2Core.Net
             //catch (IOException ex) { CtkLog.Write(ex); }
             catch (Exception ex)
             {
-                //讀取失敗, 中斷連線(會呼叫 OnDisconnect), 不需要呼叫 OnFailConnect
-                this.Disconnect();
+                CtkNetUtil.DisposeTcpClientTry(client);//僅關閉讀取失敗的連線
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnErrorReceive(myea);//但要呼叫 OnErrorReceive
                 CtkLog.WarnNs(this, ex);
+            }
+            finally
+            {
+
             }
         }
 
@@ -361,7 +365,7 @@ namespace CToolkitCs.v1_2Core.Net
         {
             CtkUtil.DisposeTaskTry(this.runningTask);
             CtkNetUtil.DisposeTcpClientTry(this.MyTcpClient);
-            this.OnDisconnect(new CtkNonStopTcpStateEventArgs() { Message = "Disconnect method is executed" });
+            this.OnDisconnect(new CtkTcpStateEventArgs() { Message = "Disconnect method is executed" });
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
         {
