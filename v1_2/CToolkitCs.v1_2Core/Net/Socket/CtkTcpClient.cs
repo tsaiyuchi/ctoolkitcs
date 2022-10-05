@@ -28,6 +28,7 @@ namespace CToolkitCs.v1_2Core.Net
         /// </summary>
         public bool IsAsynAutoRead = true;
         public Uri LocalUri;
+        public String Name;
         public Uri RemoteUri;
         protected int m_IntervalTimeOfConnectCheck = 5000;
         bool IsReceiveLoop = false;
@@ -192,7 +193,7 @@ namespace CToolkitCs.v1_2Core.Net
                 myea.WorkTcpClient = client;
 
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                    throw new CtkException("Connection Fail");
+                    throw new CtkSocketException("Connection Fail");
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -229,7 +230,7 @@ namespace CToolkitCs.v1_2Core.Net
             {
                 if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)
                 {
-                    throw new CtkException("Read Fail");
+                    throw new CtkSocketException("Read Fail");
                 }
 
                 var ctkBuffer = myea.TrxMessageBuffer;

@@ -134,6 +134,7 @@
     <Compile Include="Net\CtkFtp.cs" />
     <Compile Include="Net\CtkMail.cs" />
     <Compile Include="Net\CtkNetUtil.cs" />
+    <Compile Include="Net\CtkSocketException.cs" />
     <Compile Include="Net\EnumCtkConnectMode.cs" />
     <Compile Include="Net\Sample\CtkEgSimple_BeginSocket.cs" />
     <Compile Include="Net\Sample\CtkEgSimple_Socket.cs" />

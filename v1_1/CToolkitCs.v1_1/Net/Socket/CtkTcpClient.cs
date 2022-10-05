@@ -32,6 +32,7 @@ namespace CToolkitCs.v1_1.Net
         protected int m_IntervalTimeOfConnectCheck = 5000;
         bool IsReceiveLoop = false;
         TcpClient m_myTcpClient;
+        public String Name;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReading = new ManualResetEvent(true);
         CtkTask runningTask;

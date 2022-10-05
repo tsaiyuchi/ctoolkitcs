@@ -33,6 +33,7 @@ namespace CToolkitCs.v1_2Core.Net
         AutoResetEvent aeReading = new AutoResetEvent(true);
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
+        public String Name;
         CtkTask runningTask;
         // = new BackgroundWorker();
         public CtkTcpListener() : base() { }
@@ -243,7 +244,7 @@ namespace CToolkitCs.v1_2Core.Net
                 state.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
 
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                    throw new CtkException("連線失敗");
+                    throw new CtkSocketException("連線失敗");
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -280,7 +281,7 @@ namespace CToolkitCs.v1_2Core.Net
             {
                 if (!ar.IsCompleted || client == null || !client.Connected)
                 {
-                    throw new CtkException("Read Fail");
+                    throw new CtkSocketException("Read Fail");
                 }
 
                 var trxmBuffer = myea.TrxMessageBuffer;

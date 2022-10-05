@@ -23,15 +23,16 @@ namespace CToolkitCs.v1_1.Net
         /// </summary>
         public bool IsAsynAutoReceive = true;
         public Uri LocalUri;
+        public String Name;
         public Uri RemoteUri;
         public ConcurrentQueue<Socket> SocketWorks = new ConcurrentQueue<Socket>();
-        AutoResetEvent areIsConnecting = new AutoResetEvent(true);
-        AutoResetEvent areIsReceiving = new AutoResetEvent(true);
+        ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
+        ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         bool m_isReceiveLoop = false;
         ~CtkTcpSocket() { this.Dispose(false); }
 
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
-        public bool IsWaitReceive { get { return this.areIsReceiving.WaitOne(10); } }
+        public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
         public Socket SocketWorkActive { get; protected set; }
         public Socket SocketConn { get; protected set; }
         /// <summary>
@@ -115,8 +116,8 @@ namespace CToolkitCs.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                if (!this.areIsReceiving.WaitOne(10)) return 0;//接收中先離開
-                this.areIsReceiving.Reset();//先卡住, 不讓後面的再次進行
+                if (!this.mreIsReceiving.WaitOne(10)) return 0;//接收中先離開
+                this.mreIsReceiving.Reset();//先卡住, 不讓後面的再次進行
 
                 var ea = new CtkProtocolEventArgs()
                 {
@@ -141,7 +142,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                try { this.areIsReceiving.Set(); /*同步型的, 結束就可以Set*/ }
+                try { this.mreIsReceiving.Set(); /*同步型的, 結束就可以Set*/ }
                 catch (ObjectDisposedException) { }
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
@@ -173,7 +174,7 @@ namespace CToolkitCs.v1_1.Net
 
 
                 if (!ar.IsCompleted || client == null || !client.Connected)
-                    throw new CtkException("Connection Fail");
+                    throw new CtkSocketException("Connection Fail");
 
 
                 //呼叫他人不應影響自己運作, catch起來
@@ -195,7 +196,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                try { this.areIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
+                try { this.mreIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
                 catch (ObjectDisposedException) { }
                 Monitor.Exit(this);
             }
@@ -222,7 +223,7 @@ namespace CToolkitCs.v1_1.Net
 
 
                 if (!ar.IsCompleted || client == null || !client.Connected)
-                    throw new CtkException("Connection Fail");
+                    throw new CtkSocketException("Connection Fail");
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -243,7 +244,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                try { this.areIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
+                try { this.mreIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
                 catch (ObjectDisposedException) { }
                 Monitor.Exit(this);
             }
@@ -262,7 +263,7 @@ namespace CToolkitCs.v1_1.Net
 
                 if (!ar.IsCompleted || client == null || !client.Connected)
                 {
-                    throw new CtkException("Read Fail");
+                    throw new CtkSocketException("Read Fail");
                 }
 
                 var trxmBuffer = myea.TrxMessageBuffer;
@@ -324,7 +325,7 @@ namespace CToolkitCs.v1_1.Net
 
         public object ActiveWorkClient { get { return this.SocketWorkActive; } set { this.SocketWorkActive = value as Socket; } }
         public bool IsLocalReadyConnect { get { return this.SocketConn != null && this.SocketConn.IsBound; } }
-        public bool IsOpenRequesting { get { return !this.areIsConnecting.WaitOne(10); } }
+        public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { this.CleanInvalidWorks(); return this.SocketWorks.Count > 0; } }
 
         public int ConnectTry()
@@ -335,9 +336,9 @@ namespace CToolkitCs.v1_1.Net
 
             try
             {
-                if (!Monitor.TryEnter(this, 1000)) return -1; // throw new CtkException("Cannot enter lock");
-                if (!this.areIsConnecting.WaitOne(10)) return 0;//連線中先離開
-                this.areIsConnecting.Reset();//先卡住, 不讓後面的再次進行
+                if (!Monitor.TryEnter(this, 1000)) return -1;
+                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
 
 
                 //若連線不曾建立, 或聆聽/連線被關閉
@@ -353,7 +354,7 @@ namespace CToolkitCs.v1_1.Net
                     if (this.LocalUri != null && !this.SocketConn.IsBound)
                         this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     if (this.RemoteUri == null)
-                        throw new CtkException("remote field can not be null");
+                        throw new CtkSocketException("remote field can not be null");
                     this.SocketConn.Connect(CtkNetUtil.ToIPEndPoint(this.RemoteUri));
                     this.OnFirstConnect(new CtkProtocolEventArgs() { Message = "Connect Success" });
                     this.SocketWorks.Enqueue(this.SocketConn);
@@ -383,7 +384,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                try { this.areIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
+                try { this.mreIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
                 catch (ObjectDisposedException) { }
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
@@ -394,8 +395,8 @@ namespace CToolkitCs.v1_1.Net
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
                 this.CleanInvalidWorks();
-                if (!this.areIsConnecting.WaitOne(10)) return 0;//連線中先離開
-                this.areIsConnecting.Reset();//先卡住, 不讓後面的再次進行
+                if (!this.mreIsConnecting.WaitOne(10)) return 0;//連線中先離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行
 
 
                 //若連線不曾建立, 或聆聽/連線被關閉
@@ -412,7 +413,7 @@ namespace CToolkitCs.v1_1.Net
                     if (this.LocalUri != null && !this.SocketConn.IsBound)
                         this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
                     if (this.RemoteUri == null)
-                        throw new CtkException("remote field can not be null");
+                        throw new CtkSocketException("remote field can not be null");
 
                     this.SocketConn.BeginConnect(CtkNetUtil.ToIPEndPoint(this.RemoteUri), new AsyncCallback(EndConnectCallback), this);
                 }
@@ -443,8 +444,8 @@ namespace CToolkitCs.v1_1.Net
 
         public void Disconnect()
         {
-            try { this.areIsReceiving.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
-            try { this.areIsConnecting.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
+            try { this.mreIsReceiving.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
+            try { this.mreIsConnecting.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
 
             foreach (var socket in this.SocketWorks) CtkNetUtil.DisposeSocketTry(socket);
             CtkNetUtil.DisposeSocketTry(this.SocketConn);
@@ -538,8 +539,8 @@ namespace CToolkitCs.v1_1.Net
         public void DisposeSelf()
         {
             this.Disconnect();
-            CtkUtil.DisposeObjTry(this.areIsConnecting);
-            CtkUtil.DisposeObjTry(this.areIsReceiving);
+            CtkUtil.DisposeObjTry(this.mreIsConnecting);
+            CtkUtil.DisposeObjTry(this.mreIsReceiving);
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
         }
         protected virtual void Dispose(bool disposing)

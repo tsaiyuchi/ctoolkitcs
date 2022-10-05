@@ -34,6 +34,7 @@ namespace CToolkitCs.v1_1.Net
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
         CtkTask runningTask;
+        public String Name;
         // = new BackgroundWorker();
         public CtkTcpListener() : base() { }
 
