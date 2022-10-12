@@ -1,5 +1,3 @@
-using CToolkitCs.v1_1.Logging;
-using CToolkitCs.v1_1.Net;
 using CToolkitCs.v1_1.Protocol;
 using CToolkitCs.v1_1.Threading;
 using Newtonsoft.Json;
@@ -13,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_1.Net
+namespace CToolkitCs.v1_1.Net.Socketing
 {
     public class CtkTcpClient : ICtkProtocolNonStopConnect, IDisposable
     {
@@ -28,11 +26,11 @@ namespace CToolkitCs.v1_1.Net
         /// </summary>
         public bool IsAsynAutoRead = true;
         public Uri LocalUri;
+        public String Name;
         public Uri RemoteUri;
         protected int m_IntervalTimeOfConnectCheck = 5000;
         bool IsReceiveLoop = false;
         TcpClient m_myTcpClient;
-        public String Name;
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReading = new ManualResetEvent(true);
         CtkTask runningTask;
@@ -68,7 +66,7 @@ namespace CToolkitCs.v1_1.Net
         /// </summary>
         public void BeginRead()
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
             var client = this.ActiveWorkClient as TcpClient;
             myea.Sender = this;
             myea.WorkTcpClient = client;
@@ -177,7 +175,7 @@ namespace CToolkitCs.v1_1.Net
         }
         void EndConnectCallback(IAsyncResult ar)
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             try
             {
@@ -193,7 +191,7 @@ namespace CToolkitCs.v1_1.Net
                 myea.WorkTcpClient = client;
 
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                    throw new CtkException("Connection Fail");
+                    throw new CtkSocketException("Connection Fail");
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -224,13 +222,13 @@ namespace CToolkitCs.v1_1.Net
         void EndReadCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkNetStateEventArgs)ar.AsyncState;
             var client = myea.WorkTcpClient;
             try
             {
                 if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)
                 {
-                    throw new CtkException("Read Fail");
+                    throw new CtkSocketException("Read Fail");
                 }
 
                 var ctkBuffer = myea.TrxMessageBuffer;
@@ -365,7 +363,7 @@ namespace CToolkitCs.v1_1.Net
         {
             CtkUtil.DisposeTaskTry(this.runningTask);
             CtkNetUtil.DisposeTcpClientTry(this.MyTcpClient);
-            this.OnDisconnect(new CtkTcpStateEventArgs() { Message = "Disconnect method is executed" });
+            this.OnDisconnect(new CtkNetStateEventArgs() { Message = "Disconnect method is executed" });
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
         {

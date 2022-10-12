@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_1.Net
+namespace CToolkitCs.v1_1.Net.Socketing
 {
     public class CtkTcpListener : ICtkProtocolNonStopConnect, IDisposable
     {
@@ -30,11 +30,11 @@ namespace CToolkitCs.v1_1.Net
         bool IsReceiveLoop = false;
         ConcurrentQueue<TcpClient> m_tcpClientList = new ConcurrentQueue<TcpClient>();
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
-        ManualResetEvent mreReading = new ManualResetEvent(true);
+        ManualResetEvent meReading = new ManualResetEvent(true);
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
-        CtkTask runningTask;
         public String Name;
+        CtkTask runningTask;
         // = new BackgroundWorker();
         public CtkTcpListener() : base() { }
 
@@ -56,7 +56,7 @@ namespace CToolkitCs.v1_1.Net
         /// </summary>
         public void BeginRead()
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
             myea.Sender = this;
             var client = this.ActiveWorkClient as TcpClient;
             myea.WorkTcpClient = client;
@@ -186,8 +186,8 @@ namespace CToolkitCs.v1_1.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                if (!this.mreReading.WaitOne(10)) return 0;//接收中先離開
-                this.mreReading.Reset();//先卡住, 不讓後面的再次進行
+                if (!this.meReading.WaitOne(10)) return 0;//接收中先離開
+                this.meReading.Reset();//先卡住, 不讓後面的再次進行
 
                 var ea = new CtkProtocolEventArgs()
                 {
@@ -210,7 +210,7 @@ namespace CToolkitCs.v1_1.Net
             }
             finally
             {
-                this.mreReading.Set();//同步型的, 結束就可以Set
+                this.meReading.Set();//同步型的, 結束就可以Set
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
             return 0;
@@ -227,7 +227,7 @@ namespace CToolkitCs.v1_1.Net
 
         protected virtual void EndAcceptCallback(IAsyncResult ar)
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
             var trxmBuffer = myea.TrxMessageBuffer;
             TcpClient client = null;
             try
@@ -244,7 +244,7 @@ namespace CToolkitCs.v1_1.Net
                 state.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
 
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                    throw new CtkException("連線失敗");
+                    throw new CtkSocketException("連線失敗");
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -254,7 +254,7 @@ namespace CToolkitCs.v1_1.Net
                 {
                     var stream = client.GetStream();
                     stream.BeginRead(trxmBuffer.Buffer, 0, trxmBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
-                }
+                }        
 
             }
             catch (Exception ex)
@@ -274,14 +274,14 @@ namespace CToolkitCs.v1_1.Net
         }
         void EndReadCallback(IAsyncResult ar)
         {
-            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkNetStateEventArgs)ar.AsyncState;
             var client = myea.WorkTcpClient;
 
             try
             {
                 if (!ar.IsCompleted || client == null || !client.Connected)
                 {
-                    throw new CtkException("Read Fail");
+                    throw new CtkSocketException("Read Fail");
                 }
 
                 var trxmBuffer = myea.TrxMessageBuffer;
@@ -409,7 +409,7 @@ namespace CToolkitCs.v1_1.Net
             if (this.myTcpListener != null) this.myTcpListener.Stop();
             this.myTcpListener = null;
 
-            this.OnDisconnect(new CtkTcpStateEventArgs() { Message = "Disconnect method is executed" });
+            this.OnDisconnect(new CtkNetStateEventArgs() { Message = "Disconnect method is executed" });
         }
         public void WriteMsg(CtkProtocolTrxMessage msg)
         {

@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CToolkitCs.v1_1.Net
+namespace CToolkitCs.v1_1.Net.Socketing
 {
     public class CtkTcpListenerEx : TcpListener
     {

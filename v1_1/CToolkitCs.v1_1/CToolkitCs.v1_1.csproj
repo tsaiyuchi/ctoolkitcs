@@ -139,12 +139,13 @@
     <Compile Include="Net\Sample\CtkEgSimple_BeginSocket.cs" />
     <Compile Include="Net\Sample\CtkEgSimple_Socket.cs" />
     <Compile Include="Net\Sample\CtkEgSimple_SocketCloseTest.cs" />
-    <Compile Include="Net\Socketing\CtkTcpStateEventArgs.cs" />
+    <Compile Include="Net\Socketing\CtkNetStateEventArgs.cs" />
+    <Compile Include="Net\Socketing\CtkSocket.cs" />
+    <Compile Include="Net\Socketing\CtkSocketTcp.cs" />
+    <Compile Include="Net\Socketing\CtkSocketUdp.cs" />
     <Compile Include="Net\Socketing\CtkTcpClient.cs" />
     <Compile Include="Net\Socketing\CtkTcpListener.cs" />
     <Compile Include="Net\Socketing\CtkTcpListenerEx.cs" />
-    <Compile Include="Net\Socketing\CtkTcpSocket.cs" />
-    <Compile Include="Net\Socketing\CtkUdpSocket.cs" />
     <Compile Include="Net\WebTx\CtkNetHttpGetRtn.cs" />
     <Compile Include="Net\WebTx\CtkNetUserAgent.cs" />
     <Compile Include="Net\WebTx\CtkNetUserAgents.cs" />
