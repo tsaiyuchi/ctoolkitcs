@@ -1,16 +1,18 @@
-using CToolkitCs.v1_2Core.Protocol;
+﻿using CToolkitCs.v1_2Core.Protocol;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
-namespace CToolkitCs.v1_2Core.Net.Socketing
+namespace CToolkitCs.v1_2Core.Net.SocketTx
 {
-    public class CtkSocketTcp : CtkSocket, ICtkProtocolNonStopConnect, IDisposable
+    public abstract class CtkSocket: ICtkProtocolNonStopConnect, IDisposable
     {
+
+
         /// <summary> Client? or Listener </summary>
         public bool IsActively = false;
         /// <summary>
@@ -35,7 +37,7 @@ namespace CToolkitCs.v1_2Core.Net.Socketing
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         bool m_isReceiveLoop = false;
-        ~CtkSocketTcp() { this.Dispose(false); }
+        ~CtkSocket() { this.Dispose(false); }
 
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
@@ -568,6 +570,6 @@ namespace CToolkitCs.v1_2Core.Net.Socketing
 
 
 
-    }
 
+    }
 }

@@ -1,5 +1,7 @@
-using CToolkitCs.v1_1.Protocol;
-using CToolkitCs.v1_1.Threading;
+using CToolkitCs.v1_2Core.Logging;
+using CToolkitCs.v1_2Core.Net;
+using CToolkitCs.v1_2Core.Protocol;
+using CToolkitCs.v1_2Core.Threading;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_1.Net.Socketing
+namespace CToolkitCs.v1_2Core.Net.SocketTx
 {
     public class CtkTcpClient : ICtkProtocolNonStopConnect, IDisposable
     {

@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_1.Net.Socketing
+namespace CToolkitCs.v1_1.Net.SocketTx
 {
     public class CtkTcpListener : ICtkProtocolNonStopConnect, IDisposable
     {

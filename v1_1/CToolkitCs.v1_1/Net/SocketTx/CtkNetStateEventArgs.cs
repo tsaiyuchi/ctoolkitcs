@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CToolkitCs.v1_1.Net.Socketing
+namespace CToolkitCs.v1_1.Net.SocketTx
 {
     public class CtkNetStateEventArgs : CtkProtocolEventArgs
     {
