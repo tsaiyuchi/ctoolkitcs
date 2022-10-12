@@ -7,9 +7,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CToolkitCs.v1_2Core.Net
+namespace CToolkitCs.v1_2Core.Net.Socketing
 {
-    public class CtkTcpSocket : ICtkProtocolNonStopConnect, IDisposable
+    public class CtkSocketTcp : CtkSocket, ICtkProtocolNonStopConnect, IDisposable
     {
         /// <summary> Client? or Listener </summary>
         public bool IsActively = false;
@@ -35,7 +35,7 @@ namespace CToolkitCs.v1_2Core.Net
         ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
         ManualResetEvent mreIsReceiving = new ManualResetEvent(true);
         bool m_isReceiveLoop = false;
-        ~CtkTcpSocket() { this.Dispose(false); }
+        ~CtkSocketTcp() { this.Dispose(false); }
 
         public bool IsReceiveLoop { get { return m_isReceiveLoop; } private set { lock (this) m_isReceiveLoop = value; } }
         public bool IsWaitReceive { get { return this.mreIsReceiving.WaitOne(10); } }
@@ -48,7 +48,7 @@ namespace CToolkitCs.v1_2Core.Net
         /// </summary>
         public void BeginReceive()
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
 
             //採用現正操作中的Socket進行接收
             var client = this.ActiveWorkClient as Socket;
@@ -162,13 +162,13 @@ namespace CToolkitCs.v1_2Core.Net
         /// <param name="ar"></param>
         void EndAcceptCallback(IAsyncResult ar)
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
             var trxmBuffer = myea.TrxMessageBuffer;
             Socket client = null;
             try
             {
                 Monitor.Enter(this);//一定要等到進去
-                var state = (CtkTcpSocket)ar.AsyncState;
+                var state = (CtkSocketTcp)ar.AsyncState;
                 client = state.SocketConn.EndAccept(ar);
                 state.SocketWorks.Enqueue(client);
 
@@ -213,13 +213,13 @@ namespace CToolkitCs.v1_2Core.Net
         /// <param name="ar"></param>
         void EndConnectCallback(IAsyncResult ar)
         {
-            var myea = new CtkTcpStateEventArgs();
+            var myea = new CtkNetStateEventArgs();
             var trxBuffer = myea.TrxMessageBuffer;
             Socket client = null;
             try
             {
                 Monitor.Enter(this);//一定要等到進去
-                var state = (CtkTcpSocket)ar.AsyncState;
+                var state = (CtkSocketTcp)ar.AsyncState;
                 client.EndConnect(ar);
                 client = state.SocketConn;
                 state.SocketWorks.Enqueue(client);//作為Client時, Work = Conn
@@ -262,7 +262,7 @@ namespace CToolkitCs.v1_2Core.Net
         void EndReceiveCallback(IAsyncResult ar)
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
-            var myea = (CtkTcpStateEventArgs)ar.AsyncState;
+            var myea = (CtkNetStateEventArgs)ar.AsyncState;
             var client = myea.WorkSocket;
             try
             {
@@ -542,7 +542,7 @@ namespace CToolkitCs.v1_2Core.Net
             Dispose(false);
             GC.SuppressFinalize(this);
         }
-        public void DisposeSelf()
+        public void DisposeClose()
         {
             this.Disconnect();
             CtkUtil.DisposeObjTry(this.mreIsConnecting);
@@ -558,7 +558,7 @@ namespace CToolkitCs.v1_2Core.Net
             }
             // Free any unmanaged objects here.
             //
-            this.DisposeSelf();
+            this.DisposeClose();
             disposed = true;
         }
 

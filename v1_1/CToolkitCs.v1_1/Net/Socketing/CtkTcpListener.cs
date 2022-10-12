@@ -1,5 +1,5 @@
-using CToolkitCs.v1_2Core.Protocol;
-using CToolkitCs.v1_2Core.Threading;
+using CToolkitCs.v1_1.Protocol;
+using CToolkitCs.v1_1.Threading;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Net
+namespace CToolkitCs.v1_1.Net
 {
     public class CtkTcpListener : ICtkProtocolNonStopConnect, IDisposable
     {
@@ -29,12 +29,12 @@ namespace CToolkitCs.v1_2Core.Net
         protected int m_IntervalTimeOfConnectCheck = 5000;
         bool IsReceiveLoop = false;
         ConcurrentQueue<TcpClient> m_tcpClientList = new ConcurrentQueue<TcpClient>();
-        AutoResetEvent areIsConnecting = new AutoResetEvent(true);
-        AutoResetEvent aeReading = new AutoResetEvent(true);
+        ManualResetEvent mreIsConnecting = new ManualResetEvent(true);
+        ManualResetEvent mreReading = new ManualResetEvent(true);
         CtkTcpListenerEx myTcpListener = null;
         TcpClient myWorkClient;
-        public String Name;
         CtkTask runningTask;
+        public String Name;
         // = new BackgroundWorker();
         public CtkTcpListener() : base() { }
 
@@ -186,8 +186,8 @@ namespace CToolkitCs.v1_2Core.Net
             try
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
-                if (!this.aeReading.WaitOne(10)) return 0;//接收中先離開
-                this.aeReading.Reset();//先卡住, 不讓後面的再次進行
+                if (!this.mreReading.WaitOne(10)) return 0;//接收中先離開
+                this.mreReading.Reset();//先卡住, 不讓後面的再次進行
 
                 var ea = new CtkProtocolEventArgs()
                 {
@@ -210,7 +210,7 @@ namespace CToolkitCs.v1_2Core.Net
             }
             finally
             {
-                this.aeReading.Set();//同步型的, 結束就可以Set
+                this.mreReading.Set();//同步型的, 結束就可以Set
                 if (Monitor.IsEntered(this)) Monitor.Exit(this);
             }
             return 0;
@@ -244,7 +244,7 @@ namespace CToolkitCs.v1_2Core.Net
                 state.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
 
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
-                    throw new CtkSocketException("連線失敗");
+                    throw new CtkException("連線失敗");
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
@@ -254,7 +254,7 @@ namespace CToolkitCs.v1_2Core.Net
                 {
                     var stream = client.GetStream();
                     stream.BeginRead(trxmBuffer.Buffer, 0, trxmBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
-                }        
+                }
 
             }
             catch (Exception ex)
@@ -267,7 +267,7 @@ namespace CToolkitCs.v1_2Core.Net
             }
             finally
             {
-                try { this.areIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
+                try { this.mreIsConnecting.Set(); /*同步型的, 結束就可以Set*/ }
                 catch (ObjectDisposedException) { }
                 Monitor.Exit(this);
             }
@@ -281,7 +281,7 @@ namespace CToolkitCs.v1_2Core.Net
             {
                 if (!ar.IsCompleted || client == null || !client.Connected)
                 {
-                    throw new CtkSocketException("Read Fail");
+                    throw new CtkException("Read Fail");
                 }
 
                 var trxmBuffer = myea.TrxMessageBuffer;
@@ -334,7 +334,7 @@ namespace CToolkitCs.v1_2Core.Net
         }
 
         public bool IsLocalReadyConnect { get { return this.myTcpListener != null && this.myTcpListener.Active; } }
-        public bool IsOpenRequesting { get { return !this.areIsConnecting.WaitOne(10); } }
+        public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return this.ConnectCount() > 0; } }
 
         //用途是避免重複要求連線
@@ -344,8 +344,8 @@ namespace CToolkitCs.v1_2Core.Net
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
                 this.CleanInvalidWorks();
-                if (!areIsConnecting.WaitOne(10)) return 0;//連線中就離開
-                this.areIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
+                if (!mreIsConnecting.WaitOne(10)) return 0;//連線中就離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
 
                 if (this.myTcpListener != null) return 0;//若要重新再聆聽, 請先清除Listener
@@ -366,7 +366,7 @@ namespace CToolkitCs.v1_2Core.Net
             }
             finally
             {
-                this.areIsConnecting.Set();
+                this.mreIsConnecting.Set();
                 Monitor.Exit(this);
             }
         }
@@ -376,8 +376,8 @@ namespace CToolkitCs.v1_2Core.Net
             {
                 if (!Monitor.TryEnter(this, 1000)) return -1;//進不去先離開
                 this.CleanInvalidWorks();
-                if (!areIsConnecting.WaitOne(10)) return 0;//連線中就離開
-                this.areIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
+                if (!mreIsConnecting.WaitOne(10)) return 0;//連線中就離開
+                this.mreIsConnecting.Reset();//先卡住, 不讓後面的再次進行連線
 
 
                 if (this.myTcpListener != null) return 0;//若要重新再聆聽, 請先清除Listener

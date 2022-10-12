@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Net
+namespace CToolkitCs.v1_2Core.Net.Socketing
 {
-    public class CtkTcpStateEventArgs : CtkProtocolEventArgs
+    public class CtkNetStateEventArgs : CtkProtocolEventArgs
     {
         public Object WorkClient;
         public CtkProtocolBufferMessage TrxMessageBuffer
