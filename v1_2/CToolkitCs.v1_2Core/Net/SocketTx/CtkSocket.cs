@@ -314,7 +314,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         {
             if (this.IsOpenRequesting) return;//開啟中不執行
             if (this.SocketConn == null) return;//沒連線不執行
-            if (this.SocketWorks == null) return;//沒連線不執行
+            if (this.SocketWorks.Count == 0) return;//沒連線不執行
             if (!this.CheckConnectReadable())//確認無法連線
                 this.Disconnect();//先斷線再
         }
