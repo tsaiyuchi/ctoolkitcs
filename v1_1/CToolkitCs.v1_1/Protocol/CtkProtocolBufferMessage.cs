@@ -25,6 +25,9 @@ namespace CToolkitCs.v1_1.Protocol
         }
 
 
-        public static implicit operator CtkProtocolBufferMessage(byte[] data) { return new CtkProtocolBufferMessage() { Buffer = data, Offset = 0, Length = data.Length }; }
+        public static implicit operator CtkProtocolBufferMessage(Byte[] data) { return new CtkProtocolBufferMessage() { Buffer = data, Offset = 0, Length = data.Length }; }
+        public static implicit operator Byte[](CtkProtocolBufferMessage data) { return data.Buffer; }
+
+
     }
 }

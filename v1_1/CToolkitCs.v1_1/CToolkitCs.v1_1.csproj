@@ -171,6 +171,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\CtkProtocolBufferMessage.cs" />
     <Compile Include="Protocol\CtkProtocolEventArgs.cs" />
+    <Compile Include="Protocol\CtkProtocolReceiverCmd.cs" />
     <Compile Include="Protocol\CtkProtocolTrxMessage.cs" />
     <Compile Include="Protocol\ICtkProtocolConnect.cs" />
     <Compile Include="Protocol\ICtkProtocolNonStopConnect.cs" />
