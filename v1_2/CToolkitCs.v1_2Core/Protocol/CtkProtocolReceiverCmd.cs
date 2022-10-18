@@ -26,7 +26,12 @@ namespace CToolkitCs.v1_2Core.Protocol
             this.Receive(mybuffer);
         }
 
-
+        public void Receive(CtkProtocolBufferMessage buffer)
+        {
+            var mybuffer = new Byte[buffer.Length];
+            Array.Copy(buffer.Buffer, buffer.Offset, mybuffer, 0, buffer.Length);
+            this.Receive(mybuffer);
+        }
 
         public int ParseMessage()
         {
