@@ -8,6 +8,12 @@ namespace CToolkitCs.v1_2Core.Protocol
     public class CtkProtocolBufferMessage
     {
         public CtkProtocolBufferMessage() { }
+        public CtkProtocolBufferMessage(Byte[] buffer, int offset, int length)
+        {
+            this.Buffer = buffer;
+            this.Offset = offset;
+            this.Length = length;
+        }
         public CtkProtocolBufferMessage(int bufferSize)
         {
             this.Buffer = new byte[bufferSize];
@@ -25,6 +31,7 @@ namespace CToolkitCs.v1_2Core.Protocol
         }
 
 
-        public static implicit operator CtkProtocolBufferMessage(byte[] data) { return new CtkProtocolBufferMessage() { Buffer = data, Offset = 0, Length = data.Length }; }
+        public static implicit operator CtkProtocolBufferMessage(Byte[] data) { return new CtkProtocolBufferMessage() { Buffer = data, Offset = 0, Length = data.Length }; }
+        public static implicit operator Byte[](CtkProtocolBufferMessage data) { return data.Buffer; }
     }
 }

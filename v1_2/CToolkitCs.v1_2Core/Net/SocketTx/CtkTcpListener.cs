@@ -58,9 +58,9 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         {
             var myea = new CtkNetStateEventArgs();
             myea.Sender = this;
-            var client = this.ActiveWorkClient as TcpClient;
+            var client = this.ActiveTarget as TcpClient;
             myea.WorkTcpClient = client;
-            var trxBuffer = myea.TrxMessageBuffer;
+            var trxBuffer = myea.TrxBuffer;
             var stream = client.GetStream();
             stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
         }
@@ -228,7 +228,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         protected virtual void EndAcceptCallback(IAsyncResult ar)
         {
             var myea = new CtkNetStateEventArgs();
-            var trxmBuffer = myea.TrxMessageBuffer;
+            var trxmBuffer = myea.TrxBuffer;
             TcpClient client = null;
             try
             {
@@ -284,7 +284,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                     throw new CtkSocketException("Read Fail");
                 }
 
-                var trxmBuffer = myea.TrxMessageBuffer;
+                var trxmBuffer = myea.TrxBuffer;
                 var stream = client.GetStream();
                 int bytesRead = stream.EndRead(ar);
                 trxmBuffer.Length = bytesRead;
@@ -323,7 +323,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         [JsonIgnore]
-        public object ActiveWorkClient
+        public object ActiveTarget
         {
             get { return this.myWorkClient; }
             set
@@ -354,7 +354,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 this.myTcpListener.Start();
                 var tcpClient = this.myTcpListener.AcceptTcpClient();
                 this.TcpClientList.Enqueue(tcpClient);
-                this.ActiveWorkClient = tcpClient;
+                this.ActiveTarget = tcpClient;
 
 
                 /*[d20210722] 一般Sync方法要開始讀取, 應該使用者決定*/
