@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Net
+namespace CToolkitCs.v1_2Core.Net.SocketTx
 {
     public class CtkSocketException : CtkException
     {

@@ -13,6 +13,9 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
     {
 
         ~CtkSocketTcp() { this.Dispose(false); }
+
+
+        public override Socket CreateSocket() { return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);/*¹w³]*/ }
     }
 
 }

@@ -149,7 +149,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
                     hwreq.Accept = value;
                 else if (String.Compare(key, "Connection", true) == 0)
                 {
-                    if (value.Contains("keep-alive", StringComparison.InvariantCultureIgnoreCase))
+                    if (String.Compare(key, "keep-alive", true) == 0)
                         hwreq.KeepAlive = true;
                 }
                 else if (String.Compare(key, "Content-Length", true) == 0)

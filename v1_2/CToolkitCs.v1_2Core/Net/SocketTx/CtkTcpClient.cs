@@ -69,10 +69,10 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         public void BeginRead()
         {
             var myea = new CtkNetStateEventArgs();
-            var client = this.ActiveWorkClient as TcpClient;
+            var client = this.ActiveTarget as TcpClient;
             myea.Sender = this;
             myea.WorkTcpClient = client;
-            var trxBuffer = myea.TrxMessageBuffer;
+            var trxBuffer = myea.TrxBuffer;
             var stream = client.GetStream();
             stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
         }
@@ -178,7 +178,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         void EndConnectCallback(IAsyncResult ar)
         {
             var myea = new CtkNetStateEventArgs();
-            var trxBuffer = myea.TrxMessageBuffer;
+            var trxBuffer = myea.TrxBuffer;
             try
             {
                 //Lock使用在短碼保護, 例如: 保護一個變數的get/set
@@ -233,7 +233,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                     throw new CtkSocketException("Read Fail");
                 }
 
-                var ctkBuffer = myea.TrxMessageBuffer;
+                var ctkBuffer = myea.TrxBuffer;
                 var stream = client.GetStream();
                 int bytesRead = stream.EndRead(ar);
                 ctkBuffer.Length = bytesRead;
@@ -276,7 +276,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         public event EventHandler<CtkProtocolEventArgs> EhFirstConnect;
 
         [JsonIgnore]
-        public object ActiveWorkClient { get { return this.MyTcpClient; } set { if (this.MyTcpClient != value) throw new ArgumentException("不可傳入Active Client"); } }
+        public object ActiveTarget { get { return this.MyTcpClient; } set { if (this.MyTcpClient != value) throw new ArgumentException("不可傳入Active Client"); } }
         public bool IsLocalReadyConnect { get { return this.IsRemoteConnected; } }//Local連線成功=遠端連線成功
         public bool IsOpenRequesting { get { return !this.mreIsConnecting.WaitOne(10); } }
         public bool IsRemoteConnected { get { return CtkNetUtil.IsConnected(this.MyTcpClient); } }
