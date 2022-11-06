@@ -7,13 +7,9 @@ namespace CToolkitCs.v1_2Core.TriggerDiagram
 {
     public interface ICtkTdNode
     {
-        /// <summary>
-        /// 唯一識別碼
-        /// </summary>
+        /// <summary> 唯一識別碼 </summary>
         String CtkTdIdentifier { get; set; }
-        /// <summary>
-        /// 名稱
-        /// </summary>
+        /// <summary> 名稱 </summary>
         String CtkTdName { get; set; }
 
     }
