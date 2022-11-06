@@ -220,11 +220,11 @@ namespace CToolkitCs.v1_2Core.Threading
 
             // Free any unmanaged objects here.
             //
-            this.DisposeSelf();
+            this.DisposeClose();
             disposed = true;
         }
 
-        protected virtual void DisposeSelf()
+        protected virtual void DisposeClose()
         {
             /* [d20210220]
              * 沒人參考它時,  有機率被釋放
