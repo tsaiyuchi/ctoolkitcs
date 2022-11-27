@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CToolkitCs.v1_2Core.Worker
 {
     public abstract class CtkWorkerProcBase01<T> : ICtkContextFlowRun
-        where T : EventArgs
+        where T : EventArgs, ICtkWorkerProcBase01Msg
     {
         /*[d20210211]
          * 建立一物件, 負責處理一 特定 領域/專長/作業 的事,
@@ -61,12 +61,20 @@ namespace CToolkitCs.v1_2Core.Worker
 
         #region Event
 
-        public event EventHandler<Exception> EhException;
+        public event EventHandler<T> EhException;
         public event EventHandler<T> EhMsgGenerated;
+
         protected void OnException(Exception ex)
         {
             if (this.EhException == null) return;
-            this.EhException(this, ex);
+            var ea = Activator.CreateInstance<T>();
+            ea.Exception = ex;
+            this.EhException(this, ea);
+        }
+        protected void OnException(T ea)
+        {
+            if (this.EhException == null) return;
+            this.EhException(this, ea);
         }
         protected void OnMsgGenerated(T msg)
         {
@@ -181,7 +189,7 @@ namespace CToolkitCs.v1_2Core.Worker
             this.DisposeClose();
             disposed = true;
         }
-        protected virtual void DisposeClose()
+        public virtual void DisposeClose()
         {
             CtkUtil.DisposeTaskTry(this.CtkProcTask);
         }

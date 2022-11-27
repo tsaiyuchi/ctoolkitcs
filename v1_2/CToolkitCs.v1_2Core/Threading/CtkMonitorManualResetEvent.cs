@@ -42,29 +42,34 @@ namespace CToolkitCs.v1_2Core.Threading
      */
 
 
+    /*[d20221127] AutoResetEvent 放了一個Thread後會自動再堵起來
+     * 在此不適用:
+     * 試想, 若有一個測試用的 WaitOne, 也會導致放行後又被堵起來
+     */
+
 
     /// <summary> 為了反覆確認可否 進入/取得鎖 而寫的類別. </summary>
-    public class CtkMonitorAutoResetEvent : IDisposable
+    public class CtkMonitorManualResetEvent : IDisposable
     {
-        /// <summary> 使用AutoResetEvent, 放了一個Thread後會自動再堵起來 </summary>
-        protected AutoResetEvent _resetEvent = new AutoResetEvent(true);
+
+        protected ManualResetEvent _resetEvent = new ManualResetEvent(true);
 
         /// <summary> 不使用Monitor阻塞 </summary>
-        public virtual CtkMonitorAutoResetEventBlocker OnceBlocker()
+        public virtual CtkMonitorManualResetEventBlocker OnceBlocker()
         {
             if (!this.TryReset()) return null;
-            return new CtkMonitorAutoResetEventBlocker(this);
+            return new CtkMonitorManualResetEventBlocker(this, false);
         }
         /// <summary> 使用Monitor阻塞 </summary>
-        public virtual CtkMonitorAutoResetEventBlockerM OnceBlockerM()
+        public virtual CtkMonitorManualResetEventBlocker OnceBlockerM()
         {
             if (!this.TryEnter()) return null;
-            return new CtkMonitorAutoResetEventBlockerM(this);
+            return new CtkMonitorManualResetEventBlocker(this, true);
         }
 
 
         /// <summary> 使用Monitor進行Reset </summary>
-        public virtual bool TryEnter(int waitTimeLimitMs = 0, int eachTryGetLockTimeLimitMs = 10, int eachTryResetTimeLimitMs = 10, int eachRestTimeMs = 10)
+        public virtual bool TryEnter(int waitTimeLimitMs = 0, int eachTryGetLockTimeLimitMs = 10, int eachTryResetTimeLimitMs = 10, int eachSleepTimeMs = 10)
         {
             var entryTime = DateTime.Now;
 
@@ -77,6 +82,7 @@ namespace CToolkitCs.v1_2Core.Threading
                 try
                 {//不做大範圍Lock, 只對關鍵的
                     var isGetLock = false;
+
                     if (eachTryGetLockTimeLimitMs > 0)
                         isGetLock = Monitor.TryEnter(this, eachTryGetLockTimeLimitMs);
                     else
@@ -91,28 +97,27 @@ namespace CToolkitCs.v1_2Core.Threading
 
                         if (this._resetEvent.WaitOne(eachTryResetTimeLimitMs))
                         {
-                            //AutoResetEvent會自動Reset, 此行不一定要執行, 只是以防萬一
-                            this._resetEvent.Reset();//先堵住, 不讓後面的再次進行
-                            return true;
+                            //先堵住, 不讓後面的再次進行
+                            if (this._resetEvent.Reset()) return true;
                         }
                     }
                 }
                 finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
                 //解鎖後再等待
-                Thread.Sleep(eachRestTimeMs);
+                Thread.Sleep(eachSleepTimeMs);
             }
             return false;
         }
 
         /// <summary> 使用Monitor進行Set </summary>
-        public virtual bool TryExit(int waitTimeLimitMs = 0, int eachTryGetLockTimeLimitMs = 10)
+        public virtual bool TryExit(int waitTimeLimitMs = 0, int eachTryGetLockTimeLimitMs = 10, int eachSleepTimeMs = 10)
         {
             var entryTime = DateTime.Now;
 
             //waitTimeLimitMs <= 0 代表無限等待
             while (waitTimeLimitMs <= 0 || (DateTime.Now - entryTime).TotalMilliseconds < waitTimeLimitMs)
             {
-                //注意: 如果 tryGetLockTimeMs <= 0, 執行緒會一直在嘗試取得 lock, 無法回到這行
+                //注意: 如果 eachTryGetLockTimeLimitMs <= 0, 執行緒會一直在嘗試取得 lock, 無法回到這行
                 if (this.disposed) return false;
 
                 try
@@ -126,17 +131,18 @@ namespace CToolkitCs.v1_2Core.Threading
 
                     if (isGetLock)
                     {
-                        this._resetEvent.Set();
-                        return true;
+                        if (this._resetEvent.Set()) return true;
                     }
                 }
                 finally { if (Monitor.IsEntered(this)) Monitor.Exit(this); }
+                //解鎖後再等待
+                Thread.Sleep(eachSleepTimeMs);
             }
             return false;
         }
 
         /// <summary> 不使用Monitor進行Reset </summary>
-        public virtual bool TryReset(int waitTimeLimitMs = 0, int eachTryTimeLimitMs = 10, int eachRestTimeMs = 10)
+        public virtual bool TryReset(int waitTimeLimitMs = 0, int eachTryResetTimeLimitMs = 10, int eachSleepTimeMs = 10)
         {
             var entryTime = DateTime.Now;
 
@@ -145,32 +151,30 @@ namespace CToolkitCs.v1_2Core.Threading
             {
                 if (this.disposed) return false;
 
-                if (eachTryTimeLimitMs <= 0)
-                {
+                if (eachTryResetTimeLimitMs <= 0)
+                {//each採用無限等待時, total wait 會無效
                     if (this._resetEvent.WaitOne())
                     {
-                        //AutoResetEvent會自動Reset, 此行不一定要執行, 只是以防萬一
-                        this._resetEvent.Reset();//先堵住, 不讓後面的再次進行
-                        return true;
+                        //先堵住, 不讓後面的再次進行
+                        if (this._resetEvent.Reset()) return true;
                     }
                 }
                 else
                 {
-                    if (this._resetEvent.WaitOne(eachTryTimeLimitMs))
+                    if (this._resetEvent.WaitOne(eachTryResetTimeLimitMs))
                     {
-                        //AutoResetEvent會自動Reset, 此行不一定要執行, 只是以防萬一
-                        this._resetEvent.Reset();//先堵住, 不讓後面的再次進行
-                        return true;
+                        //先堵住, 不讓後面的再次進行
+                        if (this._resetEvent.Reset()) return true;
                     }
                 }
 
-                Thread.Sleep(eachRestTimeMs);
+                Thread.Sleep(eachSleepTimeMs);
             }
             return false;
         }
 
         /// <summary> 不使用Monitor進行Set </summary>
-        public virtual bool TrySet(int waitTimeLimitMs = 0, int eachTryTimeLimitMs = 10, int eachRestTimeMs = 10)
+        public virtual bool TrySet(int waitTimeLimitMs = 0, int eachSleepTimeMs = 10)
         {
             var entryTime = DateTime.Now;
 
@@ -179,13 +183,9 @@ namespace CToolkitCs.v1_2Core.Threading
             {
                 if (this.disposed) return false;
 
-                if (eachTryTimeLimitMs <= 0)
-                {
-                    this._resetEvent.Set();
-                    return true;
-                }
+                if (this._resetEvent.Set()) return true;
 
-                Thread.Sleep(eachRestTimeMs);
+                Thread.Sleep(eachSleepTimeMs);
             }
 
             return false;
@@ -217,11 +217,10 @@ namespace CToolkitCs.v1_2Core.Threading
 
             // Free any unmanaged objects here.
             //
-            this.DisposeSelf();
+            this.DisposeClose();
             disposed = true;
         }
-
-        protected virtual void DisposeSelf()
+        public virtual void DisposeClose()
         {
             if (this._resetEvent != null)
             {
