@@ -12,6 +12,42 @@ namespace CToolkitCs.v1_2Core.Net
     public class CtkNetUtil
     {
 
+        /// <summary> </summary>
+        /// <param name="ipAddress">廣播位址 e.q. 192.168.1.255</param>
+        /// <param name="macAddress">對象 MAC</param>
+        public static void WakeOnLan(string ipAddress, string macAddress)
+        {
+            //UDP Port 9
+            IPEndPoint pEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), 9);
+
+            //將aa:bb:cc:dd:ee:ff或aa-bb-cc-dd-ee-ff MAC地址轉成byte[]
+            var macAddrByteStrAry = macAddress.Split('-', ':');
+            var macAddrBytes = new byte[macAddrByteStrAry.Length];
+            for (var idx = 0; idx < macAddrByteStrAry.Length; idx++)
+            {
+                var str = macAddrByteStrAry[idx];
+                macAddrBytes[idx] = Convert.ToByte(str, 16);
+            }
+
+            //送出UPD封包
+            using (UdpClient udpClient = new UdpClient())
+            {
+                byte[] data = new byte[102];
+                //最前方六個0xff
+                for (var i = 0; i < 6; i++)
+                    data[i] = 0xff;
+                //重複16次MAC地址
+                for (int j = 1; j <= 16; j++)
+                {
+                    macAddrBytes.CopyTo(data, j * 6);
+                }
+                udpClient.Send(data, (int)data.Length, pEndPoint);
+                udpClient.Close();
+
+            }
+        }
+
+
         public static void DisposeSocket(Socket socket)
         {
             if (socket == null) return;

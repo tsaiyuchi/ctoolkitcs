@@ -66,20 +66,9 @@ namespace CToolkitCs.v1_2Core.Logging
 
         public void CloseTask()
         {
-            if (this.task != null)
-            {
-                //若之前有, 把它清乾淨
-                using (var obj = this.task)
-                {
-                    if (!obj.IsEnd()) obj.Cancel();
-                    obj.Dispose();
-                }
-            }
+            CtkUtil.DisposeTaskTry(this.task);
         }
-        public void Close()
-        {
-            this.CloseTask();
-        }
+
 
 
 
@@ -124,15 +113,15 @@ namespace CToolkitCs.v1_2Core.Logging
             // Free any unmanaged objects here.
             //
 
-            this.DisposeSelf();
+            this.DisposeClose();
 
             disposed = true;
         }
 
 
-        void DisposeSelf()
+        public void DisposeClose()
         {
-            try { this.Close(); }
+            try { this.CloseTask(); }
             catch (Exception ex) { CtkLog.Write(ex); }
             //斷線不用清除Event, 但Dispsoe需要, 因為即使斷線此物件仍存活著
             CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
