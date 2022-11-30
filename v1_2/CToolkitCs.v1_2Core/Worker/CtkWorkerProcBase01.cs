@@ -46,7 +46,7 @@ namespace CToolkitCs.v1_2Core.Worker
                     var result = this.CtkProcMsg(msg);
 
                     //若沒拋出 Exception 僅有 Error Code, 那麼 Log後 繼續下一回
-                    if (result != 0) CtkLog.WarnNs(this, $"{this.GetType().Name} Error Code= {result}");
+                    if (result != 0) CtkLog.WarnNsF(this, $"{this.GetType().Name} Error Code= {result}");
                 }
             }
 

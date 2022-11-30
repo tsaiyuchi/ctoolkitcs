@@ -115,13 +115,13 @@ namespace CToolkitCs.v1_2Core
         }
         public static Enum EnumParse(String val, Type type) { return (Enum)Enum.Parse(type, val, true); }
         public static T EnumParse<T>(String val) { return (T)Enum.Parse(typeof(T), val, true); }
-        public static bool EnumParseTry<T>(String val, out T rs) where T : struct { return Enum.TryParse(val, true, out rs); }
         public static T EnumParseOrDefault<T>(String val) where T : struct
         {
             var rs = default(T);
             Enum.TryParse(val, true, out rs);
             return rs;
         }
+
         public static T EnumParseOrDefault<T>(String val, T def) where T : struct
         {
             var rs = def;
@@ -129,6 +129,7 @@ namespace CToolkitCs.v1_2Core
             return rs;
         }
 
+        public static bool EnumParseTry<T>(String val, out T rs) where T : struct { return Enum.TryParse(val, true, out rs); }
         #endregion
 
 
@@ -248,19 +249,6 @@ namespace CToolkitCs.v1_2Core
         }
 
         #endregion
-        public static object TryCatch(Action theMethod, params object[] parameters)
-        {
-            try
-            {
-                return theMethod.DynamicInvoke(parameters);
-            }
-            catch (Exception ex)
-            {
-                CtkLog.Write(ex);
-                return ex;
-            }
-        }
-
         public static void Try(Action act, int times = 3)
         {
             for (var idx = 0; idx < times; idx++)
@@ -278,7 +266,18 @@ namespace CToolkitCs.v1_2Core
             }
         }
 
-
+        public static object TryCatch(Action theMethod, params object[] parameters)
+        {
+            try
+            {
+                return theMethod.DynamicInvoke(parameters);
+            }
+            catch (Exception ex)
+            {
+                CtkLog.Write(ex);
+                return ex;
+            }
+        }
         #region Process
 
         public static long MemorySize(string processName)
@@ -311,6 +310,8 @@ namespace CToolkitCs.v1_2Core
                 return (T)obj;
             }
         }
+
+
         public static T LoadXml<T>(String xml)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
@@ -327,21 +328,25 @@ namespace CToolkitCs.v1_2Core
             }
         }
 
-        public static T LoadXmlFile<T>(String fn)
+
+        public static Object LoadXmlFile(Type type, String fn)
+        {
+            var seri = new System.Xml.Serialization.XmlSerializer(type);
+            var fi = new FileInfo(fn);
+            if (!fi.Exists) return null;
+            using (var stm = fi.OpenRead()) { return seri.Deserialize(stm); }
+        }
+
+        public static T LoadXmlFileT<T>(String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
             var fi = new FileInfo(fn);
             if (!fi.Exists) return default(T);
-
-
-            using (var stm = fi.OpenRead())
-            {
-                return (T)seri.Deserialize(stm);
-            }
+            using (var stm = fi.OpenRead()) { return (T)seri.Deserialize(stm); }
         }
-        public static T LoadXmlFileOrNew<T>(String fn) where T : class, new()
+        public static T LoadXmlFileTOrNew<T>(String fn) where T : class, new()
         {
-            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var seri = new XmlSerializer(typeof(T));
             var fi = new FileInfo(fn);
             if (!fi.Exists)
             {
@@ -349,28 +354,12 @@ namespace CToolkitCs.v1_2Core
                 return config;
             }
 
-
-            using (var stm = fi.OpenRead())
-            {
-                return seri.Deserialize(stm) as T;
-            }
-        }
-        public static void SaveXmlFileT<T>(T obj, String fn)
-        {
-            var seri = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            var fi = new FileInfo(fn);
-
-            if (!fi.Directory.Exists) fi.Directory.Create();
-
-            using (var stm = fi.Open(FileMode.Create))
-            {
-                seri.Serialize(stm, obj);
-            }
+            using (var stm = fi.OpenRead()) { return seri.Deserialize(stm) as T; }
         }
 
         public static void SaveXmlFile(object obj, String fn)
         {
-            var seri = new System.Xml.Serialization.XmlSerializer(obj.GetType());
+            var seri = new XmlSerializer(obj.GetType());
             var fi = new FileInfo(fn);
 
             if (!fi.Directory.Exists) fi.Directory.Create();
@@ -380,7 +369,7 @@ namespace CToolkitCs.v1_2Core
                 seri.Serialize(stm, obj);
             }
         }
-        public static void SaveXmlFile(System.Type type, object obj, String fn)
+        public static void SaveXmlFile(Type type, object obj, String fn)
         {
             var seri = new System.Xml.Serialization.XmlSerializer(type);
             var fi = new FileInfo(fn);
@@ -392,6 +381,19 @@ namespace CToolkitCs.v1_2Core
                 seri.Serialize(stm, obj);
             }
         }
+        public static void SaveXmlFileT<T>(T obj, String fn)
+        {
+            var seri = new XmlSerializer(typeof(T));
+            var fi = new FileInfo(fn);
+
+            if (!fi.Directory.Exists) fi.Directory.Create();
+
+            using (var stm = fi.Open(FileMode.Create))
+            {
+                seri.Serialize(stm, obj);
+            }
+        }
+
         public static byte[] SerializeBinary(object obj)
         {
             var bf = new BinaryFormatter();

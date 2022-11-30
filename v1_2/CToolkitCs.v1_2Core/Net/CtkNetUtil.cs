@@ -19,10 +19,16 @@ namespace CToolkitCs.v1_2Core.Net
         {
             //UDP Port 9
             IPEndPoint pEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), 9);
-            byte[] macAddrBytes =
-                //將aa:bb:cc:dd:ee:ff或aa-bb-cc-dd-ee-ff MAC地址轉成byte[]
-                macAddress.Split('-', ':')
-                .Select(o => Convert.ToByte(o, 16)).ToArray();
+
+            //將aa:bb:cc:dd:ee:ff或aa-bb-cc-dd-ee-ff MAC地址轉成byte[]
+            var macAddrByteStrAry = macAddress.Split('-', ':');
+            var macAddrBytes = new byte[macAddrByteStrAry.Length];
+            for (var idx = 0; idx < macAddrByteStrAry.Length; idx++)
+            {
+                var str = macAddrByteStrAry[idx];
+                macAddrBytes[idx] = Convert.ToByte(str, 16);
+            }
+
             //送出UPD封包
             using (UdpClient udpClient = new UdpClient())
             {

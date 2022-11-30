@@ -48,22 +48,27 @@ namespace CToolkitCs.v1_2Core
 
         #region Namespace Logger
 
-        public static void DebugNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
-        public static void ErrorNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
+        public static void DebugNsF(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
         public static void ErrorNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Error); }
-        public static void FatalNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+
+        public static void ErrorNsF(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
         public static void FatalNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Fatal); }
+
+        public static void FatalNsF(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+        public static void InfoNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Info); }
+
         /// <summary>
         /// 使用 Namespace 記錄Log
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="msg"></param>
         /// <param name="args"></param>
-        public static void InfoNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
-        public static void InfoNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Info); }
-        public static void VerboseNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
-        public static void WarnNs(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
+        public static void InfoNsF(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
+        public static void VerboseNsF(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
+        
         public static void WarnNs(object sender, CtkLoggerEventArgs ea) { GetAssemblyLogger(sender).Write(ea, CtkLoggerEnumLevel.Warn); }
+        public static void WarnNsF(object sender, string msg, params object[] args) { GetAssemblyLogger(sender).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
+        
         public static void WarnNsTryCatch(object sender, Action act) { try { act(); } catch (Exception ex) { WarnNs(sender, ex); } }
         public static void WriteNs(object sender, CtkLoggerEventArgs ea)
         {
@@ -80,18 +85,18 @@ namespace CToolkitCs.v1_2Core
 
         #region Specified ID Logger
 
-        public static void DebugId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
-        public static void ErrorId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
-        public static void FatalId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+        public static void DebugIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
+        public static void ErrorIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
+        public static void FatalIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
         /// <summary>
         /// 使用 指定ID 記錄Log
         /// </summary>
         /// <param name="loggerId"></param>
         /// <param name="msg"></param>
         /// <param name="args"></param>
-        public static void InfoId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
-        public static void VerboseId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
-        public static void WarnId(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
+        public static void InfoIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
+        public static void VerboseIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
+        public static void WarnIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
         public static void WriteId(string loggerId, CtkLoggerEventArgs ea)
         {
             GetLoggerById(loggerId).Write(ea);
@@ -108,9 +113,9 @@ namespace CToolkitCs.v1_2Core
         #region Namespace.Specified ID Logger
 
 
-        public static void DebugNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
-        public static void ErrorNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
-        public static void FatalNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
+        public static void DebugNsIdF(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
+        public static void ErrorNsIdF(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
+        public static void FatalNsIdF(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
         /// <summary>
         /// 使用 Namespace + 指定ID 記錄Log
         /// </summary>
@@ -118,14 +123,14 @@ namespace CToolkitCs.v1_2Core
         /// <param name="loggerId"></param>
         /// <param name="msg"></param>
         /// <param name="args"></param>
-        public static void InfoNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
-        public static void VerboseNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
-        public static void WarnNsId(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
-        public static void WriteNsId(object sender, string loggerId, CtkLoggerEventArgs ea)
+        public static void InfoNsIdF(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
+        public static void VerboseNsIdF(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
+        public static void WarnNsIdF(object sender, string loggerId, string msg, params object[] args) { GetAssemblyLoggerById(sender, loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
+        public static void WriteNsIdF(object sender, string loggerId, CtkLoggerEventArgs ea)
         {
             GetAssemblyLoggerById(sender, loggerId).Write(ea);
         }
-        public static void WriteNsId(object sender, string loggerId, CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level)
+        public static void WriteNsIdF(object sender, string loggerId, CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level)
         {
             ea.Level = _level;
             GetAssemblyLoggerById(sender, loggerId).Write(ea, _level);
