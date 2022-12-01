@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 
 namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 {
@@ -446,6 +447,61 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         }
 
 
+        public static async Task<CtkNetHttpWebGetRtn<IWebDriver>> SeleniumRemoteChromeHttpGetAsyn(string seleniumRemoteUri,   String reqUri,
+            Func<IWebDriver, bool> callback = null, int timeout = 30 * 1000, int delayBrowserOpen = 5 * 1000)
+        {
+            var rtn = new CtkNetHttpWebGetRtn<IWebDriver>();
+            var start = DateTime.Now;
+
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument(string.Format("user-agent={0}", CtkNetUserAgents.Random().UserAgent));
+            var remote = new Uri(seleniumRemoteUri); // e.q.: http://nas002:49157/wd/hub
+
+            using (var driver = rtn.Driver = new RemoteWebDriver(remote, options))
+            {
+
+
+                //開啟網頁
+                driver.Navigate().GoToUrl(reqUri);
+                //隱式等待 - 直到畫面跑出資料才往下執行, 只需宣告一次, 之後找元件都等待同樣秒數.
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(delayBrowserOpen);
+
+
+
+
+
+                rtn.Html = await Task.Run<string>(() =>
+                {
+                    var interval = 500;
+
+                    for (int idx = 0; (DateTime.Now - start).TotalMilliseconds < timeout; idx++)
+                    {
+                        if (string.IsNullOrEmpty(driver.PageSource))
+                        {//等頁面載入完成
+                            Thread.Sleep(interval);
+                            continue;
+                        }
+                        if (callback != null && !callback(driver))
+                        {//有callback 要等callback完成
+                            Thread.Sleep(interval);
+                            continue;
+                        }
+
+                        return driver.PageSource;
+                    }
+                    return null;
+                });
+
+
+
+
+                driver.Quit();
+            }
+            return rtn;
+
+
+
+        }
 
 
 
