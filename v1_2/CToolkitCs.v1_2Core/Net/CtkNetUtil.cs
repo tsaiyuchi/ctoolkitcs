@@ -185,6 +185,13 @@ namespace CToolkitCs.v1_2Core.Net
             var iphostentry = Dns.GetHostEntry(strHostName);
             return iphostentry.AddressList.FirstOrDefault();
         }
+        public static IPAddress GetIpAdr1st(AddressFamily addrFamily)
+        {
+            string strHostName = Dns.GetHostName();
+            var iphostentry = Dns.GetHostEntry(strHostName);
+            var rtn = iphostentry.AddressList.Where(x => x.AddressFamily == addrFamily);
+            return rtn.FirstOrDefault();
+        }
 
         public static IPAddress GetIpAdr1stLikelyOr127(string request_ip = null, string reference_ip = null)
         {
@@ -293,6 +300,8 @@ namespace CToolkitCs.v1_2Core.Net
 
             return ipaddr;
         }
+
+
         public static bool IsConnected(TcpClient obj)
         {
             if (obj == null) return false;
