@@ -275,10 +275,6 @@ namespace CToolkitCs.v1_2Core.Net
             return macList;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public static IPAddress GetSuitableIp(string request_ip, string reference_ip)
         {
             //如果要求的IP有被設定, 就回傳要求的
@@ -295,6 +291,27 @@ namespace CToolkitCs.v1_2Core.Net
             var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
             if (ipaddr == null)
                 ipaddr = GetIpAdr1st();
+            if (ipaddr == null)
+                ipaddr = IPAddress.Parse("127.0.0.1");//localhost可能被改掉, 所以不適用
+
+            return ipaddr;
+        }
+        public static IPAddress GetSuitableIp(string request_ip, string reference_ip, AddressFamily addrFamily)
+        {
+            //如果要求的IP有被設定, 就回傳要求的
+            IPAddress requestIpAddr = null;
+            if (IPAddress.TryParse(request_ip, out requestIpAddr)) return requestIpAddr;
+
+
+            if (reference_ip == "127.0.0.1")
+                return IPAddress.Parse("127.0.0.1");
+            if (reference_ip == "localhost")
+                return IPAddress.Parse("localhost");
+
+
+            var ipaddr = GetIpAdrLikely(request_ip, reference_ip);
+            if (ipaddr == null)
+                ipaddr = GetIpAdr1st(addrFamily);
             if (ipaddr == null)
                 ipaddr = IPAddress.Parse("127.0.0.1");//localhost可能被改掉, 所以不適用
 

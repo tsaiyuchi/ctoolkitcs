@@ -414,7 +414,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 
 
 
-
+                driver.Close();
                 driver.Quit();
             }
             return rtn;
@@ -495,6 +495,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 
 
 
+                driver.Close();
                 driver.Quit();
             }
             return rtn;
