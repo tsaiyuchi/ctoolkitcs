@@ -12,10 +12,10 @@ namespace CToolkitCs.v1_2Core.WinApiNative
         [System.Runtime.InteropServices.FieldOffset(0)]
         public CtkMdlInputType dwType;
         [System.Runtime.InteropServices.FieldOffset(4)]
-        public CtkMdlHookMouseStruct mi;
+        public CtkStructHookMouse mi;
         [System.Runtime.InteropServices.FieldOffset(4)]
-        public CtkMdlHookKeyboardStruct ki;
+        public CtkStructHookKeyboard ki;
         [System.Runtime.InteropServices.FieldOffset(4)]
-        public CtkMdlHookHardwareStruct hi;
+        public CtkStructHookHardware hi;
     }
 }

@@ -5,16 +5,12 @@ using System.Text;
 
 namespace CToolkitCs.v1_2Core.WinApiNative
 {
-
-
-
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, Pack = 1)]
-    public struct CtkMdlHookKeyboardStruct
+    public struct CtkStructHookHardware
     {
-        public Int16 wVk; // VirtualKeyCode
-        public Int16 wScan;
-        public CtkEnumKeyboardFlag dwFlags;
-        public Int32 time;
-        public IntPtr dwExtraInfo;
+        public Int32 uMsg;
+        public Int16 wParamL;
+        public Int16 wParamH;
     }
+
 }
