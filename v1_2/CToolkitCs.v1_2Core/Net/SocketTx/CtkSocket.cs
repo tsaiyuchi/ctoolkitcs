@@ -314,6 +314,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             try { this.mreIsReceiving.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
             try { this.mreIsConnecting.Set();/*僅Set不釋放, 可能還會使用*/ } catch (ObjectDisposedException) { }
 
+            // Socket斷開後, 此物件無法再使用 等同 Released, 所以直接 Dispose, 若仍需要 請另開
             foreach (var socket in this.TargetSockets) CtkNetUtil.DisposeSocketTry(socket);
             CtkNetUtil.DisposeSocketTry(this.SocketConn);
             this.OnDisconnect(new CtkProtocolEventArgs() { Message = "Disconnect method is executed" });

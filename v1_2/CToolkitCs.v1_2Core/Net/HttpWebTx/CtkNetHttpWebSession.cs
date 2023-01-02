@@ -13,14 +13,14 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 
         public CtkNetHttpWebTransaction Create(String url)
         {
-            var tx = CtkNetHttpWebTransaction.HttpRequestTx(url);
+            var tx = CtkNetHttpWebTransaction.Create(url);
             tx.HwRequest.CookieContainer = this.CookieContainer;
             this.Transaction.Add(tx);
             return tx;
         }
-        public CtkNetHttpWebTransaction Create(String url, System.Net.Cache.RequestCacheLevel cachePolicy, String httpMethod = "GET")
+        public CtkNetHttpWebTransaction Create(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
         {
-            var tx = CtkNetHttpWebTransaction.HttpRequestTx(url, cachePolicy, httpMethod);
+            var tx = CtkNetHttpWebTransaction.Create(url, cachePolicy, httpMethod);
             var hwreq = tx.HwRequest;
             hwreq.CookieContainer = this.CookieContainer;
 

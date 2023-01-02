@@ -92,7 +92,7 @@ namespace CToolkitCs.v1_2Core.Worker
         public virtual int CtkCfBoot() { return 0; }
         public virtual int CtkCfFree()
         {
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+            this.DisposeClose();
             return 0;
         }
         public virtual int CtkCfLoad() { return 0; }
@@ -191,6 +191,7 @@ namespace CToolkitCs.v1_2Core.Worker
         }
         public virtual void DisposeClose()
         {
+            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
             CtkUtil.DisposeTaskTry(this.CtkProcTask);
         }
 
