@@ -49,12 +49,6 @@ namespace CToolkitCs.v1_2Core.Logging
 
 
 
-        #region Static
-
-        static CtkLoggerMapper m_Singleton;
-        public static CtkLoggerMapper Singleton { get { if (m_Singleton == null) { m_Singleton = new CtkLoggerMapper(); } return m_Singleton; } }
-
-        #endregion
 
     }
 }

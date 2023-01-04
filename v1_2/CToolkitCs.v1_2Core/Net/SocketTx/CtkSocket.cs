@@ -349,7 +349,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             catch (Exception ex)
             {
                 this.Disconnect();//寫入失敗就斷線
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
                 throw ex;//就例外就拋出, 不吃掉
             }
         }
@@ -367,7 +367,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             catch (Exception ex)
             {
                 this.Disconnect();//寫入失敗就斷線
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
                 throw ex;//就例外就拋出, 不吃掉
             }
         }
@@ -405,7 +405,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
-                catch (Exception ex) { CtkLog.WarnNs(this, ex); }
+                catch (Exception ex) { CtkLog.WarnAn(this, ex); }
 
 
                 if (this.IsAsynAutoListen)
@@ -423,7 +423,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnFailConnect(myea);
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
             }
             finally
             {
@@ -456,7 +456,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
 
                 //呼叫他人不應影響自己運作, catch起來
                 try { this.OnFirstConnect(myea); }
-                catch (Exception ex) { CtkLog.WarnNs(this, ex); }
+                catch (Exception ex) { CtkLog.WarnAn(this, ex); }
 
 
                 if (this.IsAsynAutoReceive)
@@ -479,7 +479,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnFailConnect(myea);
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
             }
             finally
             {
@@ -522,7 +522,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnErrorReceive(myea);//但要呼叫 OnErrorReceive
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
             }
             finally
             {
@@ -568,7 +568,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnErrorReceive(myea);//但要呼叫 OnErrorReceive
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
             }
             finally
             {

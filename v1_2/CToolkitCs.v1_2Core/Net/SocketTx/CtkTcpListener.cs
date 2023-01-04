@@ -263,7 +263,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 myea.Message = ex.Message;
                 myea.Exception = ex;
                 this.OnFailConnect(myea);
-                CtkLog.WarnNs(this, ex);
+                CtkLog.WarnAn(this, ex);
             }
             finally
             {

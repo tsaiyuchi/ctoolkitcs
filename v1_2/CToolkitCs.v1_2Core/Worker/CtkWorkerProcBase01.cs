@@ -46,7 +46,7 @@ namespace CToolkitCs.v1_2Core.Worker
                     var result = this.CtkProcMsg(msg);
 
                     //若沒拋出 Exception 僅有 Error Code, 那麼 Log後 繼續下一回
-                    if (result != 0) CtkLog.WarnNsF(this, $"{this.GetType().Name} Error Code= {result}");
+                    if (result != 0) CtkLog.WarnAnF(this, $"{this.GetType().Name} Error Code= {result}");
                 }
             }
 
@@ -111,7 +111,7 @@ namespace CToolkitCs.v1_2Core.Worker
                 catch (Exception ex)
                 {
                     this.OnException(ex);//Task不中斷, 回報Exception
-                    CtkLog.WarnNs(this, ex);//同時Record
+                    CtkLog.WarnAn(this, ex);//同時Record
                 }
                 Thread.Sleep(this.CtkProcSleep);
             }
@@ -132,7 +132,7 @@ namespace CToolkitCs.v1_2Core.Worker
                 catch (Exception ex)
                 {
                     this.OnException(ex);//Task不中斷, 回報Exception
-                    CtkLog.WarnNs(this, ex);//同時Record
+                    CtkLog.WarnAn(this, ex);//同時Record
                 }
                 return this.CtkCfIsRunning && !this.disposed;
             }, this.GetType().Name, this.CtkProcSleep);
@@ -148,7 +148,7 @@ namespace CToolkitCs.v1_2Core.Worker
             catch (Exception ex)
             {
                 this.OnException(ex);//回報Exception
-                CtkLog.WarnNs(this, ex);//同時Record
+                CtkLog.WarnAn(this, ex);//同時Record
                 throw ex;//跑一次的, 有Exception就拋出
             }
             return 0;
