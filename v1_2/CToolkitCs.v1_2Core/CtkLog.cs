@@ -146,7 +146,7 @@ namespace CToolkitCs.v1_2Core
         public static CtkLogger GetAssemblyLogger(Object sender)
         {
             var type = sender.GetType();
-            //if (sender is System.Type) type = sender as System.Type;
+            if (sender is System.Type) type = sender as System.Type;
             var name = type.Assembly.FullName;
             return Mapper.Get(name);
         }
