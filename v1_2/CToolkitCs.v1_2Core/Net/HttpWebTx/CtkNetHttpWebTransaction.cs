@@ -132,9 +132,11 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 
             foreach (var line in lines)
             {
-                var idx = line.IndexOf(":");
-                var key = line.Substring(0, idx).Trim();
-                var value = line.Substring(idx + 1).Trim();
+                var myline = line.Trim();
+                if (String.IsNullOrEmpty(myline)) continue;
+                var idx = myline.IndexOf(":");
+                var key = myline.Substring(0, idx).Trim();
+                var value = myline.Substring(idx + 1).Trim();
                 dict[key] = value;
             }
 
