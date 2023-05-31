@@ -11,6 +11,12 @@ namespace CToolkitCs.v1_2Core.Logging
     public class CtkLoggerMapper : Dictionary<String, CtkLogger>
     {
 
+        /*[d20230531] 
+         * An = Assembly Name
+         * Cn = Class Name
+         * Id = 追加識別碼
+         */
+
 
         ~CtkLoggerMapper()
         {
@@ -31,7 +37,7 @@ namespace CToolkitCs.v1_2Core.Logging
             }
             //不能 override/new this[] 會造成無窮迴圈
             return this[id];
-        }
+        }   
 
 
 
