@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CToolkitCs.v1_2Core.Hal\CToolkitCs.v1_2Core.Hal.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Interop.FRRJIf">
+      <HintPath>..\DLL\FanucRobot.42.15.0\Interop.FRRJIf.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.FRRobotIFLib">
+      <HintPath>..\DLL\FanucRobot.42.15.0\Interop.FRRobotIFLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
