@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 {
-    public class MvaFanucRobotLdd : IDisposable
+    public class CtkFanucRobotLdd : IDisposable
     {
         /* 20200517 所有lock皆需使用 this
          Fanuc API 並不允許多執行緒同步操作
@@ -55,18 +55,18 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
         public string RobotIp;
         private bool HasRobotFaultStatus = false;
         ManualResetEvent mreInitialFanucAPI = new ManualResetEvent(false);
-        ~MvaFanucRobotLdd() { this.Dispose(false); }
+        ~CtkFanucRobotLdd() { this.Dispose(false); }
 
 
 
 
-        public MvaFanucRobotInfo GetCurrRobotInfo()
+        public CtkFanucRobotInfo GetCurrRobotInfo()
         {
             var msg = "";
-            var alarmInfo = new MvaRobotAlarm();
+            var alarmInfo = new CtkRobotAlarm();
             HasRobotFault(ref msg, ref alarmInfo);
 
-            var robotInfo = new MvaFanucRobotInfo();
+            var robotInfo = new CtkFanucRobotInfo();
             robotInfo.PosReg = this.ReadCurPosUf();
             robotInfo.RobotTime = DateTime.Now;
             robotInfo.IsReachTarget = this.MoveIsComplete();
@@ -287,7 +287,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
         {
             Array UI = new short[18];
             Array UOInfo = new short[18];
-            MvaRobotUIOParameter UIO = new MvaRobotUIOParameter();
+            CtkRobotUIOParameter UIO = new CtkRobotUIOParameter();
             String PNScode;
 
             if (PNSname.Length == 7 && PNSname.Substring(0, 3) == "PNS")
@@ -338,7 +338,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
         }
 
 
-        public bool HasRobotFault(ref string message, ref MvaRobotAlarm alarmInfo)
+        public bool HasRobotFault(ref string message, ref CtkRobotAlarm alarmInfo)
         {
             //************IMPORTANT*************************************************//
             //UO[1~20] address has been mapping to DI[1~20] address at addr.22
@@ -423,7 +423,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
                 bool IsRestSUccess;
                 //bool IsRWSucess = false;	// 移除未使用的變數。by YMWANGN, 2016/11/17。
 
-                MvaRobotUIOParameter UIO = new MvaRobotUIOParameter();
+                CtkRobotUIOParameter UIO = new CtkRobotUIOParameter();
 
                 Array UI = new short[18];
                 Array UOInfo = new short[18];
@@ -507,7 +507,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 
         #region Register
 
-        public bool GetPosRegValue(int PRno, MvaFanucRobotPosReg posReg, bool isNeedRefresh = true)
+        public bool GetPosRegValue(int PRno, CtkFanucRobotPosReg posReg, bool isNeedRefresh = true)
         {
             //isNeedRefresh 預設為true, 確保取得最新資料, 若己知不需要更新, 可以設為false
             lock (this)
@@ -528,7 +528,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
                 return this.mobjNumReg.GetValue(index, ref value);
             }
         }
-        public bool GetAlarmInfo(MvaRobotAlarm alminfo, bool isNeedRefresh = true)
+        public bool GetAlarmInfo(CtkRobotAlarm alminfo, bool isNeedRefresh = true)
         {
             lock (this)
             {
@@ -553,7 +553,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
                     );
             }
         }
-        public bool GetCurPosUf(MvaFanucRobotPosReg posReg, bool isNeedRefresh = true)
+        public bool GetCurPosUf(CtkFanucRobotPosReg posReg, bool isNeedRefresh = true)
         {
             lock (this)
             {
@@ -565,16 +565,16 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
             }
         }
 
-        public MvaFanucRobotPosReg ReadPosReg(int PRno = 0)
+        public CtkFanucRobotPosReg ReadPosReg(int PRno = 0)
         {
-            var posReg = new MvaFanucRobotPosReg();
+            var posReg = new CtkFanucRobotPosReg();
             if (!this.GetPosRegValue(PRno, posReg))
                 throw new CtkHalException("Fail to read position register");
             return posReg;
         }
-        public MvaFanucRobotPosReg ReadCurPosUf()
+        public CtkFanucRobotPosReg ReadCurPosUf()
         {
-            var posReg = new MvaFanucRobotPosReg();
+            var posReg = new CtkFanucRobotPosReg();
             if (!this.GetCurPosUf(posReg))
                 throw new CtkHalException("Fail to read current position");
             return posReg;
@@ -588,9 +588,9 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
             return (int)reg;
         }
 
-        public MvaRobotAlarm ReadRobotAlarmInfo()
+        public CtkRobotAlarm ReadRobotAlarmInfo()
         {
-            MvaRobotAlarm alminfo = new MvaRobotAlarm();
+            CtkRobotAlarm alminfo = new CtkRobotAlarm();
             if (!this.GetAlarmInfo(alminfo))
                 throw new CtkHalException("Fail to read alarm info");
             return alminfo;
@@ -692,12 +692,12 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 
         }
 
-        public bool SetPosRegJoint(int PRno, MvaFanucRobotPosReg posReg, short userFrame = -1, short userTool = -1)
+        public bool SetPosRegJoint(int PRno, CtkFanucRobotPosReg posReg, short userFrame = -1, short userTool = -1)
         {
             lock (this)
                 return mobjPosReg.SetValueJoint(PRno, ref posReg.JointArray, userFrame, userTool);//User Frame 及 User Tool 要帶-1 才有辦法修改
         }
-        public bool SetPosRegXyzWpr(int PRno, MvaFanucRobotPosReg posReg, short userFrame = -1, short userTool = -1)
+        public bool SetPosRegXyzWpr(int PRno, CtkFanucRobotPosReg posReg, short userFrame = -1, short userTool = -1)
         {
             lock (this)
                 return mobjPosReg.SetValueXyzwpr(PRno, ref posReg.XyzwpreArrary, ref posReg.ConfigArray, userFrame, userTool);//User Frame 及 User Tool 要帶-1 才有辦法修改
@@ -817,7 +817,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
                 GetCurrRobotInfo();
 
                 var msg = "";
-                var alarmInfo = new MvaRobotAlarm();
+                var alarmInfo = new CtkRobotAlarm();
                 if (HasRobotFault(ref msg, ref alarmInfo)) { break; }
 
                 Thread.Sleep(100);
@@ -946,6 +946,8 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 
         }
         #endregion
+
+
 
         #region PNS0103
         /// <summary>

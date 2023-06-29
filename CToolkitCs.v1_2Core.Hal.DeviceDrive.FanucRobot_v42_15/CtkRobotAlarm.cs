@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 {
 
-    public class MvaRobotAlarm
+    public class CtkRobotAlarm
     {
 
         public int Count = 0;

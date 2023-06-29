@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace CToolkitCs.v1_2Core.Modbus
 {
@@ -123,7 +124,7 @@ namespace CToolkitCs.v1_2Core.Modbus
 
         void DisposeSelf()
         {
-       
+
         }
 
         #endregion
@@ -140,29 +141,31 @@ namespace CToolkitCs.v1_2Core.Modbus
         public byte funcCode;
         public ushort msgLength;//include unit id and function code
 
-        public byte[] values = new byte[0];
+        public byte[] valueBytes = new byte[0];
         public ushort readAddress;//Start Address/Reference Number
-        public ushort readLength;//Length of data
+        /// <summary> Length of data bytes </summary>
+        public ushort readLength;
         public ushort writeAddress;//Start Address/Reference Number
         public ushort writeLength;//Length of data
+
+
+
 
 
         public byte[] ToRequestBytes()
         {
             //Big-Endian (same like SECS)
             var buffer = new List<byte>();
-            var tids = BitConverter.GetBytes(transactionId);
-            buffer.Add(tids[1]);//buffer[0]
-            buffer.Add(tids[0]);//buffer[1]
-            var pids = BitConverter.GetBytes(protocolId);
-            buffer.Add(pids[1]);//buffer[2]
-            buffer.Add(pids[0]);//buffer[3]
 
 
-            //Note. 用 IPAddress.HostToNetworkOrder 可以調整順序
-            var dataBytes = new List<byte>();
-            dataBytes.Add(unitId);//buffer[6]
-            dataBytes.Add(funcCode);//buffer[7]
+            //buffer[0] + [1]
+            buffer.AddRange(BitConverter.GetBytes(HostToNetworkOrder(this.transactionId)));
+            //buffer[2] + [3]
+            buffer.AddRange(BitConverter.GetBytes(HostToNetworkOrder(this.protocolId)));
+
+            var preDataBytes = new List<byte>();
+            preDataBytes.Add(this.unitId);//buffer[6]
+            preDataBytes.Add(this.funcCode);//buffer[7]
 
             var datas = new byte[0];
 
@@ -174,37 +177,36 @@ namespace CToolkitCs.v1_2Core.Modbus
                 case CtkModbusMessage.fctReadDiscreteInputs:
                 case CtkModbusMessage.fctReadHoldingRegister:
                 case CtkModbusMessage.fctReadInputRegister:
-                    System.Diagnostics.Debug.Assert(this.values.Length == 0);//不應該有值要寫入
-                    this.ToBytes_AddReadWrite(dataBytes, this.readAddress, this.readLength);//buffer[8] [9] [10] [11]
+                    System.Diagnostics.Debug.Assert(this.valueBytes.Length == 0);//不應該有值要寫入
+                    this.ToBytes_AddReadWrite(preDataBytes, this.readAddress, this.readLength);//buffer[8] [9] [10] [11]
                     break;
 
                 case CtkModbusMessage.fctWriteMultipleCoils:
                 case CtkModbusMessage.fctWriteMultipleRegister:
-                    this.writeLength = (ushort)Math.Ceiling(this.values.Length / 2.0);
+                    this.writeLength = (ushort)Math.Ceiling(this.valueBytes.Length / 2.0);
                     //System.Diagnostics.Debug.Assert(this.writeLength * 2 == this.values.Length);//在寫入資料時, Word Count(address length) * 2 要等同於 values bytes 量
-                    this.ToBytes_AddReadWrite(dataBytes, this.writeAddress, this.writeLength);//buffer[8] [9] [10] [11]
-                    dataBytes.Add((byte)this.values.Length);//buffer[12]
+                    this.ToBytes_AddReadWrite(preDataBytes, this.writeAddress, this.writeLength);//buffer[8] [9] [10] [11]
+                    preDataBytes.Add((byte)this.valueBytes.Length);//buffer[12]
                     break;
 
                 case CtkModbusMessage.fctReadWriteMultipleRegister:
-                    this.writeLength = (ushort)Math.Ceiling(this.values.Length / 2.0);
+                    this.writeLength = (ushort)Math.Ceiling(this.valueBytes.Length / 2.0);
                     //System.Diagnostics.Debug.Assert(this.writeLength * 2 == this.values.Length);//在寫入資料時, Word Count(address length) * 2 要等同於 values bytes 量
-                    this.ToBytes_AddReadWrite(dataBytes, this.readAddress, this.readLength);//buffer[8] [9] [10] [11]
-                    this.ToBytes_AddReadWrite(dataBytes, this.writeAddress, this.writeLength);//buffer[8] [9] [10] [11]
-                    dataBytes.Add((byte)this.values.Length);//buffer[12]
+                    this.ToBytes_AddReadWrite(preDataBytes, this.readAddress, this.readLength);//buffer[8] [9] [10] [11]
+                    this.ToBytes_AddReadWrite(preDataBytes, this.writeAddress, this.writeLength);//buffer[8] [9] [10] [11]
+                    preDataBytes.Add((byte)this.valueBytes.Length);//buffer[12]
 
 
                     break;
             }
 
 
-            this.msgLength = (ushort)(dataBytes.Count);//include unit id and function code 
-            var msgLens = BitConverter.GetBytes(this.msgLength);
-            buffer.Add(msgLens[1]);//buffer[4]
-            buffer.Add(msgLens[0]);//buffer[5]
+            this.msgLength = (ushort)(preDataBytes.Count);//include unit id and function code 
+            //buffer[4] + [5]
+            buffer.AddRange(BitConverter.GetBytes(HostToNetworkOrder(this.msgLength)));
 
-            buffer.AddRange(dataBytes);
-            buffer.AddRange(this.values);
+            buffer.AddRange(preDataBytes);
+            buffer.AddRange(this.valueBytes);
 
             return buffer.ToArray();
         }
@@ -212,25 +214,32 @@ namespace CToolkitCs.v1_2Core.Modbus
 
         void ToBytes_AddReadWrite(List<byte> buffer, ushort startAddr, ushort length)
         {
-            var datas = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)startAddr));
-            buffer.Add(datas[0]);
+
+            var datas = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)startAddr));//自動對調?
+            buffer.Add(datas[0]);//buffer[8]
             buffer.Add(datas[1]);//buffer[9]
 
-            datas = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)length));
+            datas = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)length));//自動對調?
             buffer.Add(datas[0]);//buffer[10]
             buffer.Add(datas[1]);//buffer[11]
 
         }
 
-        public void LoadRequestBytes(byte[] buffer)
+        public void LoadRequestBytes(byte[] buffer, int offset = 0, int length = -1)
         {
             this.isResponse = false;
 
-            this.transactionId = SwapUInt16(BitConverter.ToUInt16(buffer, 0));
-            this.protocolId = SwapUInt16(BitConverter.ToUInt16(buffer, 2));
-            this.msgLength = SwapUInt16(BitConverter.ToUInt16(buffer, 4));
-            this.unitId = buffer[6];
-            this.funcCode = buffer[7];
+            if (length < 0) length = buffer.Length - offset;
+            var myBuffer = new byte[length];
+            Array.Copy(buffer, offset, myBuffer, 0, length);
+
+
+
+            this.transactionId = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 0));
+            this.protocolId = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 2));
+            this.msgLength = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 4));
+            this.unitId = myBuffer[6];
+            this.funcCode = myBuffer[7];
 
 
             byte valLen = 0;
@@ -241,33 +250,33 @@ namespace CToolkitCs.v1_2Core.Modbus
                 case CtkModbusMessage.fctReadDiscreteInputs:
                 case CtkModbusMessage.fctReadHoldingRegister:
                 case CtkModbusMessage.fctReadInputRegister:
-                    this.readAddress = SwapUInt16(BitConverter.ToUInt16(buffer, 8));
-                    this.readLength = SwapUInt16(BitConverter.ToUInt16(buffer, 10));
+                    this.readAddress = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 8));
+                    this.readLength = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 10));
                     break;
 
                 case CtkModbusMessage.fctWriteMultipleCoils:
                 case CtkModbusMessage.fctWriteMultipleRegister:
-                    this.writeAddress = SwapUInt16(BitConverter.ToUInt16(buffer, 8));
-                    this.writeLength = SwapUInt16(BitConverter.ToUInt16(buffer, 10));
+                    this.writeAddress = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 8));
+                    this.writeLength = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 10));
 
-                    valLen = buffer[12];
-                    System.Diagnostics.Debug.Assert(buffer.Length == valLen + 12);
-                    this.values = new byte[valLen];
-                    Array.Copy(buffer, 13, this.values, 0, valLen);
+                    valLen = myBuffer[12];
+                    System.Diagnostics.Debug.Assert(myBuffer.Length == valLen + 12);
+                    this.valueBytes = new byte[valLen];
+                    Array.Copy(myBuffer, 13, this.valueBytes, 0, valLen);
 
 
                     break;
 
                 case CtkModbusMessage.fctReadWriteMultipleRegister:
-                    this.readAddress = SwapUInt16(BitConverter.ToUInt16(buffer, 8));
-                    this.readLength = SwapUInt16(BitConverter.ToUInt16(buffer, 10));
-                    this.writeAddress = SwapUInt16(BitConverter.ToUInt16(buffer, 12));
-                    this.writeLength = SwapUInt16(BitConverter.ToUInt16(buffer, 14));
+                    this.readAddress = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 8));
+                    this.readLength = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 10));
+                    this.writeAddress = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 12));
+                    this.writeLength = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 14));
 
-                    valLen = buffer[16];
-                    System.Diagnostics.Debug.Assert(buffer.Length == valLen + 16);
-                    this.values = new byte[valLen];
-                    Array.Copy(buffer, 17, this.values, 0, valLen);
+                    valLen = myBuffer[16];
+                    System.Diagnostics.Debug.Assert(myBuffer.Length == valLen + 16);
+                    this.valueBytes = new byte[valLen];
+                    Array.Copy(myBuffer, 17, this.valueBytes, 0, valLen);
 
                     break;
             }
@@ -277,15 +286,21 @@ namespace CToolkitCs.v1_2Core.Modbus
         }
 
 
-        public void LoadResponseBytes(byte[] buffer)
+        public void LoadResponseBytes(byte[] buffer, int offset = 0, int length = -1)
         {
             this.isResponse = true;
 
-            this.transactionId = SwapUInt16(BitConverter.ToUInt16(buffer, 0));
-            this.protocolId = SwapUInt16(BitConverter.ToUInt16(buffer, 2));
-            this.msgLength = SwapUInt16(BitConverter.ToUInt16(buffer, 4));
-            this.unitId = buffer[6];
-            this.funcCode = buffer[7];
+            if (length < 0) length = buffer.Length - offset;
+            var myBuffer = new byte[length];
+            Array.Copy(buffer, offset, myBuffer, 0, length);
+
+
+
+            this.transactionId = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 0));
+            this.protocolId = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 2));
+            this.msgLength = NetworkToHostOrder(BitConverter.ToUInt16(myBuffer, 4));
+            this.unitId = myBuffer[6];
+            this.funcCode = myBuffer[7];
 
 
 
@@ -295,9 +310,9 @@ namespace CToolkitCs.v1_2Core.Modbus
                 case CtkModbusMessage.fctReadDiscreteInputs:
                 case CtkModbusMessage.fctReadHoldingRegister:
                 case CtkModbusMessage.fctReadInputRegister:
-                    this.readLength = buffer[8];
-                    this.values = new byte[this.readLength];
-                    Array.Copy(buffer, 9, this.values, 0, this.readLength);
+                    this.readLength = myBuffer[8];//若讀取Coil, 無法得知當初要求的Lenght, 其回傳 8bit=1byte
+                    this.valueBytes = new byte[this.readLength];
+                    Array.Copy(myBuffer, 9, this.valueBytes, 0, this.readLength);
                     break;
                 case CtkModbusMessage.fctWriteSingleCoil:
                 case CtkModbusMessage.fctWriteSingleRegister:
@@ -317,15 +332,22 @@ namespace CToolkitCs.v1_2Core.Modbus
         public List<Int16> GetValuesToInt16()
         {
             var list = new List<Int16>();
-
-            if (BitConverter.IsLittleEndian)
-                for (int idx = 0; idx < this.values.Length; idx += 2)
-                    list.Add(SwapUInt16(BitConverter.ToInt16(this.values, idx)));
-            else
-                for (int idx = 0; idx < this.values.Length; idx += 2)
-                    list.Add(BitConverter.ToInt16(this.values, idx));
-
+            for (int idx = 0; idx < this.valueBytes.Length; idx += 2)
+                list.Add(NetworkToHostOrder(BitConverter.ToInt16(this.valueBytes, idx)));
             return list;
+        }
+        public List<UInt16> GetValuesToUInt16()
+        {
+            var list = new List<UInt16>();
+            for (int idx = 0; idx < this.valueBytes.Length; idx += 2)
+                list.Add(NetworkToHostOrder(BitConverter.ToUInt16(this.valueBytes, idx)));
+            return list;
+        }
+
+        public BitArray GetValuesToBitArray()
+        {
+            var rtn = new BitArray(this.valueBytes);
+            return rtn;
         }
 
 
@@ -348,7 +370,7 @@ namespace CToolkitCs.v1_2Core.Modbus
             msg.funcCode = funcCode;
             msg.unitId = unitId;
             msg.writeAddress = writeAddress;
-            msg.values = values;
+            msg.valueBytes = values;
 
             return msg;
         }
@@ -361,7 +383,7 @@ namespace CToolkitCs.v1_2Core.Modbus
             msg.readAddress = readStart;
             msg.readLength = readLength;
             msg.writeAddress = writeAddress;
-            msg.values = values;
+            msg.valueBytes = values;
 
             return msg;
         }
@@ -369,18 +391,23 @@ namespace CToolkitCs.v1_2Core.Modbus
 
 
 
-        public static CtkModbusMessage FromRequestBytes(byte[] buffer)
+
+
+
+        public static CtkModbusMessage FromRequestBytes(byte[] buffer, int offset = 0, int length = -1)
         {
             var msg = new CtkModbusMessage();
-            msg.LoadRequestBytes(buffer);
+            msg.LoadRequestBytes(buffer, offset, length);
             return msg;
         }
-        public static CtkModbusMessage FromResponseBytes(byte[] buffer)
+        public static CtkModbusMessage FromResponseBytes(byte[] buffer, int offset = 0, int length = -1)
         {
             var msg = new CtkModbusMessage();
-            msg.LoadResponseBytes(buffer);
+            msg.LoadResponseBytes(buffer, offset, length);
             return msg;
         }
+
+
         public static bool GetMessageLength(List<byte> buffer, out ushort length)
         {
             length = 0;
@@ -394,17 +421,52 @@ namespace CToolkitCs.v1_2Core.Modbus
         }
 
 
+
+
+        internal static UInt16 HostToNetworkOrder(UInt16 value)
+        {
+            if (BitConverter.IsLittleEndian)
+                return SwapUInt16(value);
+            return value;
+        }
+        internal static Int16 HostToNetworkOrder(Int16 value)
+        {
+            //Equal: IPAddress.HostToNetworkOrder(value);
+            if (BitConverter.IsLittleEndian)
+                return SwapInt16(value);
+            return value;
+        }
+        internal static UInt16 NetworkToHostOrder(UInt16 value)
+        {
+            if (BitConverter.IsLittleEndian)
+                return SwapUInt16(value);
+            return value;
+        }
+        internal static Int16 NetworkToHostOrder(Int16 value)
+        {
+            //Equal: IPAddress.NetworkToHostOrder(value);
+            if (BitConverter.IsLittleEndian)
+                return SwapInt16(value);
+            return value;
+        }
+
+
+
         internal static UInt16 SwapUInt16(UInt16 inValue)
         {
             return (UInt16)(((inValue & 0xff00) >> 8) |
                      ((inValue & 0x00ff) << 8));
         }
 
-        internal static Int16 SwapUInt16(Int16 inValue)
+        internal static Int16 SwapInt16(Int16 inValue)
         {
             return (Int16)(((inValue & 0xff00) >> 8) |
                      ((inValue & 0x00ff) << 8));
         }
+
+
+
+
 
     }
 }

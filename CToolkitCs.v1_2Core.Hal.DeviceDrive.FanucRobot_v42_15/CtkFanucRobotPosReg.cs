@@ -11,7 +11,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
     /// 存放Robot暫存器中取得的資料
     /// </summary>
     [Serializable]
-    public class MvaFanucRobotPosReg
+    public class CtkFanucRobotPosReg
     {
         public float x { get { return (float)this.XyzwpreArrary.GetValue(0); } set { this.XyzwpreArrary.SetValue(value, 0); } }
         public float y { get { return (float)this.XyzwpreArrary.GetValue(1); } set { this.XyzwpreArrary.SetValue(value, 1); } }
@@ -63,14 +63,14 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 
 
 
-        public MvaFanucRobotPosReg() { }
-        public MvaFanucRobotPosReg(MvaFanucRobotPosReg source)
+        public CtkFanucRobotPosReg() { }
+        public CtkFanucRobotPosReg(CtkFanucRobotPosReg source)
         {
             source.Clone(this);
         }
 
 
-        public void Clone(MvaFanucRobotPosReg target)
+        public void Clone(CtkFanucRobotPosReg target)
         {
             this.XyzwpreArrary.CopyTo(target.XyzwpreArrary, 0);
             this.ConfigArray.CopyTo(target.ConfigArray, 0);

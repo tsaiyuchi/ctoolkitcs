@@ -11,7 +11,7 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
     /// 除Robot暫存器資料以外, 可存放其它類型資料
     /// </summary>
     [Serializable]
-    public class MvaFanucRobotInfo
+    public class CtkFanucRobotInfo
     {
         public bool IsReachTarget = false;
         /// <summary>
@@ -19,26 +19,26 @@ namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
         /// </summary>
         public int MotionType = 0;
 
-        public MvaFanucRobotPosReg PosReg = new MvaFanucRobotPosReg();
+        public CtkFanucRobotPosReg PosReg = new CtkFanucRobotPosReg();
         public DateTime RobotTime = DateTime.Now;
         /// <summary>
         /// (mm/sec)
         /// </summary>
         public int Speed = 60;
 
-        public MvaFanucRobotInfo() { }
+        public CtkFanucRobotInfo() { }
 
-        public MvaFanucRobotInfo(MvaFanucRobotInfo source)
+        public CtkFanucRobotInfo(CtkFanucRobotInfo source)
         {
             source.Clone(this);
         }
-        public MvaFanucRobotInfo(MvaFanucRobotPosReg source)
+        public CtkFanucRobotInfo(CtkFanucRobotPosReg source)
         {
             source.Clone(this.PosReg);
         }
 
 
-        public void Clone(MvaFanucRobotInfo target)
+        public void Clone(CtkFanucRobotInfo target)
         {
             this.PosReg.Clone(target.PosReg);
 

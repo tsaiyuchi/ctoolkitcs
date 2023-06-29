@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CToolkitCs.v1_2Core.Hal.DeviceDrive.FanucRobot_v42_15
 {
 
-    public class MvaRobotUIOParameter
+    public class CtkRobotUIOParameter
     {
         public short UI1_IMSTP = 1;                          //Always ON.ON:Normal, OFF:Emergent Stop
         public short UI2_HOLD = 1;                           //Always ON.ON:Normal, OFF:PAUSE
