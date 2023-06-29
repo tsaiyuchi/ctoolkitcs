@@ -33,11 +33,12 @@ namespace CToolkitCs.v1_2Core.Modbus
         public const byte fctReadDiscreteInputs = 2;
         public const byte fctReadHoldingRegister = 3;
         public const byte fctReadInputRegister = 4;
+        public const byte fctWriteSingleCoil = 5;
+        public const byte fctWriteSingleRegister = 6;
         public const byte fctWriteMultipleCoils = 15;
         public const byte fctWriteMultipleRegister = 16;
 
-        public const byte fctWriteSingleCoil = 5;//TODO:
-        public const byte fctWriteSingleRegister = 6;//TODO:
+
         public const byte fctReadWriteMultipleRegister = 23;//TODO:
 
 
@@ -134,18 +135,23 @@ namespace CToolkitCs.v1_2Core.Modbus
 
         public bool isResponse = false;
 
-        public ushort transactionId;//high byte 1st ; low byte 2nd
-        public ushort protocolId;//high byte 1st ; low byte 2nd
+        /// <summary> 流水號: high byte 1st ; low byte 2nd </summary>
+        public ushort transactionId;
+        /// <summary> usually=0, high byte 1st ; low byte 2nd </summary>
+        public ushort protocolId;
         public byte unitId;//Slave Address
         public byte funcCode;
         public ushort msgLength;//include unit id and function code
 
         public byte[] dataBytes = new byte[0];
-        public ushort readAddress;//Start Address/Reference Number
-        /// <summary> Length of data bytes </summary>
+        /// <summary> Start Address/Reference Number </summary>
+        public ushort readAddress;
+        /// <summary> Length of read bytes </summary>
         public ushort readLength;
-        public ushort writeAddress;//Start Address/Reference Number
-        public ushort writeLength;//Length of data
+        /// <summary> Start Address/Reference Number </summary>
+        public ushort writeAddress;
+        /// <summary> Length of write bytes </summary>
+        public ushort writeLength;
 
 
 
@@ -179,6 +185,23 @@ namespace CToolkitCs.v1_2Core.Modbus
                     System.Diagnostics.Debug.Assert(this.dataBytes.Length == 0);//不應該有值要寫入
                     preDataBytes.AddRange(HostToNetworkOrderBytes(this.readAddress));//buffer[8] [9]
                     preDataBytes.AddRange(HostToNetworkOrderBytes(this.readLength));// buffer[10] [11]
+                    break;
+                case CtkModbusMessage.fctWriteSingleCoil:
+                    preDataBytes.AddRange(HostToNetworkOrderBytes(this.writeAddress));//buffer[8] [9]
+                    //Single不帶Length
+
+                    // Example: UID=1, Coil=3
+                    // 00 03 00 00 00 06 01 05 00 03 FF 00 = On
+                    // 00 03 00 00 00 06 01 05 00 03 00 00 = Off
+                    
+                    break;
+                case CtkModbusMessage.fctWriteSingleRegister:
+                    preDataBytes.AddRange(HostToNetworkOrderBytes(this.writeAddress));//buffer[8] [9]
+                    //Single不帶Length
+
+                    // Example: UID=1, Register=3
+                    // 00 05 00 00 00 06 01 06 00 03 00 0C
+
                     break;
                 case CtkModbusMessage.fctWriteMultipleCoils:
                 case CtkModbusMessage.fctWriteMultipleRegister:
