@@ -33,11 +33,12 @@ namespace CToolkitCs.v1_2Core.Modbus
         public const byte fctReadDiscreteInputs = 2;
         public const byte fctReadHoldingRegister = 3;
         public const byte fctReadInputRegister = 4;
-        public const byte fctWriteSingleCoil = 5;
-        public const byte fctWriteSingleRegister = 6;
         public const byte fctWriteMultipleCoils = 15;
         public const byte fctWriteMultipleRegister = 16;
-        public const byte fctReadWriteMultipleRegister = 23;
+
+        public const byte fctWriteSingleCoil = 5;//TODO:
+        public const byte fctWriteSingleRegister = 6;//TODO:
+        public const byte fctReadWriteMultipleRegister = 23;//TODO:
 
 
         /// <summary>Constant for exception illegal function.</summary>
