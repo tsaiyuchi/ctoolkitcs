@@ -200,7 +200,7 @@ namespace CToolkitCs.v1_2Core.Modbus
                     //Single不帶Length
 
                     // Example: UID=1, Register=3
-                    // 00 05 00 00 00 06 01 06 00 03 00 0C
+                    // 00 05 00 00 00 06 01 06 00 03 00 0C = 寫入12
 
                     break;
                 case CtkModbusMessage.fctWriteMultipleCoils:
