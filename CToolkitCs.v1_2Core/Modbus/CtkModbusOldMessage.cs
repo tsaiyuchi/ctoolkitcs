@@ -153,7 +153,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="numInputs">Length of data.</param>
         public void ReadCoils(ushort id, byte unit, ushort startAddress, ushort numInputs)
         {
-            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadCoil), id);
+            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadCoil), id);
         }
 
         // ------------------------------------------------------------------------
@@ -165,7 +165,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="values">Contains the result of function.</param>
         public void ReadCoils(ushort id, byte unit, ushort startAddress, ushort numInputs, ref byte[] values)
         {
-            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadCoil), id);
+            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadCoil), id);
         }
 
         // ------------------------------------------------------------------------
@@ -176,7 +176,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="numInputs">Length of data.</param>
         public void ReadDiscreteInputs(ushort id, byte unit, ushort startAddress, ushort numInputs)
         {
-            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadDiscreteInputs), id);
+            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadDiscreteInputs), id);
         }
 
         // ------------------------------------------------------------------------
@@ -188,7 +188,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="values">Contains the result of function.</param>
         public void ReadDiscreteInputs(ushort id, byte unit, ushort startAddress, ushort numInputs, ref byte[] values)
         {
-            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadDiscreteInputs), id);
+            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadDiscreteInputs), id);
         }
 
         // ------------------------------------------------------------------------
@@ -199,7 +199,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="numInputs">Length of data.</param>
         public void ReadHoldingRegister(ushort id, byte unit, ushort startAddress, ushort numInputs)
         {
-            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadHoldingRegister), id);
+            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadHoldingRegister), id);
         }
 
         // ------------------------------------------------------------------------
@@ -211,7 +211,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="values">Contains the result of function.</param>
         public void ReadHoldingRegister(ushort id, byte unit, ushort startAddress, ushort numInputs, ref byte[] values)
         {
-            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadHoldingRegister), id);
+            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadHoldingRegister), id);
         }
 
         // ------------------------------------------------------------------------
@@ -222,7 +222,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="numInputs">Length of data.</param>
         public void ReadInputRegister(ushort id, byte unit, ushort startAddress, ushort numInputs)
         {
-            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadInputRegister), id);
+            WriteAsyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadInputRegister), id);
         }
 
         // ------------------------------------------------------------------------
@@ -234,7 +234,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         /// <param name="values">Contains the result of function.</param>
         public void ReadInputRegister(ushort id, byte unit, ushort startAddress, ushort numInputs, ref byte[] values)
         {
-            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fctReadInputRegister), id);
+            values = WriteSyncData(CreateReadHeader(id, unit, startAddress, numInputs, CtkModbusMessage.fcReadInputRegister), id);
         }
 
         // ------------------------------------------------------------------------
@@ -246,7 +246,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         public void WriteSingleCoils(ushort id, byte unit, ushort startAddress, bool OnOff)
         {
             byte[] data;
-            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fctWriteSingleCoil);
+            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fcWriteSingleCoil);
             if (OnOff == true) data[10] = 255;
             else data[10] = 0;
             WriteAsyncData(data, id);
@@ -262,7 +262,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         public void WriteSingleCoils(ushort id, byte unit, ushort startAddress, bool OnOff, ref byte[] result)
         {
             byte[] data;
-            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fctWriteSingleCoil);
+            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fcWriteSingleCoil);
             if (OnOff == true) data[10] = 255;
             else data[10] = 0;
             result = WriteSyncData(data, id);
@@ -279,7 +279,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         {
             byte numBytes = Convert.ToByte(values.Length);
             byte[] data;
-            data = CreateWriteHeader(id, unit, startAddress, numBits, (byte)(numBytes + 2), CtkModbusMessage.fctWriteMultipleCoils);
+            data = CreateWriteHeader(id, unit, startAddress, numBits, (byte)(numBytes + 2), CtkModbusMessage.fcWriteMultipleCoils);
             Array.Copy(values, 0, data, 13, numBytes);
             WriteAsyncData(data, id);
         }
@@ -296,7 +296,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         {
             byte numBytes = Convert.ToByte(values.Length);
             byte[] data;
-            data = CreateWriteHeader(id, unit, startAddress, numBits, (byte)(numBytes + 2), CtkModbusMessage.fctWriteMultipleCoils);
+            data = CreateWriteHeader(id, unit, startAddress, numBits, (byte)(numBytes + 2), CtkModbusMessage.fcWriteMultipleCoils);
             Array.Copy(values, 0, data, 13, numBytes);
             result = WriteSyncData(data, id);
         }
@@ -310,7 +310,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         public void WriteSingleRegister(ushort id, byte unit, ushort startAddress, byte[] values)
         {
             byte[] data;
-            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fctWriteSingleRegister);
+            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fcWriteSingleRegister);
             data[10] = values[0];
             data[11] = values[1];
             WriteAsyncData(data, id);
@@ -326,7 +326,7 @@ namespace CToolkitCs.v1_2Core.Modbus
         public void WriteSingleRegister(ushort id, byte unit, ushort startAddress, byte[] values, ref byte[] result)
         {
             byte[] data;
-            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fctWriteSingleRegister);
+            data = CreateWriteHeader(id, unit, startAddress, 1, 1, CtkModbusMessage.fcWriteSingleRegister);
             data[10] = values[0];
             data[11] = values[1];
             result = WriteSyncData(data, id);
@@ -344,7 +344,7 @@ namespace CToolkitCs.v1_2Core.Modbus
             if (numBytes % 2 > 0) numBytes++;
             byte[] data;
 
-            data = CreateWriteHeader(id, unit, startAddress, Convert.ToUInt16(numBytes / 2), Convert.ToUInt16(numBytes + 2), CtkModbusMessage.fctWriteMultipleRegister);
+            data = CreateWriteHeader(id, unit, startAddress, Convert.ToUInt16(numBytes / 2), Convert.ToUInt16(numBytes + 2), CtkModbusMessage.fcWriteMultipleRegister);
             Array.Copy(values, 0, data, 13, values.Length);
             WriteAsyncData(data, id);
         }
@@ -362,7 +362,7 @@ namespace CToolkitCs.v1_2Core.Modbus
             if (numBytes % 2 > 0) numBytes++;
             byte[] data;
 
-            data = CreateWriteHeader(id, unit, startAddress, Convert.ToUInt16(numBytes / 2), Convert.ToUInt16(numBytes + 2), CtkModbusMessage.fctWriteMultipleRegister);
+            data = CreateWriteHeader(id, unit, startAddress, Convert.ToUInt16(numBytes / 2), Convert.ToUInt16(numBytes + 2), CtkModbusMessage.fcWriteMultipleRegister);
             Array.Copy(values, 0, data, 13, values.Length);
             result = WriteSyncData(data, id);
         }
@@ -444,7 +444,7 @@ namespace CToolkitCs.v1_2Core.Modbus
             byte[] _adr = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)startAddress));
             data[8] = _adr[0];				// Start address
             data[9] = _adr[1];				// Start address
-            if (function >= CtkModbusMessage.fctWriteMultipleCoils)
+            if (function >= CtkModbusMessage.fcWriteMultipleCoils)
             {
                 byte[] _cnt = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)numData));
                 data[10] = _cnt[0];			// Number of bytes
@@ -524,7 +524,7 @@ namespace CToolkitCs.v1_2Core.Modbus
 
             // ------------------------------------------------------------
             // Write response data
-            if ((function >= CtkModbusMessage.fctWriteSingleCoil) && (function != CtkModbusMessage.fctReadWriteMultipleRegister))
+            if ((function >= CtkModbusMessage.fcWriteSingleCoil) && (function != CtkModbusMessage.fctReadWriteMultipleRegister))
             {
                 data = new byte[2];
                 Array.Copy(tcpAsyClBuffer, 10, data, 0, 2);
@@ -576,7 +576,7 @@ namespace CToolkitCs.v1_2Core.Modbus
                     }
                     // ------------------------------------------------------------
                     // Write response data
-                    else if ((function >= CtkModbusMessage.fctWriteSingleCoil) && (function != CtkModbusMessage.fctReadWriteMultipleRegister))
+                    else if ((function >= CtkModbusMessage.fcWriteSingleCoil) && (function != CtkModbusMessage.fctReadWriteMultipleRegister))
                     {
                         data = new byte[2];
                         Array.Copy(tcpSynClBuffer, 10, data, 0, 2);
