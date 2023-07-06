@@ -387,12 +387,13 @@ namespace CToolkitCs.v1_2Core.Modbus
             }
 
 
-            buffer.AddRange(this.dataBytes);//先加資料再計算長度
+            preDataBytes.AddRange(this.dataBytes);//先加資料再計算長度
             this.msgLength = (ushort)(preDataBytes.Count);//include unit id and function code 
             //buffer[4] + [5]
             buffer.AddRange(HostToNetworkOrderBytes(this.msgLength));
             buffer.AddRange(preDataBytes);
             return buffer.ToArray();
+            //T:00 01   00 00   00 06   01 06 05 DC 00 12 
         }
 
 
@@ -446,7 +447,7 @@ namespace CToolkitCs.v1_2Core.Modbus
 
         #region Static
 
-        protected static ushort _incrementTransactionId;
+        protected static ushort _incrementTransactionId = 1;
         public static ushort IncrementTransactionId { get { return _incrementTransactionId++; } }
 
         public static CtkModbusMessage CreateReadCoil(ushort address, ushort length, byte unitId = 1, ushort? tid = null)
