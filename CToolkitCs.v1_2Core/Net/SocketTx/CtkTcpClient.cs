@@ -71,7 +71,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             var myea = new CtkNetStateEventArgs();
             var client = this.ActiveTarget as TcpClient;
             myea.Sender = this;
-            myea.WorkTcpClient = client;
+            myea.TargetTcpClient = client;
             var trxBuffer = myea.TrxBuffer;
             var stream = client.GetStream();
             stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
@@ -190,7 +190,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 client.EndConnect(ar);
 
                 myea.Sender = state;
-                myea.WorkTcpClient = client;
+                myea.TargetTcpClient = client;
 
                 if (!ar.IsCompleted || client.Client == null || !client.Connected)
                     throw new CtkSocketException("Connection Fail");
@@ -225,7 +225,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         {
             //var stateea = (CtkNonStopTcpStateEventArgs)ar.AsyncState;
             var myea = (CtkNetStateEventArgs)ar.AsyncState;
-            var client = myea.WorkTcpClient;
+            var client = myea.TargetTcpClient;
             try
             {
                 if (!ar.IsCompleted || client == null || client.Client == null || !client.Connected)

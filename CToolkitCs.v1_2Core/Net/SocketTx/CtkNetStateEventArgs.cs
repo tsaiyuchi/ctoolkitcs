@@ -24,16 +24,17 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
 
         /// <summary> 本次作業對象 </summary>
         public Socket TargetSocket { get { return this.Target as Socket; } set { this.Target = value; } }
-        public TcpClient WorkTcpClient { get { return this.Target as TcpClient; }  set { this.Target = value; } }
-        /// <summary> 本次接收資料的遠端位置 </summary>
-        public EndPoint TargetEndPoint = new IPEndPoint(IPAddress.Any, 0);
+        public TcpClient TargetTcpClient { get { return this.Target as TcpClient; }  set { this.Target = value; } }
+
+        /// <summary> 本次接收資料的遠端位置, 通常為UDP使用 </summary>
+        public EndPoint TargetReceiveEndPoint = new IPEndPoint(IPAddress.Any, 0);
   
         public void WriteMsg(byte[] buff, int offset, int length)
         {
-            if (this.WorkTcpClient == null) return;
-            if (!this.WorkTcpClient.Connected) return;
+            if (this.TargetTcpClient == null) return;
+            if (!this.TargetTcpClient.Connected) return;
 
-            var stm = this.WorkTcpClient.GetStream();
+            var stm = this.TargetTcpClient.GetStream();
             stm.Write(buff, offset, length);
 
         }

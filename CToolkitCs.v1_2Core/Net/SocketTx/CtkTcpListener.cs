@@ -59,7 +59,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             var myea = new CtkNetStateEventArgs();
             myea.Sender = this;
             var client = this.ActiveTarget as TcpClient;
-            myea.WorkTcpClient = client;
+            myea.TargetTcpClient = client;
             var trxBuffer = myea.TrxBuffer;
             var stream = client.GetStream();
             stream.BeginRead(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, new AsyncCallback(EndReadCallback), myea);
@@ -238,7 +238,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 state.TcpClientList.Enqueue(client);//有連成功才記錄
 
                 myea.Sender = state;
-                myea.WorkTcpClient = client;
+                myea.TargetTcpClient = client;
 
                 //預設是不斷的去聆聽, 但是否要維持連線, 由應用端決定
                 state.myTcpListener.BeginAcceptTcpClient(new AsyncCallback(EndAcceptCallback), state);
@@ -275,7 +275,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         void EndReadCallback(IAsyncResult ar)
         {
             var myea = (CtkNetStateEventArgs)ar.AsyncState;
-            var client = myea.WorkTcpClient;
+            var client = myea.TargetTcpClient;
 
             try
             {
