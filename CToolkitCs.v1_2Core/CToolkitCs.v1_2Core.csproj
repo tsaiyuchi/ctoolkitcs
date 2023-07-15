@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Modbus\CtkModbusEnumFuncCode.cs" />
     <Compile Remove="Modbus\CtkModbusOldMessage.cs" />
   </ItemGroup>
 
