@@ -257,6 +257,12 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             return this.TargetClose(socket);
         }
         /// <summary> 關閉 指定 對象Socket </summary>
+        public bool TargetClose(int index)
+        {
+            var socket = this.TargetSockets.ElementAt(index);
+            return this.TargetClose(socket);
+        }
+        /// <summary> 關閉 指定 對象Socket </summary>
         public bool TargetClose(Uri uri)
         {
             var socket = this.TargetGetSocket(uri);

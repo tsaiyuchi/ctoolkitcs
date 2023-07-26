@@ -205,14 +205,20 @@ namespace CToolkitCs.v1_2Core.Modbus
         {
             var list = new List<Int16>();
             for (int idx = 0; idx < this.dataBytes.Length; idx += 2)
+            {
+                if (idx + 1 >= this.dataBytes.Length) break;
                 list.Add(NetworkToHostOrder(BitConverter.ToInt16(this.dataBytes, idx)));
+            }
             return list;
         }
         public List<UInt16> DataToListOfUInt16()
         {
             var list = new List<UInt16>();
             for (int idx = 0; idx < this.dataBytes.Length; idx += 2)
+            {
+                if (idx + 1 >= this.dataBytes.Length) break;
                 list.Add(NetworkToHostOrder(BitConverter.ToUInt16(this.dataBytes, idx)));
+            }
             return list;
         }
 
