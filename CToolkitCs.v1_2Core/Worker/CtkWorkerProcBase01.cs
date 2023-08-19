@@ -36,6 +36,7 @@ namespace CToolkitCs.v1_2Core.Worker
         protected virtual int CtkProcMain()
         {
 
+            //每回處理99個訊息後, 要出去休息一下
             for (var idx = 0; idx < 99; idx++)
             {
                 lock (this)

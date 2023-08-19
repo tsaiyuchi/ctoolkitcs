@@ -1,8 +1,8 @@
-﻿using System;
+﻿using MathNet.Numerics.IntegralTransforms;
+using MathNet.Numerics.LinearAlgebra.Complex;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 
 namespace CToolkitCs.v1_2Core.Numeric
 {
@@ -11,65 +11,90 @@ namespace CToolkitCs.v1_2Core.Numeric
     public class CtkNumContext
     {
         public bool IsUseCudafy = true;
-      
 
 
 
-    
 
 
-        public Complex[] FftForward(double[] input)
+
+
+        public Complex[] OpFftForward(double[] input)
         {
-            var result = new Complex[input.Length];
-            for (int idx = 0; idx < result.Length; idx++)
-                result[idx] = new Complex(input[idx], 0);
-
-            return this.FftForward(result);
+            var rtn = CtkNumUtil.ToSysComplex(input);
+            return this.OpFftForward(rtn);
         }
 
-        public Complex[] FftForward(IEnumerable<double> input) { return this.FftForward(CtkNumConverter.ToSysComplex(input)); }
+        public Complex[] OpFftForward(Complex[] input)
+        {
+            var rtn = (Complex[])input.Clone();
+            Fourier.Forward(rtn, FourierOptions.Default);
+            return rtn;
+        }
 
-        public Complex[] FftForward(IEnumerable<Complex> input) { return this.FftForward(input.ToArray()); }
 
-      
 
         /// <summary>
         /// Return 正確的振幅, 注意 x 軸 Mag 左右對稱
         /// </summary>
-        public List<Complex> SpectrumFft(IEnumerable<Complex> fft)
+        public Complex[] OpSpectrumFft(Complex[] fft)
         {
-            var result = new List<Complex>();
+            var rtn = new DenseVector(fft);//it is Clone
+            var scale = 2.0 / fft.Length;// Math.Net 要選 Matlab FFT 才會用這個
+            rtn *= scale;
+            return rtn.ToArray();
+        }
+
+
+
+        public Complex[] OpSpectrumFftHalf(Complex[] fft)
+        {
+            var rtn = new Complex[fft.Length / 2];
             var scale = 2.0 / fft.Count();// Math.Net 要選 Matlab FFT 才會用這個
-            foreach (var val in fft)
-                result.Add(new Complex(val.Real * scale, val.Imaginary * scale));
-            return result;
+
+            for (int idx = 0; idx < rtn.Length; idx++)
+                rtn[idx] = fft[idx] * scale;
+            return rtn;
         }
 
-   
 
-        public List<Complex> SpectrumHalfFft(IEnumerable<Complex> fft)
+        public Complex[] SpectrumTime(double[] time)
         {
-            var result = new List<Complex>();
-            var scale = 2.0 / fft.Count();// Math.Net 要選 Matlab FFT 才會用這個
-            var ary = fft.ToArray();
-            for (int idx = 0; idx < ary.Length / 2; idx++)
-                result.Add(ary[idx] * scale);
-            return result;
+            var fft = this.OpFftForward(time);
+            return this.OpSpectrumFft(fft);
         }
 
-   
-
-        public List<Complex> SpectrumTime(IEnumerable<double> time)
+        public Complex[] SpectrumTime(Complex[] time)
         {
-            var fft = this.FftForward(time);
-            return this.SpectrumFft(fft);
+            var fft = this.OpFftForward(time);
+            return this.OpSpectrumFft(fft);
         }
 
-        public List<Complex> SpectrumTime(IEnumerable<Complex> time)
+        public double[] SpectrumTimeMag(double[] time)
         {
-            var fft = this.FftForward(time);
-            return this.SpectrumFft(fft);
+            var fft = this.OpFftForward(time);
+            var sepctrum = this.OpSpectrumFft(fft);
+            return CtkNumUtil.ToMagnitude(sepctrum);
         }
+
+
+        public Complex[] SpectrumTimeHalf(double[] time)
+        {
+            var fft = this.OpFftForward(time);
+            return this.OpSpectrumFftHalf(fft);
+        }
+        public Complex[] SpectrumTimeHalf(Complex[] time)
+        {
+            var fft = this.OpFftForward(time);
+            return this.OpSpectrumFftHalf(fft);
+        }
+
+        public double[] SpectrumTimeHalfMag(double[] time)
+        {
+            var fft = this.OpFftForward(time);
+            var sepctrum = this.OpSpectrumFftHalf(fft);
+            return CtkNumUtil.ToMagnitude(sepctrum);
+        }
+
 
 
         #region Static
