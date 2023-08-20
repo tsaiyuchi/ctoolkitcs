@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace CToolkitCs.v1_2Core.Worker
 {
+
+    /// <summary> 僅供實作參考 (自用仍繼承來優使化 </summary>
     public abstract class CtkWorkerProcBase01<T> : ICtkContextFlowRun
         where T : EventArgs, ICtkWorkerProcBase01Msg
     {
@@ -39,15 +41,23 @@ namespace CToolkitCs.v1_2Core.Worker
             //每回處理99個訊息後, 要出去休息一下
             for (var idx = 0; idx < 99; idx++)
             {
-                lock (this)
+                try
                 {
-                    if (this.CtkProcMsgQueue.Count == 0) break;
                     var msg = default(T);
-                    if (!this.CtkProcMsgQueue.TryDequeue(out msg)) throw new CtkException("Can not get message from queue");
-                    var result = this.CtkProcMsg(msg);
+                    lock (this)
+                    {
+                        if (this.CtkProcMsgQueue.Count == 0) break;
+                        if (!this.CtkProcMsgQueue.TryDequeue(out msg)) throw new CtkException("Can not get message from queue");
+                    }
 
+                    var result = this.CtkProcMsg(msg);
                     //若沒拋出 Exception 僅有 Error Code, 那麼 Log後 繼續下一回
                     if (result != 0) CtkLog.WarnAnF(this, $"{this.GetType().Name} Error Code= {result}");
+                }
+                catch (Exception ex)
+                {
+                    this.OnException(ex);//Task不中斷, 回報Exception
+                    CtkLog.WriteAn(this, ex);//同時Record
                 }
             }
 
@@ -99,6 +109,7 @@ namespace CToolkitCs.v1_2Core.Worker
         public virtual int CtkCfLoad() { return 0; }
         public virtual int CtkCfRunLoop()
         {
+            //Task還在Run, 不應再執行Run
             if (this.CtkProcTask != null && this.CtkProcTask.Status < TaskStatus.RanToCompletion) return 0;
             if (this.CtkCfIsRunning) return 0;
             this.CtkCfIsRunning = true;
@@ -112,7 +123,7 @@ namespace CToolkitCs.v1_2Core.Worker
                 catch (Exception ex)
                 {
                     this.OnException(ex);//Task不中斷, 回報Exception
-                    CtkLog.WarnAn(this, ex);//同時Record
+                    CtkLog.WriteAn(this, ex);//同時Record
                 }
                 Thread.Sleep(this.CtkProcSleep);
             }
