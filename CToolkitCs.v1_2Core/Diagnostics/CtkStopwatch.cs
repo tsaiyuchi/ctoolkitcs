@@ -1,50 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CToolkitCs.v1_2Core.Diagnostics
 {
     public class CtkStopwatch : System.Diagnostics.Stopwatch
     {
-        public List<String> HistoryMessage = new List<string>();
-
 
         public CtkStopwatch() { }
-        ~CtkStopwatch() { this.Clear(); }
-        public CtkStopwatch(bool restart) { if (restart) this.Restart(); }
+        ~CtkStopwatch() { }
 
-        public String Message(string format) { return string.Format(format, this.ElapsedMilliseconds); }
 
-        public String MsgRestart(string format)
+
+
+
+
+
+
+        #region Singleton
+
+
+        protected static Dictionary<String, CtkStopwatch> _mapSingleton = new Dictionary<string, CtkStopwatch>();
+
+        public static CtkStopwatch SGetOrCreate(String key = "")
         {
-            this.Stop();
-            var msg = this.Message(format);
-            this.Restart();
-            return msg;
-        }
-        public String MsgStop(string format)
-        {
-            this.Stop();
-            var msg = this.Message(format);
-            return msg;
-        }
-
-
-        public string AppendMsg(string format)
-        {
-            var msg = this.Message(format);
-            this.HistoryMessage.Add(msg);
-            return msg;
+            if (_mapSingleton.ContainsKey(key)) return _mapSingleton[key];
+            return _mapSingleton[key] = new CtkStopwatch();
         }
 
-        public void Clear()
+        public static CtkStopwatch SRestart(String key = "")
         {
-            this.Stop();
-            this.Reset();
-            this.HistoryMessage.Clear();
+            var rtn = SGetOrCreate(key);
+            rtn.Restart();
+            return rtn;
         }
-        public string GetMessage(String separator = "\r\n") { return String.Join(separator, this.HistoryMessage); }
+        public static CtkStopwatch SRestart(String key, Action<CtkStopwatch> act)
+        {
+            var rtn = SGetOrCreate(key);
+            rtn.Stop();
+            if (act != null) act(rtn);
+            rtn.Restart();
+            return rtn;
+        }
+
+
+
+        public static CtkStopwatch SStop(String key = "", Action<CtkStopwatch> act = null)
+        {
+            var rtn = SGetOrCreate(key);
+            rtn.Stop();
+            if (act != null) act(rtn);
+            return rtn;
+        }
+
+
+
+
+
+        #endregion
+
+
+
 
     }
 
