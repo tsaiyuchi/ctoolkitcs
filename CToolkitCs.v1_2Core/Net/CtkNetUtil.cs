@@ -12,42 +12,6 @@ namespace CToolkitCs.v1_2Core.Net
     public class CtkNetUtil
     {
 
-        /// <summary> </summary>
-        /// <param name="ipAddress">廣播位址 e.q. 192.168.1.255</param>
-        /// <param name="macAddress">對象 MAC</param>
-        public static void WakeOnLan(string ipAddress, string macAddress)
-        {
-            //UDP Port 9
-            IPEndPoint pEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), 9);
-
-            //將aa:bb:cc:dd:ee:ff或aa-bb-cc-dd-ee-ff MAC地址轉成byte[]
-            var macAddrByteStrAry = macAddress.Split('-', ':');
-            var macAddrBytes = new byte[macAddrByteStrAry.Length];
-            for (var idx = 0; idx < macAddrByteStrAry.Length; idx++)
-            {
-                var str = macAddrByteStrAry[idx];
-                macAddrBytes[idx] = Convert.ToByte(str, 16);
-            }
-
-            //送出UPD封包
-            using (UdpClient udpClient = new UdpClient())
-            {
-                byte[] data = new byte[102];
-                //最前方六個0xff
-                for (var i = 0; i < 6; i++)
-                    data[i] = 0xff;
-                //重複16次MAC地址
-                for (int j = 1; j <= 16; j++)
-                {
-                    macAddrBytes.CopyTo(data, j * 6);
-                }
-                udpClient.Send(data, (int)data.Length, pEndPoint);
-                udpClient.Close();
-
-            }
-        }
-
-
         public static void DisposeSocket(Socket socket)
         {
             if (socket == null) return;
@@ -60,6 +24,7 @@ namespace CToolkitCs.v1_2Core.Net
                 socket.Close();
             }
         }
+
         public static bool DisposeSocketTry(Socket socket)
         {
             if (socket == null) return true;
@@ -78,6 +43,7 @@ namespace CToolkitCs.v1_2Core.Net
                 return false;
             }
         }
+
         public static bool DisposeSocketTry(CtkSocket socket)
         {
             if (socket == null) return true;
@@ -96,6 +62,7 @@ namespace CToolkitCs.v1_2Core.Net
                 return false;
             }
         }
+
         public static void DisposeTcpClient(TcpClient client)
         {
             if (client == null) return;
@@ -122,6 +89,14 @@ namespace CToolkitCs.v1_2Core.Net
             if (myex != null) throw myex;
 
         }
+
+        public static void DisposeTcpClient(CtkTcpClient client)
+        {
+            if (client == null) return;
+            client.Disconnect();
+            client.Dispose();
+        }
+
         public static bool DisposeTcpClientTry(TcpClient client)
         {
             try
@@ -140,12 +115,6 @@ namespace CToolkitCs.v1_2Core.Net
             }
         }
 
-        public static void DisposeTcpClient(CtkTcpClient client)
-        {
-            if (client == null) return;
-            client.Disconnect();
-            client.Dispose();
-        }
         public static bool DisposeTcpClientTry(CtkTcpClient client)
         {
             try
@@ -163,8 +132,6 @@ namespace CToolkitCs.v1_2Core.Net
                 return false;
             }
         }
-
-
 
         public static List<IPAddress> GetIP()
         {
@@ -185,6 +152,7 @@ namespace CToolkitCs.v1_2Core.Net
             var iphostentry = Dns.GetHostEntry(strHostName);
             return iphostentry.AddressList.FirstOrDefault();
         }
+
         public static IPAddress GetIpAdr1st(AddressFamily addrFamily)
         {
             string strHostName = Dns.GetHostName();
@@ -241,6 +209,7 @@ namespace CToolkitCs.v1_2Core.Net
             }
             return ipaddr;
         }
+
         public static IPAddress GetIpAdrLikely(string request_ip, string refence_ip)
         {
             if (string.IsNullOrEmpty(refence_ip) && string.IsNullOrEmpty(request_ip)) return null;
@@ -258,6 +227,7 @@ namespace CToolkitCs.v1_2Core.Net
 
             return null;
         }
+
         public static List<string> GetMacAddressEnthernet()
         {
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
@@ -296,6 +266,7 @@ namespace CToolkitCs.v1_2Core.Net
 
             return ipaddr;
         }
+
         public static IPAddress GetSuitableIp(string request_ip, string reference_ip, AddressFamily addrFamily)
         {
             //如果要求的IP有被設定, 就回傳要求的
@@ -318,7 +289,6 @@ namespace CToolkitCs.v1_2Core.Net
             return ipaddr;
         }
 
-
         public static bool IsConnected(TcpClient obj)
         {
             if (obj == null) return false;
@@ -326,11 +296,51 @@ namespace CToolkitCs.v1_2Core.Net
             return obj.Connected;
         }
 
-
         public static IPAddress ToIPAddress(Uri uri) { return IPAddress.Parse(uri.Host); }
+
+        public static IPAddress ToIPAddress(String ip) { return IPAddress.Parse(ip); }
+
+        public static IPEndPoint ToIPEndPoint(String ip, int port) { return new IPEndPoint(IPAddress.Parse(ip), port); }
+
         public static IPEndPoint ToIPEndPoint(Uri uri) { return new IPEndPoint(ToIPAddress(uri), uri.Port); }
 
         public static Uri ToUri(string ip, int port, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ip, port)); }
+
         public static Uri ToUri(IPEndPoint ipep, string schema = "net.tcp") { return new Uri(string.Format("{0}://{1}:{2}", schema, ipep.Address, ipep.Port)); }
+
+        /// <summary> </summary>
+        /// <param name="ipAddress">廣播位址 e.q. 192.168.1.255</param>
+        /// <param name="macAddress">對象 MAC</param>
+        public static void WakeOnLan(string ipAddress, string macAddress)
+        {
+            //UDP Port 9
+            IPEndPoint pEndPoint = new IPEndPoint(IPAddress.Parse(ipAddress), 9);
+
+            //將aa:bb:cc:dd:ee:ff或aa-bb-cc-dd-ee-ff MAC地址轉成byte[]
+            var macAddrByteStrAry = macAddress.Split('-', ':');
+            var macAddrBytes = new byte[macAddrByteStrAry.Length];
+            for (var idx = 0; idx < macAddrByteStrAry.Length; idx++)
+            {
+                var str = macAddrByteStrAry[idx];
+                macAddrBytes[idx] = Convert.ToByte(str, 16);
+            }
+
+            //送出UPD封包
+            using (UdpClient udpClient = new UdpClient())
+            {
+                byte[] data = new byte[102];
+                //最前方六個0xff
+                for (var i = 0; i < 6; i++)
+                    data[i] = 0xff;
+                //重複16次MAC地址
+                for (int j = 1; j <= 16; j++)
+                {
+                    macAddrBytes.CopyTo(data, j * 6);
+                }
+                udpClient.Send(data, (int)data.Length, pEndPoint);
+                udpClient.Close();
+
+            }
+        }
     }
 }

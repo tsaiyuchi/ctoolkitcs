@@ -9,9 +9,10 @@ namespace CToolkitCs.v1_2Core
     public class CtkLog
     {
 
-        protected static CtkLoggerMapper Mapper = new CtkLoggerMapper();
-        public static CtkLogger DefaultLogger { get { return Mapper.Get(); } }
+        protected static Dictionary<String, CtkLogger> Mapper = new Dictionary<String, CtkLogger>();
+        public static CtkLogger DefaultLogger { get { return MapperGet(); } }
         public static string LoggerAssemblyName { get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Name; } }
+
 
 
         #region Default Logger
@@ -23,24 +24,24 @@ namespace CToolkitCs.v1_2Core
         public static void Error(CtkLoggerEventArgs ea) { DefaultLogger.Write(ea, CtkLoggerEnumLevel.Error); }
         public static void Error(string msg) { DefaultLogger.Write(msg, CtkLoggerEnumLevel.Error); }
         public static void ErrorF(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
-        
+
         public static void Fatal(CtkLoggerEventArgs ea) { DefaultLogger.Write(ea, CtkLoggerEnumLevel.Fatal); }
         public static void Fatal(string msg) { DefaultLogger.Write(msg, CtkLoggerEnumLevel.Fatal); }
         public static void FatalF(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Fatal); }
-        
+
         public static void Info(string msg) { DefaultLogger.Write(msg, CtkLoggerEnumLevel.Info); }
         public static void Info(CtkLoggerEventArgs ea) { DefaultLogger.Write(ea, CtkLoggerEnumLevel.Info); }
         /// <summary> 使用 空ID 記錄Log </summary>
         public static void InfoF(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Info); }
-        
+
         public static void Verbose(CtkLoggerEventArgs ea) { DefaultLogger.Write(ea, CtkLoggerEnumLevel.Verbose); }
         public static void Verbose(string msg) { DefaultLogger.Write(msg, CtkLoggerEnumLevel.Verbose); }
         public static void VerboseF(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Verbose); }
-        
+
         public static void Warn(CtkLoggerEventArgs ea) { DefaultLogger.Write(ea, CtkLoggerEnumLevel.Warn); }
         public static void Warn(string msg) { DefaultLogger.Write(msg, CtkLoggerEnumLevel.Warn); }
         public static void WarnF(string msg, params object[] args) { DefaultLogger.Write(string.Format(msg, args), CtkLoggerEnumLevel.Warn); }
-        
+
         public static void Write(CtkLoggerEventArgs ea) { DefaultLogger.Write(ea); }
         public static void Write(CtkLoggerEventArgs ea, CtkLoggerEnumLevel _level) { ea.Level = _level; DefaultLogger.Write(ea, _level); }
 
@@ -85,7 +86,7 @@ namespace CToolkitCs.v1_2Core
         #endregion
 
 
-        #region Specified ID Logger
+        #region SpecifiedID Logger
 
         public static void DebugIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Debug); }
         public static void ErrorIdF(string loggerId, string msg, params object[] args) { GetLoggerById(loggerId).Write(string.Format(msg, args), CtkLoggerEnumLevel.Error); }
@@ -148,19 +149,31 @@ namespace CToolkitCs.v1_2Core
             var type = sender.GetType();
             if (sender is System.Type) type = sender as System.Type;
             var name = type.Assembly.FullName;
-            return Mapper.Get(name);
+            return MapperGet(name);
         }
         public static CtkLogger GetAssemblyLoggerById(Object sender, string loggerId)
         {
             var type = sender.GetType();
             var name = type.Assembly.FullName + (string.IsNullOrEmpty(loggerId) ? "" : "." + loggerId);
-            return Mapper.Get(name);
+            return MapperGet(name);
         }
-        public static CtkLogger GetLoggerById(string loggerId) { return Mapper.Get(loggerId); }
+        public static CtkLogger GetLoggerById(string loggerId) { return MapperGet(loggerId); }
+        public static CtkLogger MapperGet(String id = "")
+        {
+            lock (Mapper)
+            {
+                if (!Mapper.ContainsKey(id))
+                {
+                    var logger = new CtkLogger();
+                    Mapper.Add(id, logger);
+                }
+            }
+            return Mapper[id];//不能 override/new this[] 會造成無窮迴圈
+        }
+
         public static void RegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite += eh; }
         public static void UnRegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite -= eh; }
         public static void UnRegisterEveryLogWriteByOwner(object owner) { CtkEventUtil.RemoveEventHandlersOfTypeByTarget(typeof(CtkLogger), owner); }
-
         #endregion
 
 

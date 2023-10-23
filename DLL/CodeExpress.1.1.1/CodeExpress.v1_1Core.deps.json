@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v3.1": {
       "CodeExpress.v1_1Core/1.1.1": {
         "dependencies": {
-          "CToolkitCs.v1_2Core": "1.0.0",
+          "CToolkitCs.v1_2Core": "1.0.1",
           "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
@@ -545,7 +545,7 @@
           }
         }
       },
-      "CToolkitCs.v1_2Core/1.0.0": {
+      "CToolkitCs.v1_2Core/1.0.1": {
         "dependencies": {
           "FluentFTP": "37.0.2",
           "MathNet.Filtering": "0.7.0",
@@ -844,7 +844,7 @@
       "path": "system.windows.extensions/6.0.0",
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
     },
-    "CToolkitCs.v1_2Core/1.0.0": {
+    "CToolkitCs.v1_2Core/1.0.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

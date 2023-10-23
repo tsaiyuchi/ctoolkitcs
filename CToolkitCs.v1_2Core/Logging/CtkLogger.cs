@@ -140,6 +140,8 @@ namespace CToolkitCs.v1_2Core.Logging
 
         public void DisposeClose()
         {
+
+
             try { this.CloseTask(); }
             catch (Exception ex) { CtkLog.Write(ex); }
             //斷線不用清除Event, 但Dispsoe需要, 因為即使斷線此物件仍存活著
@@ -171,6 +173,8 @@ namespace CToolkitCs.v1_2Core.Logging
 
 
         #region Static
+
+
 
         public static event EventHandler<CtkLoggerEventArgs> EhEveryLogWrite;
         static void OnEveryLogWrite(object sender, CtkLoggerEventArgs ea)

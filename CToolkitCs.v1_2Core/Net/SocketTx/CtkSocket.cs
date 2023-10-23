@@ -79,11 +79,12 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
 
         public void CloseIfUnReadable()
         {
-            if (this.IsOpenConnecting) return;//開啟中不執行
-            if (this.SocketConn == null) return;//沒連線不執行
-            if (this.TargetSockets.Count == 0) return;//沒連線不執行
-            if (!this.TargetTestReadable())//確認無法連線
-                this.Disconnect();//先斷線再
+            if (this.IsOpenConnecting) return;//開啟中 不執行
+            if (this.SocketConn == null) return;//沒連線 不執行
+            if (this.TargetSockets.Count == 0) return;//沒連線 不執行
+            if (this.TargetTestReadableAll() > 0) return;//有可抵達的連線 不執行
+
+            this.Disconnect();//先斷線
         }
 
         /// <summary> 指定的 Socket or Last </summary>
@@ -231,7 +232,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                     }
                     else
                     {
-                        CtkNetUtil.DisposeSocketTry(client);
+                        this.TargetClose(client);
                     }
                 }
 
@@ -278,7 +279,8 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         public int TargetCloseAll()
         {
             var count = 0;
-            foreach (var socket in this.TargetSockets)
+            var list = this.TargetSockets.ToList();
+            foreach (var socket in list)
                 count += this.TargetClose(socket) ? 1 : 0;
             return count;
         }
@@ -297,8 +299,13 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         public Socket TargetGetSocket(EndPoint ep)
         {
             if (ep == null) return null;
-            foreach (var socket in this.TargetSockets)
+            var list = this.TargetSockets.ToList();
+            foreach (var socket in list)
+            {
+                if (socket == null) continue;
+                if (!socket.Connected) continue;
                 if (ep.Equals(socket.RemoteEndPoint)) return socket;
+            }
             return null;
         }
         /// <summary> 取得 指定 對象Socket </summary>
@@ -349,7 +356,8 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         public int TargetTestReadableAll()
         {
             var count = 0;
-            foreach (var socket in this.TargetSockets)
+            var list = this.TargetSockets.ToList();
+            foreach (var socket in list)
                 count += this.TargetTestReadable(socket) ? 1 : 0;
             return count;
         }
