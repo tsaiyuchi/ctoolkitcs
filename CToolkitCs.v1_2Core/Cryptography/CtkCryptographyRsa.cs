@@ -117,13 +117,13 @@ namespace CToolkitCs.v1_2Core.Cryptography
         //=== Static ================================================================
 
 
-        public static CtkCryptographyRsa FromXml(string xml)
+        public static CtkCryptographyRsa FromXml(string rsaXml)
         {
             var rtn = new CtkCryptographyRsa();
             var rsa = new RSACryptoServiceProvider();
             rtn.m_rsa = rsa;
 
-            rsa.FromXmlString(xml);
+            rsa.FromXmlString(rsaXml);
 
 
             return rtn;
