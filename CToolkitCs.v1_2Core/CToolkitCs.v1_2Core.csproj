@@ -6,11 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Modbus\CtkModbusEnumFuncCode.cs" />
-    <Compile Remove="Modbus\CtkModbusOldMessage.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentFTP" Version="37.0.2" />
     <PackageReference Include="MathNet.Filtering" Version="0.7.0" />
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
