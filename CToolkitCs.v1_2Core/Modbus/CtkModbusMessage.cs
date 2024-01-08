@@ -30,6 +30,9 @@ namespace CToolkitCs.v1_2Core.Modbus
 
         #region Const
 
+        /// <summary> 0x86=134, error code=1~4 </summary>
+        public const byte SlaveDeviceFailure = 0x86;
+
         /// <summary>Constant for exception acknowledge.</summary>
         public const byte excAck = 5;
 
@@ -75,7 +78,8 @@ namespace CToolkitCs.v1_2Core.Modbus
         public const byte fcWriteMultipleRegister = 16;
         public const byte fcWriteSingleCoil = 5;
         public const byte fcWriteSingleRegister = 6;
-        //TODO:
+        
+
         #endregion
 
 

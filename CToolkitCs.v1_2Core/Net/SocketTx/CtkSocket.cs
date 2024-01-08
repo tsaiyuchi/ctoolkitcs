@@ -406,8 +406,8 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
 
 
 
-
-        public int ConnectTry() { /*暫時不支援同步型, 也很少用*/ throw new NotImplementedException(); }
+        /// <summary> 暫不支援同步型, 很少使用 </summary>
+        public int ConnectTry() { throw new NotImplementedException(); }
         public int ConnectTryStart()
         {
             /*Client: 
