@@ -6,6 +6,48 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Hal\BaslerCamera\**" />
+    <Compile Remove="Hal\CameraLink\**" />
+    <Compile Remove="Hal\CwTechDevice\**" />
+    <Compile Remove="Hal\DriverFanucRobot_v42_15\**" />
+    <Compile Remove="Hal\E84\**" />
+    <Compile Remove="Hal\GudengLoadPort\**" />
+    <Compile Remove="Hal\HiwinStage\**" />
+    <Compile Remove="Hal\iDSCamera\**" />
+    <Compile Remove="Hal\KjMachineDrawer\**" />
+    <Compile Remove="Hal\LeimacLight\**" />
+    <Compile Remove="Hal\OmronPlc\**" />
+    <Compile Remove="Hal\OmronSentechCamera\**" />
+    <Compile Remove="Hal\WacohForce\**" />
+    <EmbeddedResource Remove="Hal\BaslerCamera\**" />
+    <EmbeddedResource Remove="Hal\CameraLink\**" />
+    <EmbeddedResource Remove="Hal\CwTechDevice\**" />
+    <EmbeddedResource Remove="Hal\DriverFanucRobot_v42_15\**" />
+    <EmbeddedResource Remove="Hal\E84\**" />
+    <EmbeddedResource Remove="Hal\GudengLoadPort\**" />
+    <EmbeddedResource Remove="Hal\HiwinStage\**" />
+    <EmbeddedResource Remove="Hal\iDSCamera\**" />
+    <EmbeddedResource Remove="Hal\KjMachineDrawer\**" />
+    <EmbeddedResource Remove="Hal\LeimacLight\**" />
+    <EmbeddedResource Remove="Hal\OmronPlc\**" />
+    <EmbeddedResource Remove="Hal\OmronSentechCamera\**" />
+    <EmbeddedResource Remove="Hal\WacohForce\**" />
+    <None Remove="Hal\BaslerCamera\**" />
+    <None Remove="Hal\CameraLink\**" />
+    <None Remove="Hal\CwTechDevice\**" />
+    <None Remove="Hal\DriverFanucRobot_v42_15\**" />
+    <None Remove="Hal\E84\**" />
+    <None Remove="Hal\GudengLoadPort\**" />
+    <None Remove="Hal\HiwinStage\**" />
+    <None Remove="Hal\iDSCamera\**" />
+    <None Remove="Hal\KjMachineDrawer\**" />
+    <None Remove="Hal\LeimacLight\**" />
+    <None Remove="Hal\OmronPlc\**" />
+    <None Remove="Hal\OmronSentechCamera\**" />
+    <None Remove="Hal\WacohForce\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentFTP" Version="37.0.2" />
     <PackageReference Include="MathNet.Filtering" Version="0.7.0" />
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
@@ -17,6 +59,10 @@
     <PackageReference Include="System.IO.Ports" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.9.0" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Hal\" />
   </ItemGroup>
 
 </Project>
