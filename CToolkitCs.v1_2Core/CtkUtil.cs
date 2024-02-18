@@ -28,13 +28,6 @@ namespace CToolkitCs.v1_2Core
         public static T ChangeType<T>(object data) { return (T)Convert.ChangeType(data, typeof(T)); }
 
 
-        public static bool IsCurrentProcessAdmin()
-        {
-            using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            var principal = new System.Security.Principal.WindowsPrincipal(identity);
-            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-        }
-
         public static TAttr GetAttribute<TEnum, TAttr>(TEnum val) where TAttr : Attribute
         {
             var type = typeof(TEnum);
@@ -66,6 +59,12 @@ namespace CToolkitCs.v1_2Core
             return assembly.GetName().Version.ToString();
         }
 
+        public static bool IsCurrentProcessAdmin()
+        {
+            using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            var principal = new System.Security.Principal.WindowsPrincipal(identity);
+            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+        }
         public static bool MonitorTryEnter(object obj, int millisecond, Action act)
         {
             try
@@ -105,6 +104,34 @@ namespace CToolkitCs.v1_2Core
             return rnd.Next(min, max);
         }
 
+        public static void Try(Action act, int times = 3)
+        {
+            for (var idx = 0; idx < times; idx++)
+            {
+                try
+                {
+                    act();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    if (idx >= times - 1)
+                        throw ex;
+                }
+            }
+        }
+        public static object TryCatch(Action theMethod, params object[] parameters)
+        {
+            try
+            {
+                return theMethod.DynamicInvoke(parameters);
+            }
+            catch (Exception ex)
+            {
+                CtkLog.Write(ex);
+                return ex;
+            }
+        }
 
 
 
@@ -156,8 +183,6 @@ namespace CToolkitCs.v1_2Core
             throw new ArgumentException();
         }
 
-
-
         public static string GetMethodName<TType, TDelegate>(Expression<Func<TType, TDelegate>> expression)
         {
             LambdaExpression lambda = expression;
@@ -193,6 +218,7 @@ namespace CToolkitCs.v1_2Core
             LambdaExpression lambda = expression;
             return GetMethodName(lambda);
         }
+
         #endregion
 
 
@@ -252,37 +278,55 @@ namespace CToolkitCs.v1_2Core
         {
             foreach (var obj in list) act(obj);
         }
-
-        #endregion
-        public static void Try(Action act, int times = 3)
+        public static void ForeachTry<T>(IEnumerable<T> list, Action<T> act, Action<Exception> exceptionHandler = null)
         {
-            for (var idx = 0; idx < times; idx++)
+            foreach (var obj in list)
+            {
+                try { act(obj); }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null) exceptionHandler(ex);
+                    else CtkLog.Write(ex);
+                }
+            }
+        }
+
+        /// <summary> func return true will continue, else then break </summary>
+        public static void TryLoop(int loop, Action<int> act, Action<Exception> exceptionHandler = null)
+        {
+            for (var idx = 0; idx < loop; idx++)
             {
                 try
                 {
-                    act();
+                    act(idx);
                     return;
                 }
                 catch (Exception ex)
                 {
-                    if (idx >= times - 1)
-                        throw ex;
+                    if (exceptionHandler != null) exceptionHandler(ex);
+                    else CtkLog.Write(ex);
                 }
             }
         }
-
-        public static object TryCatch(Action theMethod, params object[] parameters)
+        public static T TryLoop<T>(int loop, Func<int, T> func, Action<Exception> exceptionHandler = null)
         {
-            try
+            for (var idx = 0; idx < loop; idx++)
             {
-                return theMethod.DynamicInvoke(parameters);
+                try { return func(idx); }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null) exceptionHandler(ex);
+                    else CtkLog.Write(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                CtkLog.Write(ex);
-                return ex;
-            }
+            return default(T);
         }
+
+        #endregion
+
+
+
+
         #region Process
 
         public static long MemorySize(string processName)
@@ -500,22 +544,7 @@ namespace CToolkitCs.v1_2Core
 
         #endregion
 
-        #region Foreach
 
-        public static void ForeachTry<T>(IEnumerable<T> list, Action<T> act, Action<Exception> exceptionHandler = null)
-        {
-            foreach (var obj in list)
-            {
-                try { act(obj); }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler == null) exceptionHandler(ex);
-                    else CtkLog.Write(ex);
-                }
-            }
-        }
-
-        #endregion
 
 
 
