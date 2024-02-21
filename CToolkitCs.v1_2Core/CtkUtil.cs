@@ -292,8 +292,9 @@ namespace CToolkitCs.v1_2Core
         }
 
         /// <summary> func return true will continue, else then break </summary>
-        public static void TryLoop(int loop, Action<int> act, Action<Exception> exceptionHandler = null)
+        public static void TryLoop(int loop, Action<int> act, Action<Exception> exceptionHandler = null, Action<List<Exception>> failHandler = null)
         {
+            var exceptions = new List<Exception>();
             for (var idx = 0; idx < loop; idx++)
             {
                 try
@@ -303,23 +304,44 @@ namespace CToolkitCs.v1_2Core
                 }
                 catch (Exception ex)
                 {
+                    exceptions.Add(ex);
                     if (exceptionHandler != null) exceptionHandler(ex);
-                    else CtkLog.Write(ex);
+                    else CtkLog.Warn(ex);
                 }
             }
+            if (failHandler != null) failHandler(exceptions);
         }
-        public static T TryLoop<T>(int loop, Func<int, T> func, Action<Exception> exceptionHandler = null)
+        public static T TryLoop<T>(int loop, Func<int, T> func, Action<Exception> exceptionHandler = null, Action<List<Exception>> failHandler = null)
         {
+            var exceptions = new List<Exception>();
             for (var idx = 0; idx < loop; idx++)
             {
                 try { return func(idx); }
                 catch (Exception ex)
                 {
+                    exceptions.Add(ex);
                     if (exceptionHandler != null) exceptionHandler(ex);
-                    else CtkLog.Write(ex);
+                    else CtkLog.Warn(ex);
                 }
             }
+            if (failHandler != null) failHandler(exceptions);
             return default(T);
+        }
+
+        public static T TryLoopThrow<T>(int loop, Func<int, T> func, Action<Exception> exceptionHandler = null)
+        {
+            var exceptions = new List<Exception>();
+            for (var idx = 0; idx < loop; idx++)
+            {
+                try { return func(idx); }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
+                    if (exceptionHandler != null) exceptionHandler(ex);
+                    else CtkLog.Warn(ex);
+                }
+            }
+            throw exceptions.Last();
         }
 
         #endregion
