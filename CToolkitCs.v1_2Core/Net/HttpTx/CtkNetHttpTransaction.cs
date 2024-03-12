@@ -15,10 +15,11 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using System.Net.Cache;
+using Newtonsoft.Json;
 
-namespace CToolkitCs.v1_2Core.Net.HttpWebTx
+namespace CToolkitCs.v1_2Core.Net.HttpTx
 {
-    public class CtkNetHttpWebTransaction : IDisposable
+    public class CtkNetHttpTransaction : IDisposable
     {
         public HttpWebRequest HwRequest;
         public Encoding HwRequestEncoding = Encoding.UTF8;
@@ -28,7 +29,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         protected String HwResponseData;
 
 
-        
+
         public HttpWebResponse GetHwResponse()
         {
             if (this.hwResponse != null) return this.hwResponse;
@@ -178,7 +179,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         #region IDisposable
         // Flag: Has Dispose already been called?
         protected bool disposed = false;
-        ~CtkNetHttpWebTransaction() { this.Dispose(false); }
+        ~CtkNetHttpTransaction() { this.Dispose(false); }
         // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
         {
@@ -230,22 +231,30 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 
         #region === Static === === ===
 
-        public static CtkNetHttpWebTransaction Create(String url)
+        public static CtkNetHttpTransaction Create(String url)
         {
-            var rs = new CtkNetHttpWebTransaction();
+            var rs = new CtkNetHttpTransaction();
             rs.HwRequest = (HttpWebRequest)HttpWebRequest.Create(url);
             return rs;
         }
-
-        public static CtkNetHttpWebTransaction Create(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
+        public static CtkNetHttpTransaction Create(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
         {
-            var rs = new CtkNetHttpWebTransaction();
+            var rs = new CtkNetHttpTransaction();
             var req = rs.HwRequest = (HttpWebRequest)HttpWebRequest.Create(url);
             req.CachePolicy = new System.Net.Cache.RequestCachePolicy(cachePolicy);
             req.Method = httpMethod;
 
             return rs;
         }
+    
+
+
+
+        #endregion
+
+
+        #region === Static - Direct Return === === ===
+
 
         public static String HttpGet(string uri, RequestCacheLevel cachePolicy) { return HttpGet(new Uri(uri), cachePolicy); }
         public static String HttpGet(Uri uri, RequestCacheLevel cachePolicy)
@@ -269,20 +278,8 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
 
         }
 
-        public static String HttpPost(String uri, Dictionary<string, object> postData, Encoding encodingReq = null)
-        {
-            var list = new List<string>();
-            foreach (var kv in postData)
-            {
-                var param = string.Format("{0}={1}", kv.Key, Uri.EscapeDataString(Convert.ToString(kv.Value)));
-                list.Add(param);
-            }
-            var post = string.Join("&", list.ToArray());
 
-            return HttpPost(uri, post, encodingReq);
-
-        }
-        public static String HttpPost(String uri, String post, Encoding encodingReq = null)
+        public static String HttpPost(String uri, String contentType, String post, Encoding encodingReq = null)
         {
             if (encodingReq == null) encodingReq = Encoding.UTF8;
             byte[] byteData = encodingReq.GetBytes(post);
@@ -295,7 +292,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
             {
                 wreq = (HttpWebRequest)WebRequest.Create(uri);
                 wreq.Method = "POST";
-                wreq.ContentType = "application/x-www-form-urlencoded";
+                wreq.ContentType = contentType;
                 wreq.ContentLength = byteData.Length;
                 //request.Credentials = new NetworkCredential("xx", "xx"); 
                 reqstm = wreq.GetRequestStream();
@@ -316,6 +313,66 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
                 if (reqstm != null) { reqstm.Close(); }
             }
         }
+        public static String HttpPost(String uri, String contentType, Stream stream, Encoding encodingReq = null)
+        {
+            if (encodingReq == null) encodingReq = Encoding.UTF8;
+
+            HttpWebRequest wreq = null;
+            Stream reqstm = null;
+            HttpWebResponse wresp = null;
+            StreamReader reader = null;
+            try
+            {
+                wreq = (HttpWebRequest)WebRequest.Create(uri);
+                wreq.Method = "POST";
+                wreq.ContentType = contentType;
+                //wreq.ContentLength = byteData.Length;
+                //request.Credentials = new NetworkCredential("xx", "xx"); 
+                reqstm = wreq.GetRequestStream();
+
+
+                var buffer = new byte[1024];
+                var count = stream.Read(buffer, 0, buffer.Length);
+                while(count > 0)
+                {
+                    reqstm.Write(buffer, 0, buffer.Length);
+                    count = stream.Read(buffer, 0, buffer.Length);
+                }
+
+                wresp = (HttpWebResponse)wreq.GetResponse();
+                //string responseStatus = response.StatusDescription;
+
+                using (var wrespStream = wresp.GetResponseStream())
+                {
+                    reader = new StreamReader(wrespStream);
+                    return reader.ReadToEnd();
+                }
+            }
+            finally
+            {
+                if (reader != null) { reader.Close(); reader.Dispose(); }
+                if (wresp != null) { wresp.Close(); }
+                if (reqstm != null) { reqstm.Close(); }
+            }
+        }
+
+
+        public static String HttpPostForm(String uri, List<KeyValuePair<string, object>> postData, Encoding encodingReq = null)
+        {
+            var list = new List<string>();
+            foreach (var kv in postData)
+            {
+                var param = string.Format("{0}={1}", kv.Key, Uri.EscapeDataString(Convert.ToString(kv.Value)));
+                list.Add(param);
+            }
+            var post = string.Join("&", list.ToArray());
+            return HttpPostForm(uri, post, encodingReq);
+
+        }
+        public static String HttpPostForm(String uri, String post, Encoding encodingReq = null) { return HttpPost(uri, CtkNetHttpContentType.AppForm, post, encodingReq); }
+        public static String HttpPostForm(String uri, Stream stream, Encoding encodingReq = null) { return HttpPost(uri, CtkNetHttpContentType.AppForm, stream, encodingReq); }
+        public static String HttpPostJson(String uri, String post, Encoding encodingReq = null) { return HttpPost(uri, CtkNetHttpContentType.AppJson, post, encodingReq); }
+        public static String HttpPostJson(String uri, Stream stream, Encoding encodingReq = null) { return HttpPost(uri, CtkNetHttpContentType.AppJson, stream, encodingReq); }
 
         public static string HttpRequest(HttpWebRequest wreq, string dataReq = null, Encoding encodingReq = null, Encoding encodingResp = null)
         {
@@ -347,6 +404,11 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
                     return reader.ReadToEnd();
             }
         }
+
+
+
+
+
         public static Regex RegexUrl() { return new Regex(@"^(?<proto>\w+)://[^/]+?(?<port>:\d+)?/", RegexOptions.Compiled); }
 
 
@@ -357,11 +419,11 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         #region Static - Selenium
 
 
-        public static async Task<CtkNetHttpWebGetRtn<IWebDriver>> SeleniumChromeHttpGetAsyn(String uri,
+        public static async Task<CtkNetHttpGetRtn<IWebDriver>> SeleniumChromeHttpGetAsyn(String uri,
             Func<IWebDriver, bool> callback = null,
             int timeout = 30 * 1000, int delayBrowserOpen = 5 * 1000)
         {
-            var rtn = new CtkNetHttpWebGetRtn<IWebDriver>();
+            var rtn = new CtkNetHttpGetRtn<IWebDriver>();
 
             var start = DateTime.Now;
 
@@ -435,10 +497,10 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         }
 
 
-        public static async Task<CtkNetHttpWebGetRtn<IWebDriver>> SeleniumRemoteChromeHttpGetAsyn(string seleniumRemoteUri, String reqUri,
+        public static async Task<CtkNetHttpGetRtn<IWebDriver>> SeleniumRemoteChromeHttpGetAsyn(string seleniumRemoteUri, String reqUri,
             Func<IWebDriver, bool> callback = null, int timeout = 30 * 1000, int delayBrowserOpen = 5 * 1000)
         {
-            var rtn = new CtkNetHttpWebGetRtn<IWebDriver>();
+            var rtn = new CtkNetHttpGetRtn<IWebDriver>();
             var start = DateTime.Now;
 
             ChromeOptions options = new ChromeOptions();

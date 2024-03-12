@@ -4,23 +4,23 @@ using System.Net;
 using System.Net.Cache;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Net.HttpWebTx
+namespace CToolkitCs.v1_2Core.Net.HttpTx
 {
-    public class CtkNetHttpWebSession : IDisposable
+    public class CtkNetHttpSession : IDisposable
     {
         public CookieContainer CookieContainer = new CookieContainer();
-        public List<CtkNetHttpWebTransaction> Transaction = new List<CtkNetHttpWebTransaction>();
+        public List<CtkNetHttpTransaction> Transaction = new List<CtkNetHttpTransaction>();
 
-        public CtkNetHttpWebTransaction Create(String url)
+        public CtkNetHttpTransaction Create(String url)
         {
-            var tx = CtkNetHttpWebTransaction.Create(url);
+            var tx = CtkNetHttpTransaction.Create(url);
             tx.HwRequest.CookieContainer = this.CookieContainer;
             this.Transaction.Add(tx);
             return tx;
         }
-        public CtkNetHttpWebTransaction Create(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
+        public CtkNetHttpTransaction Create(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
         {
-            var tx = CtkNetHttpWebTransaction.Create(url, cachePolicy, httpMethod);
+            var tx = CtkNetHttpTransaction.Create(url, cachePolicy, httpMethod);
             var hwreq = tx.HwRequest;
             hwreq.CookieContainer = this.CookieContainer;
 
@@ -29,8 +29,8 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         }
 
 
-        public CtkNetHttpWebTransaction CreateHttpGet(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.Create(url, cachePolicy, "GET"); }
-        public CtkNetHttpWebTransaction CreateHttpPost(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.Create(url, cachePolicy, "POST"); }
+        public CtkNetHttpTransaction CreateHttpGet(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.Create(url, cachePolicy, "GET"); }
+        public CtkNetHttpTransaction CreateHttpPost(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.Create(url, cachePolicy, "POST"); }
 
         public String HttpGet(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default)
         {
@@ -50,7 +50,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpWebTx
         #region IDisposable
         // Flag: Has Dispose already been called?
         protected bool disposed = false;
-        ~CtkNetHttpWebSession() { this.Dispose(false); }
+        ~CtkNetHttpSession() { this.Dispose(false); }
         // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
         {
