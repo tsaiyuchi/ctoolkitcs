@@ -21,7 +21,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
 {
     public class CtkNetHttpTransaction : IDisposable
     {
-        public HttpWebRequest HwRequest;
+        public HttpWebRequest HwRequest { get; protected set; }
         public Encoding HwRequestEncoding = Encoding.UTF8;
         public Encoding HwResponseEncoding = Encoding.UTF8;
         protected string HwRequestData;
@@ -29,7 +29,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
         protected String HwResponseData;
 
 
-
+        /// <summary> 若還沒交易, 會依現有資料進行交易 </summary>
         public HttpWebResponse GetHwResponse()
         {
             if (this.hwResponse != null) return this.hwResponse;
@@ -43,13 +43,15 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
             {
                 if (hwreqData == null) hwreqData = "";
                 var byteData = hwreqEncoding.GetBytes(hwreqData);
-                hwreq.ContentLength = byteData.Length;
+                hwreq.ContentLength = byteData.Length;//未必要設定
                 using (var reqstm = hwreq.GetRequestStream())
                     reqstm.Write(byteData, 0, byteData.Length);
             }
 
             return this.hwResponse = (HttpWebResponse)hwreq.GetResponse();
         }
+
+        /// <summary> 若還沒有Response, 會依現有資料進行交易 並取得Response </summary>
         public String GetHwResponseData()
         {
             if (this.HwResponseData != null) return this.HwResponseData;//只有null, 空字串仍代表已讀過
@@ -68,6 +70,8 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
             using (var reader = new StreamReader(stream, hwrespEncoding))
                 return this.HwResponseData = reader.ReadToEnd();
         }
+
+        /// <summary> Response為GZip壓縮 </summary>
         public String GetHwResponseDataGZip()
         {
             if (this.HwResponseData != null) return this.HwResponseData;//只有null, 空字串仍代表已讀過
@@ -176,6 +180,16 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
 
 
         }
+
+
+
+
+
+
+
+
+
+
         #region IDisposable
         // Flag: Has Dispose already been called?
         protected bool disposed = false;
@@ -229,6 +243,9 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
 
 
 
+
+
+
         #region === Static === === ===
 
         public static CtkNetHttpTransaction Create(String url)
@@ -246,9 +263,6 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
 
             return rs;
         }
-    
-
-
 
         #endregion
 
@@ -333,7 +347,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
 
                 var buffer = new byte[1024];
                 var count = stream.Read(buffer, 0, buffer.Length);
-                while(count > 0)
+                while (count > 0)
                 {
                     reqstm.Write(buffer, 0, buffer.Length);
                     count = stream.Read(buffer, 0, buffer.Length);
@@ -374,7 +388,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
         public static String HttpPostJson(String uri, String post, Encoding encodingReq = null) { return HttpPost(uri, CtkNetHttpContentType.AppJson, post, encodingReq); }
         public static String HttpPostJson(String uri, Stream stream, Encoding encodingReq = null) { return HttpPost(uri, CtkNetHttpContentType.AppJson, stream, encodingReq); }
 
-        public static string HttpRequest(HttpWebRequest wreq, string dataReq = null, Encoding encodingReq = null, Encoding encodingResp = null)
+        public static String HttpRequest(HttpWebRequest wreq, string dataReq = null, Encoding encodingReq = null, Encoding encodingResp = null)
         {
             if (encodingReq == null) encodingReq = Encoding.UTF8;
 

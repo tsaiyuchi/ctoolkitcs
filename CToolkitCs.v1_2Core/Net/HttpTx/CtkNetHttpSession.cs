@@ -11,14 +11,17 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
         public CookieContainer CookieContainer = new CookieContainer();
         public List<CtkNetHttpTransaction> Transaction = new List<CtkNetHttpTransaction>();
 
-        public CtkNetHttpTransaction Create(String url)
+
+
+
+        public CtkNetHttpTransaction CreateTx(String url)
         {
             var tx = CtkNetHttpTransaction.Create(url);
             tx.HwRequest.CookieContainer = this.CookieContainer;
             this.Transaction.Add(tx);
             return tx;
         }
-        public CtkNetHttpTransaction Create(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
+        public CtkNetHttpTransaction CreateTx(String url, RequestCacheLevel cachePolicy, String httpMethod = "GET")
         {
             var tx = CtkNetHttpTransaction.Create(url, cachePolicy, httpMethod);
             var hwreq = tx.HwRequest;
@@ -29,18 +32,18 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
         }
 
 
-        public CtkNetHttpTransaction CreateHttpGet(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.Create(url, cachePolicy, "GET"); }
-        public CtkNetHttpTransaction CreateHttpPost(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.Create(url, cachePolicy, "POST"); }
+        public CtkNetHttpTransaction CreateTxHttpGet(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.CreateTx(url, cachePolicy, "GET"); }
+        public CtkNetHttpTransaction CreateTxHttpPost(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default) { return this.CreateTx(url, cachePolicy, "POST"); }
 
         public String HttpGet(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default)
         {
-            var tx = this.Create(url, cachePolicy, "GET");
-            return tx.GetHwResponseData();
+            using (var tx = this.CreateTx(url, cachePolicy, "GET"))
+                return tx.GetHwResponseData();
         }
         public String HttpPost(String url, RequestCacheLevel cachePolicy = RequestCacheLevel.Default)
         {
-            var tx = this.Create(url, cachePolicy, "POST");
-            return tx.GetHwResponseData();
+            using (var tx = this.CreateTx(url, cachePolicy, "POST"))
+                return tx.GetHwResponseData();
         }
 
 

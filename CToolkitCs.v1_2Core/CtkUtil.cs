@@ -104,22 +104,35 @@ namespace CToolkitCs.v1_2Core
             return rnd.Next(min, max);
         }
 
-        public static void Try(Action act, int times = 3)
+        public static void TryError(Action<int> act, int times = 3)
         {
+            var exTryError = new CtkTryErrorException();
             for (var idx = 0; idx < times; idx++)
             {
                 try
                 {
-                    act();
+                    act(idx);
                     return;
                 }
-                catch (Exception ex)
-                {
-                    if (idx >= times - 1)
-                        throw ex;
-                }
+                catch (Exception ex) { exTryError.Exceptions.Add(ex); }
             }
+            throw exTryError;
         }
+        public static T TryError<T>(Func<int, T> act, int times = 3)
+        {
+            var exTryError = new CtkTryErrorException();
+            for (var idx = 0; idx < times; idx++)
+            {
+                try
+                {
+                    return act(idx);
+                }
+                catch (Exception ex) { exTryError.Exceptions.Add(ex); }
+            }
+            throw exTryError;
+        }
+
+
         public static object TryCatch(Action theMethod, params object[] parameters)
         {
             try
@@ -153,15 +166,14 @@ namespace CToolkitCs.v1_2Core
             Enum.TryParse(val, true, out rs);
             return rs;
         }
-
         public static T EnumParseOrDefault<T>(String val, T def) where T : struct
         {
             var rs = def;
             Enum.TryParse(val, true, out rs);
             return rs;
         }
-
         public static bool EnumParseTry<T>(String val, out T rs) where T : struct { return Enum.TryParse(val, true, out rs); }
+
         #endregion
 
 
@@ -182,7 +194,6 @@ namespace CToolkitCs.v1_2Core
 
             throw new ArgumentException();
         }
-
         public static string GetMethodName<TType, TDelegate>(Expression<Func<TType, TDelegate>> expression)
         {
             LambdaExpression lambda = expression;
@@ -291,58 +302,6 @@ namespace CToolkitCs.v1_2Core
             }
         }
 
-        /// <summary> func return true will continue, else then break </summary>
-        public static void TryLoop(int loop, Action<int> act, Action<Exception> exceptionHandler = null, Action<List<Exception>> failHandler = null)
-        {
-            var exceptions = new List<Exception>();
-            for (var idx = 0; idx < loop; idx++)
-            {
-                try
-                {
-                    act(idx);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    exceptions.Add(ex);
-                    if (exceptionHandler != null) exceptionHandler(ex);
-                    else CtkLog.Warn(ex);
-                }
-            }
-            if (failHandler != null) failHandler(exceptions);
-        }
-        public static T TryLoop<T>(int loop, Func<int, T> func, Action<Exception> exceptionHandler = null, Action<List<Exception>> failHandler = null)
-        {
-            var exceptions = new List<Exception>();
-            for (var idx = 0; idx < loop; idx++)
-            {
-                try { return func(idx); }
-                catch (Exception ex)
-                {
-                    exceptions.Add(ex);
-                    if (exceptionHandler != null) exceptionHandler(ex);
-                    else CtkLog.Warn(ex);
-                }
-            }
-            if (failHandler != null) failHandler(exceptions);
-            return default(T);
-        }
-
-        public static T TryLoopThrow<T>(int loop, Func<int, T> func, Action<Exception> exceptionHandler = null)
-        {
-            var exceptions = new List<Exception>();
-            for (var idx = 0; idx < loop; idx++)
-            {
-                try { return func(idx); }
-                catch (Exception ex)
-                {
-                    exceptions.Add(ex);
-                    if (exceptionHandler != null) exceptionHandler(ex);
-                    else CtkLog.Warn(ex);
-                }
-            }
-            throw exceptions.Last();
-        }
 
         #endregion
 
