@@ -667,18 +667,10 @@ namespace CToolkitCs.v1_2Core.Timing
         /// <param name="dt"></param>
         /// <returns></returns>
         public static string ToSign3Week(DateTime? dt) { return dt.HasValue ? ToSign3Week(dt.Value) : null; }
-        /// <summary>
-        /// yr_2020
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSign3Yeaer(DateTime dt) { return "yr_" + dt.ToString("yyyy"); }
-        /// <summary>
-        /// yr_2020
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static string ToSign3Year(DateTime? dt) { return dt.HasValue ? ToSign3Yeaer(dt.Value) : null; }
+        /// <summary> yr_2020 </summary>
+        public static string ToSign3Year(DateTime dt) { return "yr_" + dt.ToString("yyyy"); }
+        /// <summary> yr_2020 </summary>
+        public static string ToSign3Year(DateTime? dt) { return dt.HasValue ? ToSign3Year(dt.Value) : null; }
 
         #endregion
 
