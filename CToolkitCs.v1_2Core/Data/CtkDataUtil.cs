@@ -25,15 +25,34 @@ namespace CToolkitCs.v1_2Core.Data
 
 
 
-        public static DataTable CsvToDataTable(string csv)
+        public static DataTable CsvToDataTable(string csv) { return TextFieldToDataTable(csv, ","); }
+        public static List<T> CsvToList<T>(string csv) where T : new() { return TextFieldToList<T>(csv, ","); }
+
+
+        public static string CsvFrom<T>(List<T> objectList) { return TextFieldFrom(objectList, ","); }
+        public static string CsvFrom(DataTable dataTable) { return TextFieldFrom(dataTable, ","); }
+
+
+
+        public static DataTable IsvToDataTable(string isv) { return TextFieldToDataTable(isv, "\t"); }
+        public static List<T> IsvToList<T>(string isv) where T : new() { return TextFieldToList<T>(isv, "\t"); }
+
+
+        public static string IsvFrom<T>(List<T> objectList) { return TextFieldFrom(objectList, "\t"); }
+        public static string IsvFrom(DataTable dataTable) { return TextFieldFrom(dataTable, "\t"); }
+
+
+
+
+        public static DataTable TextFieldToDataTable(string text, params string[] delimiters)
         {
             DataTable dataTable = new DataTable();
 
-            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(csv)))
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(text)))
             using (TextFieldParser parser = new TextFieldParser(ms))
             {
                 parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
+                parser.SetDelimiters(delimiters);
                 bool isFirstRow = true;
 
                 while (!parser.EndOfData)
@@ -59,10 +78,10 @@ namespace CToolkitCs.v1_2Core.Data
 
             return dataTable;
         }
-        public static List<T> CsvToList<T>(string csv) where T : new()
+        public static List<T> TextFieldToList<T>(string text, params string[] delimiters) where T : new()
         {
             var rtn = new List<T>();
-            var datatable = CsvToDataTable(csv);
+            var datatable = TextFieldToDataTable(text, delimiters);
             var type = typeof(T);
 
             foreach (DataRow row in datatable.Rows)
@@ -84,9 +103,9 @@ namespace CToolkitCs.v1_2Core.Data
         }
 
 
-        public static string CsvFrom<T>(List<T> objectList)
+        public static string TextFieldFrom<T>(List<T> objectList, string delimiter)
         {
-            StringBuilder csvBuilder = new StringBuilder();
+            StringBuilder textBuilder = new StringBuilder();
             var type = typeof(T);
 
             // 添加 CSV 標題行
@@ -95,9 +114,9 @@ namespace CToolkitCs.v1_2Core.Data
             {
                 if (mem.MemberType == System.Reflection.MemberTypes.Field
                     || mem.MemberType == System.Reflection.MemberTypes.Property)
-                    csvBuilder.Append(mem.Name + ",");
+                    textBuilder.Append(mem.Name + delimiter);
             }
-            csvBuilder.AppendLine();
+            textBuilder.AppendLine();
 
             // 添加物件列表的數據行
             foreach (var obj in objectList)
@@ -108,38 +127,41 @@ namespace CToolkitCs.v1_2Core.Data
                     var prop = mem as PropertyInfo;
 
                     if (field != null)
-                        csvBuilder.Append(field.GetValue(obj) + ",");
+                        textBuilder.Append(field.GetValue(obj) + delimiter);
                     else if (prop != null)
-                        csvBuilder.Append(prop.GetValue(obj) + ",");
+                        textBuilder.Append(prop.GetValue(obj) + delimiter);
                 }
-                csvBuilder.AppendLine();
+                textBuilder.AppendLine();
             }
 
-            return csvBuilder.ToString();
+            return textBuilder.ToString();
         }
-        public static string CsvFrom(DataTable dataTable)
+        public static string TextFieldFrom(DataTable dataTable, string delimiter)
         {
-            StringBuilder csvBuilder = new StringBuilder();
+            StringBuilder textBuilder = new StringBuilder();
 
             // 添加 CSV 標題行
             foreach (DataColumn col in dataTable.Columns)
             {
-                csvBuilder.Append(col.ColumnName + ",");
+                textBuilder.Append(col.ColumnName + delimiter);
             }
-            csvBuilder.AppendLine();
+            textBuilder.AppendLine();
 
             // 添加物件列表的數據行
             foreach (DataRow row in dataTable.Rows)
             {
                 foreach (DataColumn col in dataTable.Columns)
                 {
-                    csvBuilder.Append(row[col] + ",");
+                    textBuilder.Append(row[col] + delimiter);
                 }
-                csvBuilder.AppendLine();
+                textBuilder.AppendLine();
             }
 
-            return csvBuilder.ToString();
+            return textBuilder.ToString();
         }
+
+
+
 
     }
 }
