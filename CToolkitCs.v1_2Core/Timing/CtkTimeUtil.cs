@@ -36,7 +36,7 @@ namespace CToolkitCs.v1_2Core.Timing
             return null;
         }
 
-       
+
 
         #region Week Operation
         //--- Week ---------
@@ -285,6 +285,7 @@ namespace CToolkitCs.v1_2Core.Timing
 
         public static string ToDTime(DateTime dt) { return ToYyyyMmDdHhIiSs(dt); }
         public static string ToYyyy(DateTime dt) { return dt.ToString("yyyy"); }
+        public static string ToYyyy(DateTime? dt) { return dt.HasValue ? ToYyyy(dt.Value) : null; }
         public static string ToYyyyHy(DateTime dt)
         {
             var Hyhy = HalfOfYear(dt);
@@ -302,6 +303,7 @@ namespace CToolkitCs.v1_2Core.Timing
             var qq = QuarterOfYear(dt);
             return string.Format("{0}{1:00}", dt.ToString("yyyy"), qq);
         }
+        public static string ToYyyyQq(DateTime? dt) { return dt.HasValue ? ToYyyyQq(dt.Value) : null; }
         public static string ToYyyyWw(DateTime dt)
         {
             var weekOfYear = CtkTimeUtil.WeekOfYear(dt);
