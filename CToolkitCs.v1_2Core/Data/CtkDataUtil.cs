@@ -89,14 +89,45 @@ namespace CToolkitCs.v1_2Core.Data
                 var entity = new T();
                 foreach (DataColumn col in datatable.Columns)
                 {
-                    var field = type.GetField(col.ColumnName);
-                    var prop = type.GetProperty(col.ColumnName);
+                    var member = type.GetMember(col.ColumnName).FirstOrDefault();
+                    if (member == null) continue;
 
-                    if (field != null)
-                        field.SetValue(entity, row[col]);
-                    if (prop != null)
-                        prop.SetValue(entity, row[col]);
+                    if (member.MemberType == MemberTypes.Field)
+                    {
+                        var field = member as FieldInfo;
+                        if (field == null) continue;
+
+                        if (field.FieldType.IsEnum)
+                        {
+                            var val = CtkUtil.EnumParse(row[col] as string, field.FieldType);
+                            field.SetValue(entity, val);
+                        }
+                        else
+                        {
+                            var val = Convert.ChangeType(row[col] as string, field.FieldType);
+                            field.SetValue(entity, val);
+                        }
+
+                    }
+                    else if (member.MemberType == MemberTypes.Property)
+                    {
+                        var prop = member as PropertyInfo;
+                        if (prop == null) continue;
+                        if (prop.PropertyType.IsEnum)
+                        {
+                            var val = CtkUtil.EnumParse(row[col] as string, prop.PropertyType);
+                            prop.SetValue(entity, val);
+                        }
+                        else
+                        {
+                            var val = Convert.ChangeType(row[col] as string, prop.PropertyType);
+                            prop.SetValue(entity, val);
+                        }
+
+                    }
+
                 }
+                rtn.Add(entity);
             }
 
             return rtn;
