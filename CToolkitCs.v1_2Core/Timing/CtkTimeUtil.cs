@@ -499,15 +499,6 @@ namespace CToolkitCs.v1_2Core.Timing
         #region Sign DateTime / String : prefix 3 字元
 
 
-        /// <summary> wek202212 </summary>
-        public static DateTime FromSign3Week(string yyyyww)
-        {
-            if (!yyyyww.StartsWith("wek")) throw new ArgumentException("錯誤的Sign");
-            yyyyww = yyyyww.Substring(3);
-            return FromYyyyWw(yyyyww);
-        }
-
-
         /// <summary> mth20220911 </summary>
         public static DateTime FromSign3Day(string yyyymmdd)
         {
@@ -529,6 +520,8 @@ namespace CToolkitCs.v1_2Core.Timing
             catch (Exception) { return null; }
         }
 
+        /// <summary> same as Seoncd </summary>
+        public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
 
         /// <summary> mth202209 </summary>
         public static DateTime FromSign3Month(string yyyymm)
@@ -546,14 +539,6 @@ namespace CToolkitCs.v1_2Core.Timing
             return FromYyyyQq(yyyyqq);
         }
 
-        /// <summary> yr_202203 </summary>
-        public static DateTime FromSign3Year(string yyyy)
-        {
-            if (!yyyy.StartsWith("yr_")) throw new ArgumentException("錯誤的Sign");
-            yyyy = yyyy.Substring(3);
-            return FromYyyy(yyyy);
-        }
-
         /// <summary> sec20220911201435 </summary>
         public static DateTime FromSign3Second(string yyyymmddhhiiss)
         {
@@ -562,11 +547,20 @@ namespace CToolkitCs.v1_2Core.Timing
             return FromYyyyMmDdHhIiSs(yyyymmddhhiiss);
         }
 
-        /// <summary> same as Seoncd </summary>
-        public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
-
-
-
+        /// <summary> wek202212 </summary>
+        public static DateTime FromSign3Week(string yyyyww)
+        {
+            if (!yyyyww.StartsWith("wek")) throw new ArgumentException("錯誤的Sign");
+            yyyyww = yyyyww.Substring(3);
+            return FromYyyyWw(yyyyww);
+        }
+        /// <summary> yr_202203 </summary>
+        public static DateTime FromSign3Year(string yyyy)
+        {
+            if (!yyyy.StartsWith("yr_")) throw new ArgumentException("錯誤的Sign");
+            yyyy = yyyy.Substring(3);
+            return FromYyyy(yyyy);
+        }
         /// <summary> day20201223 </summary>
         public static string ToSign3Day(DateTime dt) { return "day" + dt.ToString("yyyyMMdd"); }
         /// <summary>
