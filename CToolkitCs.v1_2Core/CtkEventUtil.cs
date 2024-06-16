@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace CToolkitCs.v1_2Core
 {
@@ -11,54 +10,107 @@ namespace CToolkitCs.v1_2Core
     public class CtkEventUtil
     {
 
-        /// <summary>
-        /// 移除某個event裡的所有delegate
-        /// 無法使用, 因為event無法以EventHandler形式傳遞
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="eh"></param>
-        public static void RemoveEventHandlers<T>(EventHandler<T> eh) where T : EventArgs
+        public static bool IsSubscriberIncludedEvent(EventInfo eventInfo, Delegate targetSubscriber
+            , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+        { return IsSubscriberIncludedEvent(null, eventInfo, targetSubscriber, flags); }
+        public static bool IsSubscriberIncludedEvent(Object eventObject, EventInfo eventInfo, Delegate targetSubscriber
+            , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
         {
-            //Delegate.RemoveAll(,)
-            var handlers = eh.GetInvocationList().ToList();
-            foreach (var hdl in handlers)
-                eh -= (EventHandler<T>)hdl;
+            if (eventInfo == null || targetSubscriber == null) return false;
+
+
+            var field = eventInfo.DeclaringType.GetField(eventInfo.Name, flags);
+            var eventDelegate = field.GetValue(eventObject) as Delegate;
+            if (eventDelegate == null) return false;//沒人訂閱也會回傳null
+
+            foreach (var subscriber in eventDelegate.GetInvocationList().ToList())
+            {//每個訂閱者
+                if (subscriber == targetSubscriber) return true;
+            }
+            return false;
         }
 
-        /// <summary>
-        /// 移除某個event裡的所有delegate
-        /// </summary>
-        /// <param name="dlgt"></param>
-        /// <param name="target"></param>
-        /// <param name="flags"></param>
-        public static void RemoveEventHandlersOfDlgtByTarget(Delegate dlgt, Object target
+
+        public static bool IsSubscriberIncludedObject(Object eventObject, Delegate targetSubscriber
             , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
         {
-            //Delegate.RemoveAll(,)
-            var theEvent = dlgt.Target.GetType().GetEvent(dlgt.Method.Name, flags);
-            var handlers = dlgt.GetInvocationList().ToList();
-            foreach (var hdl in handlers)
-                if (hdl.Target == target)
-                    RemoveSubscriberEvenIfItsPrivate(theEvent, dlgt.Target, hdl, flags);
+            if (eventObject == null || targetSubscriber == null) return false;
+            foreach (DelegateInfo dlgtInfo in GetDelegates(eventObject, null, flags, true))
+            {//每個delegate/event
+                foreach (Delegate subscriber in dlgtInfo.GetInvocationList())
+                {//每個訂閱者
+                    if (subscriber == targetSubscriber) return true;
+                }
+            }
+            return false;
+        }
+        public static bool IsSubscriberIncludedType(Type eventType, Delegate targetSubscriber
+            , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+        {
+            if (eventType == null || targetSubscriber == null) return false;
+
+            foreach (DelegateInfo eventOfOwning in GetDelegates(null, eventType, flags, true))
+            {//每個delegate/event
+                foreach (Delegate subscriber in eventOfOwning.GetInvocationList())
+                {//每個訂閱者
+                    if (subscriber == targetSubscriber) return true;
+                }
+            }
+            return false;
         }
 
 
-        /// <summary>
-        /// 移除某個event裡的所有delegate
-        /// </summary>
-        /// <param name="dlgt"></param>
-        /// <param name="target"></param>
-        /// <param name="flags"></param>
-        public static void RemoveEventHandlersOfTypeByTarget(System.Type type, Object target
+
+
+
+
+        /// <summary> 移除物件裡所有delegate/event 屬於target的訂閱者 </summary>
+        public static void RemoveSubscriberOfObjectBelongTarget(Object eventObject, Object target
+            , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+        {
+            if (eventObject == null || target == null) return;
+
+            foreach (DelegateInfo dlgtInfo in GetDelegates(eventObject, null, flags, true))
+            {//每個delegate/event
+                foreach (Delegate subscriber in dlgtInfo.GetInvocationList())
+                {//每個訂閱者
+                    if (subscriber.Target == target)
+                    {
+                        EventInfo theEvent = dlgtInfo.GetEventInfo(flags);
+                        RemoveSubscriberEvenIfItsPrivate(theEvent, eventObject, subscriber, flags);
+                    }
+                }
+            }
+        }
+
+        /// <summary> 移除物件裡所有delegate/event 經過filter的訂閱者 </summary>
+        public static void RemoveSubscriberOfObjectByFilter(Object eventObject, Func<Delegate, bool> filterFunc = null,
+            BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+        {
+            if (eventObject == null) return;
+            if (filterFunc == null) filterFunc = dlgt => true;
+
+            foreach (DelegateInfo eventFromOwningObject in GetDelegates(eventObject, null, flags, true))
+            {
+                foreach (Delegate subscriber in eventFromOwningObject.GetInvocationList())
+                {
+                    if (filterFunc(subscriber))
+                    {
+                        EventInfo theEvent = eventFromOwningObject.GetEventInfo(flags);
+                        RemoveSubscriberEvenIfItsPrivate(theEvent, eventObject, subscriber, flags);
+                    }
+                }
+            }
+        }
+
+        /// <summary> 移除型別裡所有delegate/event 屬於target訂閱者 </summary>
+        public static void RemoveSubscriberOfTypeBelongTarget(Type eventType, Object target
             , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
         {
-            //傳入類型代表要處理static類型的EventHandler
-
-            foreach (DelegateInfo eventOfOwning in GetDelegates(type, flags))
-            {
-                //Run過所有訂閱者
+            foreach (DelegateInfo eventOfOwning in GetDelegates(null, eventType, flags, true))
+            {//每個delegate/event
                 foreach (Delegate subscriber in eventOfOwning.GetInvocationList())
-                {
+                {//每個訂閱者
                     if (subscriber.Target == target)
                     {
                         EventInfo theEvent = eventOfOwning.GetEventInfo(flags);
@@ -69,165 +121,82 @@ namespace CToolkitCs.v1_2Core
         }
 
 
-        /// <summary>
-        /// 在 owningObject 中, 移除所有與 targetObj 有關 event 的 delegate
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="eventOwner"></param>
-        /// <param name="target"></param>
-        public static void RemoveEventHandlersOfOwnerByTarget(Object eventOwner, Object target
-            , BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
-        {
-            if (eventOwner == null || target == null) return;
-
-            foreach (DelegateInfo dlgtInfo in GetDelegates(eventOwner, flags))
-            {
-                //Run過所有訂閱者
-                foreach (Delegate subscriber in dlgtInfo.GetInvocationList())
-                {
-                    if (subscriber.Target == target)
-                    {
-                        EventInfo theEvent = dlgtInfo.GetEventInfo(flags);
-                        RemoveSubscriberEvenIfItsPrivate(theEvent, eventOwner, subscriber, flags);
-                    }
-                }
-            }
-        }
-
-
 
 
         /// <summary>
-        /// 清除 owningObject 裡所有 event 的 delegate
+        /// Getting delegates/events what from a type.
+        /// 取得型別中 宣告為 delegate/event 的成員
         /// </summary>
-        /// <param name="filterFunc"></param>
-        /// <param name="eventOwner"></param>
-        /// <param name="flags"></param>
-        public static void RemoveEventHandlersOfOwnerByFilter(Object eventOwner, Func<Delegate, bool> filterFunc = null,
-            BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+        private static DelegateInfo[] GetDelegates(object ownObject, Type ownType, BindingFlags flags, bool isIncldueBaseType)
         {
-            if (eventOwner == null) return;
-            if (filterFunc == null) filterFunc = dlgt => true;
-
-            foreach (DelegateInfo eventFromOwningObject in GetDelegates(eventOwner, flags))
-            {
-                foreach (Delegate subscriber in eventFromOwningObject.GetInvocationList())
-                {
-                    if (filterFunc(subscriber))
-                    {
-                        EventInfo theEvent = eventFromOwningObject.GetEventInfo(flags);
-                        RemoveSubscriberEvenIfItsPrivate(theEvent, eventOwner, subscriber, flags);
-                    }
-                }
-            }
-        }
-
-
-
-
-        /// <summary>
-        /// 取得owningObject裡所有宣告為Delegate的Field
-        /// </summary>
-        /// <param name="owningObject"></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
-        private static DelegateInfo[] GetDelegates(object owningObject, BindingFlags flags)
-        {
-
             var delegates = new List<DelegateInfo>();
             var potentialEvetns = new List<FieldInfo>();
 
-            var type = owningObject.GetType();
+            if (ownObject != null) ownType = ownObject.GetType();
+            if (ownType == null) throw new CtkException("Cannot get type");
+
+            var type = ownType;
             do
             {
                 potentialEvetns.AddRange(type.GetFields(flags));
                 type = type.BaseType;
-            } while (type != null);
+            } while (type != null && isIncldueBaseType);
 
 
             foreach (FieldInfo privateFieldInfo in potentialEvetns)
             {
-                Delegate eventFromOwningObject = privateFieldInfo.GetValue(owningObject) as Delegate;
+                Delegate eventFromOwningObject = privateFieldInfo.GetValue(ownObject) as Delegate;
                 //可以成功轉為Delegate的, 記錄下來
                 if (eventFromOwningObject != null)
                 {
-                    delegates.Add(new DelegateInfo(eventFromOwningObject, privateFieldInfo, owningObject));
+                    delegates.Add(new DelegateInfo(eventFromOwningObject, privateFieldInfo, ownObject, ownType));
                 }
             }
-
-
-
 
             return delegates.ToArray();
         }
 
-        private static DelegateInfo[] GetDelegates(System.Type owningType, BindingFlags flags)
-        {
-
-            var delegates = new List<DelegateInfo>();
-            var potentialEvetns = new List<FieldInfo>();
-
-            var type = owningType;
-            do
-            {
-                potentialEvetns.AddRange(owningType.GetFields(flags));
-                type = type.BaseType;
-            } while (type != null);
 
 
-
-
-            foreach (FieldInfo privateFieldInfo in potentialEvetns)
-            {
-                Delegate eventFromOwningObject = privateFieldInfo.GetValue(null) as Delegate;
-                //可以成功轉為Delegate的, 記錄下來
-                if (eventFromOwningObject != null)
-                {
-                    delegates.Add(new DelegateInfo(eventFromOwningObject, privateFieldInfo, owningType));
-                }
-            }
-
-
-
-
-            return delegates.ToArray();
-        }
-
-        // You can use eventInfo.RemoveEventHandler(owningObject, subscriber) 
-        // unless it's a private delegate
         private static void RemoveSubscriberEvenIfItsPrivate(
-          EventInfo eventInfo, object owningObject, Delegate subscriber, BindingFlags flags)
+          EventInfo eventInfo, object ownObject, Delegate subscriber, BindingFlags flags)
         {
-            if (eventInfo == null) return;
+            // You can use eventInfo.RemoveEventHandler(owningObject, subscriber) 
+            // unless it's a private delegate if (eventInfo == null) return;
             MethodInfo privateRemoveMethod = eventInfo.GetRemoveMethod(true);
-            privateRemoveMethod.Invoke(owningObject, flags, null, new object[] { subscriber }, CultureInfo.CurrentCulture);
+            //移除指定 訂閱者
+            privateRemoveMethod.Invoke(ownObject, flags, null, new object[] { subscriber }, CultureInfo.CurrentCulture);
         }
+
+
+
+
         private class DelegateInfo
         {
-            public readonly Delegate delegateInformation;
+            public readonly Delegate aDelegate;
             public readonly FieldInfo fieldInfo;
-            public readonly object owningObject;
-            public readonly System.Type owningType;
+            public readonly object ownObject;
+            public readonly Type ownType;
 
-            public DelegateInfo(Delegate delegateInformation, FieldInfo fieldInfo, object owningObject)
+            public DelegateInfo(Delegate delegateInformation, FieldInfo fieldInfo, object ownObject, Type ownType)
             {
-                this.delegateInformation = delegateInformation;
+                this.aDelegate = delegateInformation;
                 this.fieldInfo = fieldInfo;
-                this.owningObject = owningObject;
-                if (owningObject is System.Type) this.owningType = owningObject as System.Type;
+                this.ownObject = ownObject;
+                this.ownType = ownType;
             }
 
             public EventInfo GetEventInfo(BindingFlags flags)
             {
-                if (this.owningType == null)
-                    return owningObject.GetType().GetEvent(fieldInfo.Name, flags);
+                if (this.ownType == null)
+                    return ownObject.GetType().GetEvent(fieldInfo.Name, flags);
 
-                return this.owningType.GetEvent(fieldInfo.Name, flags);
+                return this.ownType.GetEvent(fieldInfo.Name, flags);
             }
 
             public Delegate[] GetInvocationList()
             {
-                return delegateInformation.GetInvocationList();
+                return aDelegate.GetInvocationList();
             }
         }
     }

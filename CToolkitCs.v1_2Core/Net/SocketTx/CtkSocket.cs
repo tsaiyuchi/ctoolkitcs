@@ -805,7 +805,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             this.Disconnect();
             CtkUtil.DisposeObjTry(this.mreIsConnecting);
             CtkUtil.DisposeObjTry(this.mreIsReceiving);
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveSubscriberOfObjectByFilter(this, (dlgt) => true);
         }
         protected virtual void Dispose(bool disposing)
         {

@@ -145,7 +145,7 @@ namespace CToolkitCs.v1_2Core.Logging
             try { this.CloseTask(); }
             catch (Exception ex) { CtkLog.Write(ex); }
             //斷線不用清除Event, 但Dispsoe需要, 因為即使斷線此物件仍存活著
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveSubscriberOfObjectByFilter(this, (dlgt) => true);
         }
 
         // Protected implementation of Dispose pattern.

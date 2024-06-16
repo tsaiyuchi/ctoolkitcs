@@ -266,7 +266,7 @@ namespace CToolkitCs.v1_2Core.DigitalPort
             {
                 this.Disconnect();
                 //一旦結束就死了, 需要重new, 所以清掉event沒問題
-                CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+                CtkEventUtil.RemoveSubscriberOfObjectByFilter(this, (dlgt) => true);
             }
             catch (Exception ex) { CtkLog.Write(ex); }
         }

@@ -203,7 +203,7 @@ namespace CToolkitCs.v1_2Core.Worker
         }
         public virtual void DisposeClose()
         {
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveSubscriberOfObjectByFilter(this, (dlgt) => true);
             CtkUtil.DisposeTaskTry(this.CtkProcTask);
         }
 

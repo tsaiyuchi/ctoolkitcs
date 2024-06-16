@@ -172,8 +172,13 @@ namespace CToolkitCs.v1_2Core
         }
 
         public static void RegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite += eh; }
+        public static bool IsRegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh)
+        {
+            var ei = typeof(CtkLogger).GetEvent(nameof(CtkLogger.EhEveryLogWrite));
+            return CtkEventUtil.IsSubscriberIncludedEvent(ei, eh);
+        }
         public static void UnRegisterEveryLogWrite(EventHandler<CtkLoggerEventArgs> eh) { CtkLogger.EhEveryLogWrite -= eh; }
-        public static void UnRegisterEveryLogWriteByOwner(object owner) { CtkEventUtil.RemoveEventHandlersOfTypeByTarget(typeof(CtkLogger), owner); }
+        public static void UnRegisterEveryLogWriteByOwner(object owner) { CtkEventUtil.RemoveSubscriberOfTypeBelongTarget(typeof(CtkLogger), owner); }
         #endregion
 
 

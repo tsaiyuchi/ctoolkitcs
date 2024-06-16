@@ -540,7 +540,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         {
             try { this.Disconnect(); }
             catch (Exception ex) { CtkLog.Write(ex); }
-            CtkEventUtil.RemoveEventHandlersOfOwnerByFilter(this, (dlgt) => true);
+            CtkEventUtil.RemoveSubscriberOfObjectByFilter(this, (dlgt) => true);
 
         }
 
