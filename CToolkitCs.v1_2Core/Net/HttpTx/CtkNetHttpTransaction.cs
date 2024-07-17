@@ -139,6 +139,7 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
             {
                 var myline = line.Trim();
                 if (String.IsNullOrEmpty(myline)) continue;
+                if (myline.StartsWith("//")) continue;//註解的
                 var idx = myline.IndexOf(":");
                 var key = myline.Substring(0, idx).Trim();
                 var value = myline.Substring(idx + 1).Trim();
@@ -152,14 +153,14 @@ namespace CToolkitCs.v1_2Core.Net.HttpTx
                 var key = kv.Key;
                 var value = kv.Value;
 
-                if (key.StartsWith("//")) continue;//註解的
-
                 if (String.Compare(key, "Accept", true) == 0)
                     hwreq.Accept = value;
                 else if (String.Compare(key, "Connection", true) == 0)
                 {
-                    if (String.Compare(key, "keep-alive", true) == 0)
+                    if (String.Compare(value, "keep-alive", true) == 0)
                         hwreq.KeepAlive = true;
+                    else
+                        hwreq.Headers[key] = value;
                 }
                 else if (String.Compare(key, "Content-Length", true) == 0)
                     continue;
