@@ -35,7 +35,7 @@ namespace CToolkitCs.v1_2Core.Threading
 
         void SetupThreadName()
         {
-            if (!String.IsNullOrEmpty(this.Name) && String.IsNullOrEmpty(Thread.CurrentThread.Name))
+            if (!String.IsNullOrEmpty(this.Name))
                 Thread.CurrentThread.Name = this.Name;
         }
 
