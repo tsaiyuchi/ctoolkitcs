@@ -522,6 +522,7 @@ namespace CToolkitCs.v1_2Core.Timing
 
         /// <summary> same as Seoncd </summary>
         public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
+        public static bool FromSign3DTimeTry(string dtime, out DateTime dt) { return FromSign3SecondTry(dtime, out dt); }
 
         /// <summary> mth202209 </summary>
         public static DateTime FromSign3Month(string yyyymm)
@@ -546,6 +547,18 @@ namespace CToolkitCs.v1_2Core.Timing
             yyyymmddhhiiss = yyyymmddhhiiss.Substring(3);
             return FromYyyyMmDdHhIiSs(yyyymmddhhiiss);
         }
+        /// <summary> sec20220911201435 </summary>
+        public static bool FromSign3SecondTry(string yyyymmddhhiiss, out DateTime dt)
+        {
+            dt = new DateTime();
+            if (String.IsNullOrEmpty(yyyymmddhhiiss)) return false;
+            if (!yyyymmddhhiiss.StartsWith("sec")) return false;
+            yyyymmddhhiiss = yyyymmddhhiiss.Substring(3);
+            return FromYyyyMmDdHhIiSsTry(yyyymmddhhiiss, out dt);
+        }
+
+
+
 
         /// <summary> wek202212 </summary>
         public static DateTime FromSign3Week(string yyyyww)
@@ -561,6 +574,10 @@ namespace CToolkitCs.v1_2Core.Timing
             yyyy = yyyy.Substring(3);
             return FromYyyy(yyyy);
         }
+
+
+
+
         /// <summary> day20201223 </summary>
         public static string ToSign3Day(DateTime dt) { return "day" + dt.ToString("yyyyMMdd"); }
         /// <summary>
@@ -581,6 +598,7 @@ namespace CToolkitCs.v1_2Core.Timing
         /// <param name="dt"></param>
         /// <returns></returns>
         public static string ToSign3DTime(DateTime? dt) { return dt.HasValue ? ToSign3DTime(dt.Value) : null; }
+
         /// <summary>
         /// hyr202002
         /// </summary>
@@ -651,6 +669,10 @@ namespace CToolkitCs.v1_2Core.Timing
         /// <param name="dt"></param>
         /// <returns></returns>
         public static string ToSign3Second(DateTime? dt) { return dt.HasValue ? ToSign3Second(dt.Value) : null; }
+
+
+
+
         /// <summary>
         /// wek202053
         /// </summary>
@@ -928,6 +950,10 @@ namespace CToolkitCs.v1_2Core.Timing
 
 
         public static int CompareSign3DTime(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3DTime(dt2)); }
+
+        public static int CompareSign3Month(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Month(dt2)); }
+        public static int CompareSign3Month(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Month(dt1), ToSign3Month(dt2)); }
+
 
 
         #endregion
