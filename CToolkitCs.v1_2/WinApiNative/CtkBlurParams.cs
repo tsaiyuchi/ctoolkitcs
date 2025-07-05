@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.WinApiNative
+namespace CToolkitCs.v1_2.WinApiNative
 {
     public struct CtkBlurParams
     {

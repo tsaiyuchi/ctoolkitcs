@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-namespace CToolkitCs.v1_2Core.Numeric
+namespace CToolkitCs.v1_2.Numeric
 {
 
 

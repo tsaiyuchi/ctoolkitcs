@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.StateMachine
+namespace CToolkitCs.v1_2.StateMachine
 {
     public class ReadMe
     {

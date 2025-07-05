@@ -1,4 +1,4 @@
-﻿using CToolkitCs.v1_2Core.Protocol;
+﻿using CToolkitCs.v1_2.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.DigitalPort
+namespace CToolkitCs.v1_2.DigitalPort
 {
     public class CtkNonStopSerialPortEventArgs : CtkProtocolEventArgs
     {

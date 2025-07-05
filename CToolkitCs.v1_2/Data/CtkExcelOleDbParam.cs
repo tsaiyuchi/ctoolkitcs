@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Data
+namespace CToolkitCs.v1_2.Data
 {
     public class CtkExcelOleDbParam
     {

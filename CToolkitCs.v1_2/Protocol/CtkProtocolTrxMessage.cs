@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Protocol
+namespace CToolkitCs.v1_2.Protocol
 {
     public class CtkProtocolTrxMessage
     {
@@ -15,28 +15,9 @@ namespace CToolkitCs.v1_2Core.Protocol
 
         public T As<T>() where T : class { return this.TrxMessage as T; }
 
-        public string GetString(Encoding encoding = null)
-        {
-            if (encoding == null) encoding = Encoding.UTF8;
-
-            var bufferMsg = this.As<CtkProtocolBufferMessage>();
-            if (bufferMsg != null)
-                return bufferMsg.GetString(encoding);
-
-            if (this.TrxMessage is String)
-                return this.TrxMessage as string;
-
-            if (this.TrxMessage is byte[])
-            {
-                var buffer = this.TrxMessage as byte[];
-                return encoding.GetString(buffer, 0, buffer.Length);
-            }
-
-            return null;
-        }
-
         public bool Is<T>() { return this.TrxMessage is T; }
-        public CtkProtocolBufferMessage ToBuffer(Encoding encoding = null)
+
+        public CtkProtocolBufferMessage TxBuffer(Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.UTF8;
 
@@ -57,10 +38,27 @@ namespace CToolkitCs.v1_2Core.Protocol
             bufferMsg.Length = buffer.Length;
             return bufferMsg;
         }
+        public string TxString(Encoding encoding = null)
+        {
+            if (encoding == null) encoding = Encoding.UTF8;
 
+            var bufferMsg = this.As<CtkProtocolBufferMessage>();
+            if (bufferMsg != null)
+                return bufferMsg.GetString(encoding);
 
+            if (this.TrxMessage is String)
+                return this.TrxMessage as string;
 
+            if (this.TrxMessage is byte[])
+            {
+                var buffer = this.TrxMessage as byte[];
+                return encoding.GetString(buffer, 0, buffer.Length);
+            }
 
+            return null;
+        }
+        
+        
         #region Static
 
         public static CtkProtocolTrxMessage Create(Object msg) { return new CtkProtocolTrxMessage() { TrxMessage = msg }; }
@@ -69,10 +67,17 @@ namespace CToolkitCs.v1_2Core.Protocol
 
 
         public static implicit operator CtkProtocolTrxMessage(Byte[] msg) { return new CtkProtocolTrxMessage() { TrxMessage = msg }; }
+        public static implicit operator CtkProtocolTrxMessage(UInt16[] msg)
+        {
+            var buffer = new byte[msg.Length * sizeof(uint)];
+            Buffer.BlockCopy(msg, 0, buffer, 0, buffer.Length);
+            return new CtkProtocolTrxMessage() { TrxMessage = buffer };
+        }
         public static implicit operator CtkProtocolTrxMessage(String msg) { return new CtkProtocolTrxMessage() { TrxMessage = msg }; }
         public static implicit operator CtkProtocolTrxMessage(CtkProtocolBufferMessage msg) { return new CtkProtocolTrxMessage() { TrxMessage = msg }; }
 
         #endregion
+
 
 
 

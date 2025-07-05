@@ -1,4 +1,4 @@
-using CToolkitCs.v1_2Core.Protocol;
+using CToolkitCs.v1_2.Protocol;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CToolkitCs.v1_2Core.Net.SocketTx
+namespace CToolkitCs.v1_2.Net.SocketTx
 {
     public class CtkSocketTcp : CtkSocket
     {

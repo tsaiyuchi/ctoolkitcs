@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Protocol
+namespace CToolkitCs.v1_2.Protocol
 {
     public class CtkProtocolBufferMessage
     {
@@ -33,5 +33,8 @@ namespace CToolkitCs.v1_2Core.Protocol
 
         public static implicit operator CtkProtocolBufferMessage(Byte[] data) { return new CtkProtocolBufferMessage() { Buffer = data, Offset = 0, Length = data.Length }; }
         public static implicit operator Byte[](CtkProtocolBufferMessage data) { return data.Buffer; }
+
+
+
     }
 }

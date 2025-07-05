@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CToolkitCs.v1_2Core.Protocol
+namespace CToolkitCs.v1_2.Protocol
 {
     public interface ICtkProtocolConnect
     {

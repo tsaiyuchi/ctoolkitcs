@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Extension
+namespace CToolkitCs.v1_2.Extension
 {
     public static class CtkExtObject
     {

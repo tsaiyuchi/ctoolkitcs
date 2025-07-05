@@ -7,7 +7,7 @@ using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using System.Reflection;
 
-namespace CToolkitCs.v1_2Core.Data
+namespace CToolkitCs.v1_2.Data
 {
     public class CtkDataUtil
     {

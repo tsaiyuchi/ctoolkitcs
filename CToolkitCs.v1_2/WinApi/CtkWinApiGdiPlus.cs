@@ -1,5 +1,5 @@
-﻿using CToolkitCs.v1_2Core.Extension;
-using CToolkitCs.v1_2Core.WinApiNative;
+﻿using CToolkitCs.v1_2.Extension;
+using CToolkitCs.v1_2.WinApiNative;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.WinApi
+namespace CToolkitCs.v1_2.WinApi
 {
     public class CtkWinApiGdiPlus
     {

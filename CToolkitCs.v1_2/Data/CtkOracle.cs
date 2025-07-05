@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Data
+namespace CToolkitCs.v1_2.Data
 {
     public class CtkOracle
     {

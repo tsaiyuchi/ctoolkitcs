@@ -1,4 +1,4 @@
-﻿using CToolkitCs.v1_2Core;
+﻿using CToolkitCs.v1_2;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 
 
-namespace CToolkitCs.v1_2Core.TypeGuid
+namespace CToolkitCs.v1_2.TypeGuid
 {
 
     public class CtkTypeGuidMapper

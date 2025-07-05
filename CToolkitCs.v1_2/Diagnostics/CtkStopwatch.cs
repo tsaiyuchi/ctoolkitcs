@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CToolkitCs.v1_2Core.Diagnostics
+namespace CToolkitCs.v1_2.Diagnostics
 {
     public class CtkStopwatch : System.Diagnostics.Stopwatch
     {

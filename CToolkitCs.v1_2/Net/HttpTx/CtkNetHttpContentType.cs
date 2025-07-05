@@ -1,4 +1,4 @@
-﻿namespace CToolkitCs.v1_2Core.Net.HttpTx
+﻿namespace CToolkitCs.v1_2.Net.HttpTx
 {
     public class CtkNetHttpContentType
     {

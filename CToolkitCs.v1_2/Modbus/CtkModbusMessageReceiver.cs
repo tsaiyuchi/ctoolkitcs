@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Modbus
+namespace CToolkitCs.v1_2.Modbus
 {
     public class CtkModbusMessageReceiver : Queue<CtkModbusMessage>
     {

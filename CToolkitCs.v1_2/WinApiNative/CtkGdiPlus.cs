@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.WinApiNative
+namespace CToolkitCs.v1_2.WinApiNative
 {
     public class CtkGdiPlus
     {

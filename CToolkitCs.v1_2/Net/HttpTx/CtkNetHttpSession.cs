@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Net.HttpTx
+namespace CToolkitCs.v1_2.Net.HttpTx
 {
     public class CtkNetHttpSession : IDisposable
     {

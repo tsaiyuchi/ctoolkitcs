@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CToolkitCs.v1_2Core.Modbus
+namespace CToolkitCs.v1_2.Modbus
 {
     /// <summary>
     /// Modbus TCP common driver class. This class implements a modbus TCP master driver.

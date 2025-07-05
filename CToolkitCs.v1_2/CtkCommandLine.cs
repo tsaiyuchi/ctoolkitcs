@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core
+namespace CToolkitCs.v1_2
 {
     public class CtkCommandLine
     {

@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Security;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core.Net.FtpTx
+namespace CToolkitCs.v1_2.Net.FtpTx
 {
     /// <summary> 採混用 FluentFtp + FtpWebRequest 來達成各種Method </summary>
     public class CtkNetFtpTransaction : IDisposable

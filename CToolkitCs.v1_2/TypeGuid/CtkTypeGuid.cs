@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace CToolkitCs.v1_2Core.TypeGuid
+namespace CToolkitCs.v1_2.TypeGuid
 {
     [Serializable]
     public class CtkTypeGuid

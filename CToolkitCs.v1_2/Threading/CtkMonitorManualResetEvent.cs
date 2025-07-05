@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Threading
+namespace CToolkitCs.v1_2.Threading
 {
 
     /*[d20220501] 

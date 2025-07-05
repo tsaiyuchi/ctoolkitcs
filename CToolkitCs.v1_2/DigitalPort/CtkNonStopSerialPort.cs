@@ -1,6 +1,6 @@
-using CToolkitCs.v1_2Core.Logging;
-using CToolkitCs.v1_2Core.Net;
-using CToolkitCs.v1_2Core.Protocol;
+using CToolkitCs.v1_2.Logging;
+using CToolkitCs.v1_2.Net;
+using CToolkitCs.v1_2.Protocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace CToolkitCs.v1_2Core.DigitalPort
+namespace CToolkitCs.v1_2.DigitalPort
 {
     public class CtkNonStopSerialPort : ICtkProtocolNonStopConnect, IDisposable
     {
@@ -168,7 +168,7 @@ namespace CToolkitCs.v1_2Core.DigitalPort
 
 
         #region ICtkProtocolNonStopConnect
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+        public int NonStopIntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public void NonStopRunStop()
         {
             if (this.threadNonStopConnect != null)
@@ -188,7 +188,7 @@ namespace CToolkitCs.v1_2Core.DigitalPort
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
 
-                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
+                    Thread.Sleep(this.NonStopIntervalTimeOfConnectCheck);
 
                 }
             }));

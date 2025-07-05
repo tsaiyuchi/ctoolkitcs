@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Compress
+namespace CToolkitCs.v1_2.Compress
 {
     public class CtkCompressUtil
     {

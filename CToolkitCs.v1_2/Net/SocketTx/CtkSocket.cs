@@ -1,4 +1,4 @@
-﻿using CToolkitCs.v1_2Core.Protocol;
+﻿using CToolkitCs.v1_2.Protocol;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,13 +7,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CToolkitCs.v1_2Core.Net.SocketTx
+namespace CToolkitCs.v1_2.Net.SocketTx
 {
     public abstract class CtkSocket : ICtkProtocolNonStopConnect, IDisposable
     {
 
         /// <summary> Client? or Listener </summary>
-        public bool IsActively = false;
+        public bool IsClient = false;
         /// <summary> 自動聆聽開啟時, 會在每次收到連線後 再繼續聆聽下一個 </summary>
         public bool IsAsynAutoListen = true;
         /// <summary>
@@ -124,7 +124,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 };
 
                 ea.TrxMessage = new CtkProtocolBufferMessage(1024);
-                var trxBuffer = ea.TrxMessage.ToBuffer();
+                var trxBuffer = ea.TrxMessage.TxBuffer();
 
                 trxBuffer.Length = mySocketActive.Receive(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length, SocketFlags.None);
                 if (trxBuffer.Length == 0) return -1;
@@ -176,7 +176,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 if (this.SocketConn.ProtocolType != ProtocolType.Udp)
                     throw new CtkSocketException($"Only UDP can send by EndPoint");
 
-                var buffer = msg.ToBuffer();
+                var buffer = msg.TxBuffer();
                 this.SocketConn.SendTo(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None, ep);
                 return;
             }
@@ -199,7 +199,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 //所以其它作業卡同一個沒問題: Monitor.TryEnter(this, 1000)
                 if (this.SocketConn.ProtocolType != ProtocolType.Tcp)
                     throw new CtkSocketException($"Only TCP can send by Socket");
-                var buffer = msg.ToBuffer();
+                var buffer = msg.TxBuffer();
                 socket.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
             }
             catch (Exception ex)
@@ -445,7 +445,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 var myea = new CtkNetStateEventArgs();
                 myea.Sender = this;
 
-                if (this.IsActively)
+                if (this.IsClient)
                 {//Client + TCP/UDP
                     if (this.LocalUri != null && !this.SocketConn.IsBound)
                         this.SocketConn.Bind(CtkNetUtil.ToIPEndPoint(this.LocalUri));
@@ -520,6 +520,23 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
             this.WriteMsgTo_Socket(msg, socket);
         }
 
+
+        #endregion
+
+
+
+        #region ICtkProtocolNonStopConnect
+
+        public int NonStopIntervalTimeOfConnectCheck { get; set; }
+        public bool IsNonStopRunning { get; set; }
+        public void NonStopRunStart()
+        {
+            throw new NotImplementedException();
+        }
+        public void NonStopRunStop()
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 
@@ -771,23 +788,6 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
         #endregion
 
 
-
-
-
-        #region ICtkProtocolNonStopConnect
-
-        public int IntervalTimeOfConnectCheck { get; set; }
-        public bool IsNonStopRunning { get; set; }
-        public void NonStopRunStart()
-        {
-            throw new NotImplementedException();
-        }
-        public void NonStopRunStop()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
 
 
 

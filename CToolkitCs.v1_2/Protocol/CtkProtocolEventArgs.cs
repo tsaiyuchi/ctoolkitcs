@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace CToolkitCs.v1_2Core.Protocol
+namespace CToolkitCs.v1_2.Protocol
 {
     public class CtkProtocolEventArgs : EventArgs
     {

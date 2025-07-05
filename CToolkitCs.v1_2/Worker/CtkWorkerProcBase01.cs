@@ -1,5 +1,5 @@
-﻿using CToolkitCs.v1_2Core.ContextFlow;
-using CToolkitCs.v1_2Core.Threading;
+﻿using CToolkitCs.v1_2.ContextFlow;
+using CToolkitCs.v1_2.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Worker
+namespace CToolkitCs.v1_2.Worker
 {
 
     /// <summary> 僅供實作參考 (自用仍繼承來優使化 </summary>

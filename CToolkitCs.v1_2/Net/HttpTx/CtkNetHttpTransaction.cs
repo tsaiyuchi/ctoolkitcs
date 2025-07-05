@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.IO.Compression;
 using System.IO;
-using CToolkitCs.v1_2Core.Compress;
+using CToolkitCs.v1_2.Compress;
 using System.Threading.Tasks;
 using System.Threading;
 using OpenQA.Selenium;
@@ -17,7 +17,7 @@ using OpenQA.Selenium.Remote;
 using System.Net.Cache;
 using Newtonsoft.Json;
 
-namespace CToolkitCs.v1_2Core.Net.HttpTx
+namespace CToolkitCs.v1_2.Net.HttpTx
 {
     public class CtkNetHttpTransaction : IDisposable
     {

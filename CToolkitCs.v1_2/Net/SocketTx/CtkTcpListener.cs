@@ -1,5 +1,5 @@
-using CToolkitCs.v1_2Core.Protocol;
-using CToolkitCs.v1_2Core.Threading;
+using CToolkitCs.v1_2.Protocol;
+using CToolkitCs.v1_2.Threading;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CToolkitCs.v1_2Core.Net.SocketTx
+namespace CToolkitCs.v1_2.Net.SocketTx
 {
     public class CtkTcpListener : ICtkProtocolNonStopConnect, IDisposable
     {
@@ -195,7 +195,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                 };
 
                 ea.TrxMessage = new CtkProtocolBufferMessage(1518);
-                var trxBuffer = ea.TrxMessage.ToBuffer();
+                var trxBuffer = ea.TrxMessage.TxBuffer();
 
                 var stream = this.myWorkClient.GetStream();
                 trxBuffer.Length = stream.Read(trxBuffer.Buffer, 0, trxBuffer.Buffer.Length);
@@ -442,7 +442,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
 
         #region ICtkProtocolNonStopConnect
 
-        public int IntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
+        public int NonStopIntervalTimeOfConnectCheck { get { return this.m_IntervalTimeOfConnectCheck; } set { this.m_IntervalTimeOfConnectCheck = value; } }
         public bool IsNonStopRunning { get { return this.runningTask != null && this.runningTask.Status < TaskStatus.RanToCompletion; } }
         public void NonStopRunStop()
         {
@@ -464,7 +464,7 @@ namespace CToolkitCs.v1_2Core.Net.SocketTx
                     }
                     catch (Exception ex) { CtkLog.Write(ex); }
 
-                    Thread.Sleep(this.IntervalTimeOfConnectCheck);
+                    Thread.Sleep(this.NonStopIntervalTimeOfConnectCheck);
 
                 }
             });

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CToolkitCs.v1_2Core
+namespace CToolkitCs.v1_2
 {
     public static class CtkEquality<T>
     {
