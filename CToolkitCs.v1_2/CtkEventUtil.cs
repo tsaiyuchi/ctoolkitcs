@@ -162,7 +162,8 @@ namespace CToolkitCs.v1_2
           EventInfo eventInfo, object ownObject, Delegate subscriber, BindingFlags flags)
         {
             // You can use eventInfo.RemoveEventHandler(owningObject, subscriber) 
-            // unless it's a private delegate if (eventInfo == null) return;
+            // unless it's a private delegate
+            if (eventInfo == null) return;
             MethodInfo privateRemoveMethod = eventInfo.GetRemoveMethod(true);
             //移除指定 訂閱者
             privateRemoveMethod.Invoke(ownObject, flags, null, new object[] { subscriber }, CultureInfo.CurrentCulture);
