@@ -8,17 +8,8 @@ namespace CToolkitCs.v1_2.Timing
 {
     public class CtkTimeUtil
     {
-        //ToUniversalTime/ToLocalTime 會自動判別Kind = Local / Utc 來決定加減
-        //若為Unspecified, 則可當兩者,
-        // toLocal: +8 & Kink = Local
-        // toUniversal: -8 & Kind = Utc
 
-
-
-        //--- DateTime and Timestamp converter ---------
-
-        //--- ROC ---------
-        const int YearDiffBetweenRocAndAd = 1911;
+        public const int YearDiffFromRocToAd = 1911;
 
 
 
@@ -26,9 +17,7 @@ namespace CToolkitCs.v1_2.Timing
         {
             DateTime rsdate;
             if (DateTime.TryParse(datetime, out rsdate)
-                ||
-
-                DateTime.TryParseExact(datetime, srcFormat
+                || DateTime.TryParseExact(datetime, srcFormat
                     , CultureInfo.InvariantCulture
                     , DateTimeStyles.None
                     , out rsdate))
@@ -102,6 +91,7 @@ namespace CToolkitCs.v1_2.Timing
         #region Year Operation
 
         public static int HalfOfYear(DateTime dt) { return (dt.Month - 1) / 6 + 1; }
+        public static DateTime QuarterFrom(int year, int quarter) { return new DateTime(year, (quarter - 1) * 3 + 1, 15); }
         public static int QuarterOfYear(DateTime dt) { return (dt.Month - 1) / 3 + 1; }
 
         #endregion
@@ -167,18 +157,15 @@ namespace CToolkitCs.v1_2.Timing
             return new DateTime(mydt.Year, mydt.Month, mydt.Day, hour, minute, second);
         }
 
-
-
         #endregion
 
 
 
-
-        #region Normal DateTime / String
+        #region Sign-0 DateTime / String = Non-Sign
         /*[d20220627] 一般日期時間字串 = 沒有符號
          */
 
-        public static DateTime DateTimeParseExact(string s, string format = "yyyyMMdd") {return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture); }
+        public static DateTime DateTimeParseExact(string s, string format = "yyyyMMdd") { return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture); }
         public static DateTime DateTimeParseExact(string s, DateTime defaultDt, string format = "yyyyMMdd")
         {
             var dt = defaultDt;
@@ -313,9 +300,7 @@ namespace CToolkitCs.v1_2.Timing
 
         #endregion
 
-
-
-        #region Sign DateTime / String : 一代目, prefix 1 字元
+        #region Sign-1 DateTime / String
 
         /*[d20210327]
          * Normal DateTime: 一般轉換, Func Name 直接 代表轉換格式
@@ -493,10 +478,7 @@ namespace CToolkitCs.v1_2.Timing
 
         #endregion
 
-
-
-
-        #region Sign DateTime / String : prefix 3 字元
+        #region Sign-3 DateTime / String
 
 
         /// <summary> mth20220911 </summary>
@@ -692,7 +674,7 @@ namespace CToolkitCs.v1_2.Timing
 
         #endregion
 
-        #region Sign DateTime / String : prefix 6 字元
+        #region Sign-6 DateTime / String
 
         /// <summary>
         /// day___20201223
@@ -817,8 +799,7 @@ namespace CToolkitCs.v1_2.Timing
 
         #endregion
 
-
-        #region Sign DateTime / String : Full Prefix
+        #region Sign-Full DateTime / String
 
         /// <summary>
         /// day20201223
@@ -885,9 +866,7 @@ namespace CToolkitCs.v1_2.Timing
 
 
 
-
-
-        #region Normal Compare
+        #region Sign-0 Compare
 
         public static int CompareDTime(string dt1, string dt2) { return string.Compare(dt1, dt2); }
         public static int CompareDTime(DateTime dt1, DateTime dt2) { return string.Compare(ToDTime(dt1), ToDTime(dt2)); }
@@ -946,14 +925,23 @@ namespace CToolkitCs.v1_2.Timing
 
         #endregion
 
-        #region Compare Sign3
+        #region Sign-3 Compare
 
 
         public static int CompareSign3DTime(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3DTime(dt2)); }
 
         public static int CompareSign3Month(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Month(dt2)); }
+        public static int CompareSign3Month(DateTime dt1, string dt2) { return string.Compare(ToSign3Month(dt1), dt2); }
         public static int CompareSign3Month(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Month(dt1), ToSign3Month(dt2)); }
 
+
+        public static int CompareSign3Quarter(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Quarter(dt2)); }
+        public static int CompareSign3Quarter(DateTime dt1, string dt2) { return string.Compare(ToSign3Quarter(dt1), dt2); }
+        public static int CompareSign3Quarter(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Quarter(dt1), ToSign3Quarter(dt2)); }
+
+        public static int CompareSign3Year(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Year(dt2)); }
+        public static int CompareSign3Year(DateTime dt1, string dt2) { return string.Compare(ToSign3Year(dt1), dt2); }
+        public static int CompareSign3Year(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Year(dt1), ToSign3Year(dt2)); }
 
 
         #endregion
@@ -1015,44 +1003,53 @@ namespace CToolkitCs.v1_2.Timing
 
         #region ROC DateTime
 
-        public static DateTime FromRocDateToAd(DateTime dt) { return dt.AddYears(YearDiffBetweenRocAndAd); }
-
-        public static DateTime FromRocDateToAdSpliter(string s, char spliter)
+        public static DateTime FromRocToAdDate(string s, char spliter)
         {
             var dt = new DateTime();
-            if (!FromRocDateToAdSpliterTry(s, spliter, ref dt)) throw new CtkException("Cannot convert to DateTime");
+            if (!FromRocToAdDateTry(s, spliter, ref dt)) throw new CtkTimeTransferException("Cannot convert to DateTime");
             return dt;
         }
-
-        public static bool FromRocDateToAdSpliterTry(string s, char spliter, ref DateTime dt)
+        public static bool FromRocToAdDateTry(string s, char spliter, ref DateTime dt)
         {
+            //有潤年的關係, DateTime 不適合 當作 ROC DateTime
+
             var nums = s.Split(spliter);
             if (nums.Length != 3) return false;
-            var yyy = ToAdYearFromRoc(Convert.ToInt32(nums[0]));//會遇到潤2月, 因此先轉
-            var mm = Convert.ToInt32(nums[1]);
-            var dd = Convert.ToInt32(nums[2]);
-            dt = new DateTime(yyy, mm, dd);
-            return true;
+
+            if (Int32.TryParse(nums[0], out var yyy)
+                && Int32.TryParse(nums[1], out var mm)
+                && Int32.TryParse(nums[2], out var dd)
+                )
+            {
+                dt = new DateTime(yyy + YearDiffFromRocToAd, mm, dd);
+                return true;
+            }
+             return false;
         }
-        /// <summary>
-        /// 不建議使用, 小於民國100年的, 會被視為19xx年, e.q. 88/01/15 會變成 1988/01/15
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="result"></param>
-        /// <param name="format"></param>
-        /// <returns></returns>
-        [Obsolete("A incorrect convertion when year<100")]
-        public static bool FromRocDateToAdTry(string s, out DateTime result, string format = "yyy.MM.dd")
+        public static bool FromRocToAdDateTryOut(string s, char spliter, out DateTime? dt)
         {
-            if (!DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
-                return false;
-            result = CtkTimeUtil.FromRocDateToAd(result);
-            return true;
+            //有潤年的關係, DateTime 不適合 當作 ROC DateTime
+            dt = null;
+            var nums = s.Split(spliter);
+            if (nums.Length != 3) return false;
+
+            if (Int32.TryParse(nums[0], out var yyy)
+                && Int32.TryParse(nums[1], out var mm)
+                && Int32.TryParse(nums[2], out var dd)
+                )
+            {
+                dt = new DateTime(yyy + YearDiffFromRocToAd, mm, dd);
+                return true;
+            }
+
+            return false;
         }
 
-        public static int ToAdYearFromRoc(int year) { return year + YearDiffBetweenRocAndAd; }
-        public static DateTime ToRocDateFromAd(DateTime dt) { return dt.AddYears(-YearDiffBetweenRocAndAd); }
-        public static int ToRocYearFromAd(int year) { return year - YearDiffBetweenRocAndAd; }
+
+
+        public static int ToAdFromRocYear(int year) { return year + YearDiffFromRocToAd; }
+        public static int ToRocFromAdYear(int year) { return year - YearDiffFromRocToAd; }
+
         #endregion
 
 

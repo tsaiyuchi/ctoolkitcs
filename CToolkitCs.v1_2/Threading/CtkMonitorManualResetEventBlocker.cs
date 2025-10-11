@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CToolkitCs.v1_2.Threading
 {
@@ -15,6 +13,8 @@ namespace CToolkitCs.v1_2.Threading
             this._mare = mare;
             this._isUsedMonitor = isUsedMonitor;
         }
+
+        ~CtkMonitorManualResetEventBlocker() { this.Dispose(false); }
 
 
         public void Close()

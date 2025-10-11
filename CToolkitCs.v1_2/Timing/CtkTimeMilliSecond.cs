@@ -35,6 +35,8 @@ namespace CToolkitCs.v1_2.Timing
         }
 
         public DateTime ToDateTime() { return new DateTime(TotalMilliSecond * TimeSpan.TicksPerMillisecond); }
+       
+        
         #region Operator
 
         public static implicit operator CtkTimeMilliSecond(long d) { return new CtkTimeMilliSecond(d); }

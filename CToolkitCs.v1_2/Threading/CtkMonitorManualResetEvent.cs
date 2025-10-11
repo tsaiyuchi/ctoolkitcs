@@ -40,13 +40,13 @@ namespace CToolkitCs.v1_2.Threading
      * 長期阻塞(跨method) 用 ResetEvent.
      * 需要 方便的功能 再考慮用此類別
      */
-
-
     /*[d20221127] AutoResetEvent 放了一個Thread後會自動再堵起來
      * 在此不適用:
      * 試想, 若有一個測試用的 WaitOne, 也會導致放行後又被堵起來
      */
-
+    /* [d20250908] 沒有排隊的機制, 誰會先進去是憑運氣, 也有可能一直都進不去.
+     * 應該做一個有 隊列機制的, 領號碼牌, 也可以選擇要不要繼續排隊
+     */
 
     /// <summary> 為了反覆確認可否 進入/取得鎖 而寫的類別. </summary>
     public class CtkMonitorManualResetEvent : IDisposable
@@ -54,6 +54,7 @@ namespace CToolkitCs.v1_2.Threading
 
         protected ManualResetEvent _resetEvent = new ManualResetEvent(true);
 
+        ~CtkMonitorManualResetEvent() { this.Dispose(false); }
 
 
         /// <summary> 不使用Monitor阻塞 </summary>
@@ -73,6 +74,10 @@ namespace CToolkitCs.v1_2.Threading
         /// <summary> 使用Monitor進行Reset </summary>
         public virtual bool MonitorReset(int waitTimeLimitMs = 0, int eachTryGetLockTimeLimitMs = 10, int eachTryResetTimeLimitMs = 10, int eachSleepTimeMs = 10)
         {
+            //waitTimeLimitMs = 總等待時間
+            //eachTryGetLockTimeLimitMs = 每回嘗試時間
+
+
             var entryTime = DateTime.Now;
 
             //waitTimeUpLimitMs <= 0 代表無限等待
@@ -93,8 +98,8 @@ namespace CToolkitCs.v1_2.Threading
 
                     if (isGetLock)
                     {
-                        /* 若在這Wait不歸還Lock, 會導致其它Thread無法取得Lock, 無法進行Set就永遠等不到. 
-                         * 若確定要這樣做, 請直接使用 ResetEvent.WaitOne, 不需使用此物件*/
+                        //若在這Wait不歸還Lock, 會導致其它Thread無法取得Lock, 無法進行Set就永遠等不到. 
+                        //若確定要這樣做, 請直接使用 ResetEvent.WaitOne, 不需使用此物件
                         if (eachTryResetTimeLimitMs <= 0)
                             throw new ArgumentException("if you can get locker then another cannot, reset time <= 0 will cause dead lock");
 
