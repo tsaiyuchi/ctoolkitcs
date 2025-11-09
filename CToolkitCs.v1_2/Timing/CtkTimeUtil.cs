@@ -505,6 +505,12 @@ namespace CToolkitCs.v1_2.Timing
         /// <summary> same as Seoncd </summary>
         public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
         public static bool FromSign3DTimeTry(string dtime, out DateTime dt) { return FromSign3SecondTry(dtime, out dt); }
+        public static DateTime? FromSign3DTimeTryOrDefault(string s)
+        {
+            var dt = new DateTime();
+            if (FromSign3DTimeTry(s, out dt)) return dt;
+            return null;
+        }
 
         /// <summary> mth202209 </summary>
         public static DateTime FromSign3Month(string yyyymm)
@@ -916,7 +922,6 @@ namespace CToolkitCs.v1_2.Timing
         public static int CompareYyyyQq(string dt1, DateTime dt2) { return string.Compare(dt1, ToYyyyQq(dt2)); }
 
 
-        public static int CompareYyyyWw(string dt1, string dt2) { return string.Compare(dt1, dt2); }
         public static int CompareYyyyWw(DateTime dt1, DateTime dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         public static int CompareYyyyWw(DateTime? dt1, DateTime? dt2) { return string.Compare(ToYyyyWw(dt1), ToYyyyWw(dt2)); }
         public static int CompareYyyyWw(DateTime dt1, string dt2) { return string.Compare(ToYyyyWw(dt1), dt2); }
@@ -927,7 +932,9 @@ namespace CToolkitCs.v1_2.Timing
 
         #region Sign-3 Compare
 
-
+        public static int CompareSign3Day(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Day(dt1), ToSign3Day(dt2)); }
+        public static int CompareSign3Day(DateTime dt1, string dt2) { return string.Compare(ToSign3Day(dt1), dt2); }
+        public static int CompareSign3Day(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Day(dt2)); }
         public static int CompareSign3DTime(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3DTime(dt2)); }
 
         public static int CompareSign3Month(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Month(dt2)); }
@@ -1024,7 +1031,7 @@ namespace CToolkitCs.v1_2.Timing
                 dt = new DateTime(yyy + YearDiffFromRocToAd, mm, dd);
                 return true;
             }
-             return false;
+            return false;
         }
         public static bool FromRocToAdDateTryOut(string s, char spliter, out DateTime? dt)
         {

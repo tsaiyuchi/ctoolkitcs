@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
+using System.Web;
 
 namespace CToolkitCs.v1_2.Net.HttpClientTx
 {
+    /* Descrition
+     * 官方建議 HttpClient 物件要重複使用，不用每次都 new 一個新的
+     */
+
+
     public class CtkNetHttpClientTransaction : IDisposable
     {
 
@@ -35,6 +41,48 @@ namespace CToolkitCs.v1_2.Net.HttpClientTx
             httpResp.Wait();
             return httpResp.Result;
         }
+
+        public string HttpPostResp(string uri, string formData)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            if (string.IsNullOrWhiteSpace(formData)) return null;
+            var pairs = formData.Split('&', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var pair in pairs)
+            {
+                var kv = pair.Split('=', 2); // 只分成兩段，避免 value 裡面還有 '=' 的情況
+                var key = HttpUtility.UrlDecode(kv[0]);
+                var value = kv.Length > 1 ? HttpUtility.UrlDecode(kv[1]) : "";
+                dict[key] = value;
+            }
+            return this.HttpPostResp(uri, dict);
+        }
+        public string HttpPostResp(string uri, Dictionary<string, string> formData)
+        {
+            var content = new FormUrlEncodedContent(formData); //application/x-www-form-urlencoded
+            var httpResp = this.HttpClient.PostAsync(uri, content);
+            httpResp.Wait();
+            var result = httpResp.Result;
+
+            result.EnsureSuccessStatusCode();
+            var httpContent = result.Content.ReadAsStringAsync();
+            httpContent.Wait();
+
+            // 若伺服器明確指定 charset，可用此處理方式確保解碼正確
+            var mediaType = result.Content.Headers.ContentType?.MediaType ?? "";
+            var charset = result.Content.Headers.ContentType?.CharSet ?? "utf-8";
+            if (!string.IsNullOrEmpty(mediaType) && mediaType.Contains("text/html", StringComparison.OrdinalIgnoreCase))
+            {
+                var bytes = result.Content.ReadAsByteArrayAsync().Result;
+                return Encoding.GetEncoding(charset).GetString(bytes);
+            }
+
+            return httpContent.Result;
+        }
+
+
+
+
+
         public string HttpPostRespJson(string uri, string json)
         {
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -49,6 +97,7 @@ namespace CToolkitCs.v1_2.Net.HttpClientTx
             httpContent.Wait();
             return httpContent.Result;
         }
+
 
 
 
