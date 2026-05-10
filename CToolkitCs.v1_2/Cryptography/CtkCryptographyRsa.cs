@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace CToolkitCs.v1_2.Cryptography
 {
+
+
     public class CtkCryptographyRsa : IDisposable
     {
         RSACryptoServiceProvider m_rsa;
@@ -65,6 +67,51 @@ namespace CToolkitCs.v1_2.Cryptography
         {
             var json = this.DecryptString(encryptedContent, encoding);
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+
+
+
+        public string SignSha1(string content)
+        {
+            var data = Encoding.UTF8.GetBytes(content);
+
+            using (var sha1 = new SHA1CryptoServiceProvider())
+            {
+                var signature = this.m_rsa.SignData(data, sha1);
+                return Convert.ToBase64String(signature);
+            }
+        }
+
+        public string SignSha256(string content)
+        {
+            var data = Encoding.UTF8.GetBytes(content);
+
+            using (var sha256 = SHA256.Create())
+            {
+                var signature = this.m_rsa.SignData(data, sha256);
+                return Convert.ToBase64String(signature);
+            }
+        }
+
+        public bool VerifySha1(string content, string signature)
+        {
+            var data = Encoding.UTF8.GetBytes(content);
+            var signatureBuffer = Convert.FromBase64String(signature);
+            using (var sha1 = new SHA1CryptoServiceProvider())
+            {
+                return this.m_rsa.VerifyData(data, sha1, signatureBuffer);
+            }
+        }
+
+        public bool VerifySha256(string content, string signature)
+        {
+            var data = Encoding.UTF8.GetBytes(content);
+            var signatureBuffer = Convert.FromBase64String(signature);
+            using (var sha256 = SHA256.Create())
+            {
+                return this.m_rsa.VerifyData(data, sha256, signatureBuffer);
+            }
         }
 
 
@@ -142,4 +189,9 @@ namespace CToolkitCs.v1_2.Cryptography
         }
 
     }
+
+
+
+
+
 }
