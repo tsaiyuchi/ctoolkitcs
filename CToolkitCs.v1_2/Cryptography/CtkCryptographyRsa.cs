@@ -104,6 +104,27 @@ namespace CToolkitCs.v1_2.Cryptography
             }
         }
 
+        public bool VerifySha1_Debug(string content, string signature)
+        {
+            var data = Encoding.UTF8.GetBytes(content);
+            var signatureBuffer = Convert.FromBase64String(signature);
+            using (var sha1 = new SHA1CryptoServiceProvider())
+            {
+                var hashBytes = sha1.ComputeHash(data);
+
+                // 印出 hex 與 base64，避免用 UTF8 轉成亂碼字串
+                System.Diagnostics.Debug.WriteLine("hashBytes (hex): " + BitConverter.ToString(hashBytes).Replace("-", " "));
+                System.Diagnostics.Debug.WriteLine("hashBytes (base64): " + Convert.ToBase64String(hashBytes));
+                System.Diagnostics.Debug.WriteLine("sigBytes (hex): " + BitConverter.ToString(signatureBuffer).Replace("-", " "));
+
+                // 已經有 hashBytes，直接用 VerifyHash 可避免內部重複計算
+                var oid = CryptoConfig.MapNameToOID("SHA1");
+                return this.m_rsa.VerifyHash(hashBytes, oid, signatureBuffer);
+
+                //return this.m_rsa.VerifyData(data, sha1, signatureBuffer);
+            }
+        }
+
         public bool VerifySha256(string content, string signature)
         {
             var data = Encoding.UTF8.GetBytes(content);
