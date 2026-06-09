@@ -505,7 +505,7 @@ namespace CToolkitCs.v1_2.Timing
         /// <summary> same as Seoncd </summary>
         public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
         public static bool FromSign3DTimeTry(string dtime, out DateTime dt) { return FromSign3SecondTry(dtime, out dt); }
-        public static DateTime? FromSign3DTimeTryOrDefault(string s)
+        public static DateTime? FromSign3DTimeOrDefault(string s)
         {
             var dt = new DateTime();
             if (FromSign3DTimeTry(s, out dt)) return dt;

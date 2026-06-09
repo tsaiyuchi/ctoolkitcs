@@ -17,9 +17,9 @@ namespace CToolkitCs.v1_2.Net.HttpClientTx
     public class CtkNetHttpClientTransaction : IDisposable
     {
 
-        public CtkNetHttpClientTransaction(HttpClientHandler handler = null)
+        public CtkNetHttpClientTransaction(HttpClientHandler handler = null, bool disposeHandler = true)
         {
-            this.HttpClient = new HttpClient(handler);
+            this.HttpClient = new HttpClient(handler, disposeHandler);
         }
 
         ~CtkNetHttpClientTransaction() { this.Dispose(false); }
@@ -111,7 +111,6 @@ namespace CToolkitCs.v1_2.Net.HttpClientTx
             foreach (var val in values)
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(val));
         }
-
         public void HeaderSetAcceptEncoding(params string[] values)
         {
             var client = this.HttpClient;
@@ -142,33 +141,35 @@ namespace CToolkitCs.v1_2.Net.HttpClientTx
                 }
             }
         }
-
-        public void HeaderSetHost(string host)
-        {
-            var client = this.HttpClient;
-            client.DefaultRequestHeaders.Host = host;
-        }
-
-        public void HeaderSetOrigin(string origin)
-        {
-            var client = this.HttpClient;
-            client.DefaultRequestHeaders.Add("Origin", origin);
-        }
-
-        public void HeaderSetUserAgent(string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
-        {
-            var client = this.HttpClient;
-            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
-        }
-
         /// <summary> ConnectionClose = false</summary>
         public void HeaderSetConnectionClose(bool value = false)
         {
             var client = this.HttpClient;
             client.DefaultRequestHeaders.ConnectionClose = value;
         }
+        public void HeaderSetHost(string host)
+        {
+            var client = this.HttpClient;
+            client.DefaultRequestHeaders.Host = host;
+        }
         /// <summary> 強制使用 keep-alive (預設就是 keep-alive) </summary>
         public void HeaderSetKeepAlive(bool value = true) { this.HeaderSetConnectionClose(!value); }
+        public void HeaderSetOrigin(string origin)
+        {
+            var client = this.HttpClient;
+            client.DefaultRequestHeaders.Add("Origin", origin);
+        }
+        public void HeaderSetUserAgent(string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
+        {
+            var client = this.HttpClient;
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+        }
+
+        public void HeaderSetReferer(string referer)
+        {
+            var client = this.HttpClient;
+            client.DefaultRequestHeaders.Referrer =  new Uri(referer);
+        }
 
         #endregion
 
