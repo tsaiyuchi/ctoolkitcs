@@ -504,7 +504,6 @@ namespace CToolkitCs.v1_2.Timing
 
         /// <summary> same as Seoncd </summary>
         public static DateTime FromSign3DTime(string dtime) { return FromSign3Second(dtime); }
-        public static bool FromSign3DTimeTry(string dtime, out DateTime dt) { return FromSign3SecondTry(dtime, out dt); }
         public static DateTime? FromSign3DTimeOrDefault(string s)
         {
             var dt = new DateTime();
@@ -512,6 +511,7 @@ namespace CToolkitCs.v1_2.Timing
             return null;
         }
 
+        public static bool FromSign3DTimeTry(string dtime, out DateTime dt) { return FromSign3SecondTry(dtime, out dt); }
         /// <summary> mth202209 </summary>
         public static DateTime FromSign3Month(string yyyymm)
         {

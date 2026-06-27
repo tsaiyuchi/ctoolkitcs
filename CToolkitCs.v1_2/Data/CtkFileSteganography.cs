@@ -109,7 +109,7 @@ namespace CToolkitCs.v1_2.Data
         /// <param name="outputDirectory">輸出目錄</param>
         /// <param name="maxChunkSize">每個分割檔案的最大大小(位元組),預設 10MB</param>
         /// <returns>生成的圖片檔案路徑列表</returns>
-        public static List<string> HideMultiFile(string[] imageFiles, string hiddenFile, string outputDirectory, long maxChunkSize = 800 * 1024)
+        public static List<string> HideMultiFile(string[] imageFiles, string hiddenFile, string outputDirectory, string prefix = "img", long maxChunkSize = 800 * 1024)
         {
             if (imageFiles == null || imageFiles.Length == 0)
                 throw new ArgumentException("至少需要一個圖片檔案");
@@ -137,7 +137,7 @@ namespace CToolkitCs.v1_2.Data
                     string imageFile = imageFiles[i % imageFiles.Length];
                     string imageExt = Path.GetExtension(imageFile);
                     string imageName = Path.GetFileNameWithoutExtension(imageFile);
-                    string outputFile = Path.Combine(outputDirectory, $"{imageName}_stego_{i:D4}{imageExt}");
+                    string outputFile = Path.Combine(outputDirectory, $"{prefix}_{i:D4}.bmp");
 
                     long chunkSize = Math.Min(maxChunkSize, totalSize - (i * maxChunkSize));
 
