@@ -45,7 +45,7 @@ namespace CToolkitCs.v1_2.Logging
 
 
 
-        protected virtual void WriteAsyn(CtkLoggerEventArgs ea)
+        protected virtual async void WriteAsyn(CtkLoggerEventArgs ea)
         {
             this.queue.Enqueue(ea);
             if (!Monitor.TryEnter(this, 1000)) return;

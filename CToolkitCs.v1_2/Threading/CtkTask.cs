@@ -62,14 +62,14 @@ namespace CToolkitCs.v1_2.Threading
             task.Sleep = sleep;
 
             var ct = task.CancelTokenSource.Token;
-            task.Task = Task.Factory.StartNew(() =>
+            task.Task = Task.Factory.StartNew(async () =>
             {
                 task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue()) break;
-                    if (task.Sleep > 0) Thread.Sleep(task.Sleep);
+                    if (task.Sleep > 0) await Task.Delay(task.Sleep);
                 }
             }, ct);
 
@@ -81,14 +81,14 @@ namespace CToolkitCs.v1_2.Threading
             task.Sleep = sleep;
 
             var ct = task.CancelTokenSource.Token;
-            task.Task = Task.Factory.StartNew(() =>
+            task.Task = Task.Factory.StartNew(async () =>
             {
                 task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue()) break;
-                    if (task.Sleep > 0) Thread.Sleep(task.Sleep);
+                    if (task.Sleep > 0) await Task.Delay(task.Sleep);
                 }
             }, ct);
             task.Name = name;
@@ -100,14 +100,14 @@ namespace CToolkitCs.v1_2.Threading
             task.Sleep = sleep;
 
             var ct = task.CancelTokenSource.Token;
-            task.Task = Task.Factory.StartNew(() =>
+            task.Task = Task.Factory.StartNew(async () =>
             {
                 task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue(ct)) break;
-                    if (task.Sleep > 0) Thread.Sleep(task.Sleep);
+                    if (task.Sleep > 0) await Task.Delay(task.Sleep);
                 }
             }, ct);
             return task;
@@ -118,14 +118,14 @@ namespace CToolkitCs.v1_2.Threading
             task.Sleep = sleep;
 
             var ct = task.CancelTokenSource.Token;
-            task.Task = Task.Factory.StartNew(() =>
+            task.Task = Task.Factory.StartNew(async () =>
             {
                 task.SetupThreadName();
                 while (!ct.IsCancellationRequested)
                 {
                     ct.ThrowIfCancellationRequested();
                     if (!funcIsContinue(ct)) break;
-                    if (task.Sleep > 0) Thread.Sleep(task.Sleep);
+                    if (task.Sleep > 0) await Task.Delay(task.Sleep);
                 }
             }, ct);
             task.Name = name;
@@ -261,10 +261,7 @@ namespace CToolkitCs.v1_2.Threading
 
 
 
-    public class CtkTask<TResult>
-    {
 
-    }
 
 
 }
