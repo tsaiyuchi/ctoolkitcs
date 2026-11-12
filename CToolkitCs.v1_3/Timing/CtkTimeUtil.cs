@@ -932,10 +932,16 @@ namespace CToolkitCs.v1_3.Timing
 
         #region Sign-3 Compare
 
+        public static int CompareSign3Week(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Week(dt1), ToSign3Week(dt2)); }
+        public static int CompareSign3Week(DateTime dt1, string dt2) { return string.Compare(ToSign3Week(dt1), dt2); }
+        public static int CompareSign3Week(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Week(dt2)); }
+
         public static int CompareSign3Day(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3Day(dt1), ToSign3Day(dt2)); }
         public static int CompareSign3Day(DateTime dt1, string dt2) { return string.Compare(ToSign3Day(dt1), dt2); }
         public static int CompareSign3Day(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Day(dt2)); }
         public static int CompareSign3DTime(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3DTime(dt2)); }
+        public static int CompareSign3DTime(DateTime dt1, string dt2) { return string.Compare(ToSign3DTime(dt1), dt2); }
+        public static int CompareSign3DTime(DateTime dt1, DateTime dt2) { return string.Compare(ToSign3DTime(dt1), ToSign3DTime(dt2)); }
 
         public static int CompareSign3Month(string dt1, DateTime dt2) { return string.Compare(dt1, ToSign3Month(dt2)); }
         public static int CompareSign3Month(DateTime dt1, string dt2) { return string.Compare(ToSign3Month(dt1), dt2); }

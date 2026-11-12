@@ -47,5 +47,34 @@ namespace CToolkitCs.v1_3.Compress
 
 
         }
+
+        /// <summary> 將字串(e.q. Json)以UTF8編碼後，用GZip壓縮成byte[]，用於存入Db Blob欄位 </summary>
+        public static byte[] GZipCompressString(string text, Encoding? encoding = null)
+        {
+            encoding ??= Encoding.UTF8;
+            var rawBytes = encoding.GetBytes(text);
+
+            using (var memStream = new MemoryStream())
+            {
+                using (var gzipStream = new GZipStream(memStream, CompressionMode.Compress, true))
+                {
+                    gzipStream.Write(rawBytes, 0, rawBytes.Length);
+                }
+                return memStream.ToArray();
+            }
+        }
+
+        /// <summary> 將GZip壓縮過的byte[]解壓回原始字串(e.q. Json) </summary>
+        public static string GZipDecompressString(byte[] gzipBytes, Encoding? encoding = null)
+        {
+            encoding ??= Encoding.UTF8;
+
+            using (var memStream = new MemoryStream(gzipBytes))
+            using (var gzipStream = new GZipStream(memStream, CompressionMode.Decompress))
+            using (var reader = new StreamReader(gzipStream, encoding))
+            {
+                return reader.ReadToEnd();
+            }
+        }
     }
 }

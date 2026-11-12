@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CToolkitCs.v1_3.ContextFlow
+namespace CToolkitCs.v1_3
 {
 
     /// <summary>
     /// 物件生命週期定義, 基本上是 Init -> Load -> Unload -> Free.
     /// </summary>
-    public interface ICtkContextFlow
+    public interface ICtkContextFlow    
     {
         int CtkCfBoot();
         int CtkCfLoad();
